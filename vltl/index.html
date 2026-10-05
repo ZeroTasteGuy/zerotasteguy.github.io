@@ -143,8 +143,9 @@ function generateDaVinciExpression(three, rate, offset) {
   end
 
   local conSecs = (time >= ${e3}) and ${dT} or (time - ${start}) / fps
-  table.insert(out, fmt(conSecs))
-  table.insert(out, "-----------")
+  local top = fmt(conSecs)
+  table.insert(out, top)
+  table.insert(out, string.rep("-", math.floor(#top * 1.5 + 0.5)))
 
   if time >= ${start} then
     local l1Secs = (time >= ${e1}) and ${d1} or (time - ${start}) / fps
