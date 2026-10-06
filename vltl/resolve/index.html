@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Resolve Guide</title>
+<meta name="description" content="How to add the lap-timer overlay to DaVinci Resolve with a Text+ box, and how to install the HDZero OSD font.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1116'/%3E%3Cg font-family='Arial,Helvetica,sans-serif' font-weight='800' font-size='27' fill='%233dd68c' text-anchor='middle'%3E%3Ctext x='16' y='28'%3EV%3C/text%3E%3Ctext x='48' y='28'%3EL%3C/text%3E%3Ctext x='16' y='57'%3ET%3C/text%3E%3Ctext x='48' y='57'%3EL%3C/text%3E%3C/g%3E%3Cg fill='%238b96a5'%3E%3Crect x='27' y='19' width='10' height='3' rx='1.5'/%3E%3Crect x='27' y='48' width='10' height='3' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+@font-face{font-family:"HDZero OSD";src:url(HDZeroOSD.ttf) format("truetype");font-display:swap}
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark;--bg:#0e1116;--panel:#161b22;--panel2:#12161c;--text:#e6edf3;--muted:#8b96a5;--line:#262d38;--accent:#3dd68c;--accentText:#04130b;--blue:#5cc8ff;--shot:#2a4a73}
+:root[data-theme=light]{color-scheme:light;--bg:#f6f7f9;--panel:#fff;--panel2:#f3f5f8;--text:#16202e;--muted:#667085;--line:#e3e7ee;--accent:#16915f;--accentText:#fff;--blue:#0a74a8;--shot:#2a4a73}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:auto;padding:22px 16px 60px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:7px;font-weight:800;font-size:22px;line-height:1;color:var(--accent);text-decoration:none}
+.logo i{display:block;width:9px;height:2px;border-radius:2px;background:var(--muted);opacity:.6}
+.logo span{margin-left:10px;padding-left:12px;border-left:1px solid var(--line);font-size:15px;font-weight:600;color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:7px 12px;border-radius:8px;font:600 13px inherit;text-decoration:none;cursor:pointer}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accentText);padding:10px 18px;font-size:14px}
+.btn.primary:hover{filter:brightness(1.1);color:var(--accentText)}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px;letter-spacing:-.02em}
+h2{font-size:20px;margin:0 0 10px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+h2 .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accentText);font-size:14px;flex:none}
+p{margin:0 0 12px}
+section a{color:var(--accent)}
+.lead{color:var(--muted);font-size:17px;margin-bottom:28px}
+section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:18px}
+ol,ul{margin:0 0 12px;padding-left:22px}li{margin-bottom:6px}
+code,kbd{font:600 .88em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.scroll{overflow-x:auto;margin:6px 0 14px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:420px}
+th,td{text-align:left;padding:9px 12px;border-top:1px solid var(--line)}
+th{background:var(--panel2);color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;border-top:0}
+td.chg{color:var(--accent);font-weight:700}
+.note{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:10px 14px;margin:12px 0;font-size:14px}
+.sample{display:grid;grid-template-columns:1fr;gap:0;margin:14px 0}
+.shot{background:var(--shot);border-radius:10px;padding:22px 26px;display:flex;gap:30px;flex-wrap:wrap;align-items:flex-start}
+.osd{font-family:"HDZero OSD",monospace;color:#fff;font-size:30px;line-height:1.25;white-space:pre;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 0 #000}
+.osd.s{font-size:19px}
+.cap{color:var(--muted);font-size:13px;margin-top:8px}
+.dl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0 4px}
+footer{color:var(--muted);font-size:13px;margin-top:26px}
+footer a{color:var(--accent)}
+@media(max-width:560px){h1{font-size:25px}section{padding:16px}.osd{font-size:24px}}
+</style></head><body><div class="wrap">
+<div class="bar"><a class="logo" href="../" aria-label="Video Lap Tracking Lab">V<i></i>L<i></i>T<i></i>L<span>Video Lap Tracking Lab</span></a><div><a class="btn" href="../">← Back to the lap timer</a> <button class="btn" id="themeBtn" type="button">Light mode</button></div></div>
+
+<h1>Lap timer overlay for DaVinci Resolve</h1>
+<p class="lead">Put live lap times on your HDZero footage with one Text+ box, and make them look like the goggle OSD with the free HDZero OSD font.</p>
+
+<section id="expression">
+<h2><span class="n">1</span>Get the expression</h2>
+<ol>
+<li>In the <a href="../">lap timer</a>, mark your laps until it shows your best 3 consecutive laps.</li>
+<li>In the <b>Resolve panel</b> (right side), set:
+<ul>
+<li><b>Resolve timeline FPS</b>: the frame rate of your Resolve timeline (for example 60).</li>
+<li><b>Clip start on timeline (s)</b>: <code>0</code> when the Text+ box and your video start at the same place. If the video starts <i>later</i> than the Text+ box, enter that gap in seconds. If the start of the video is trimmed off, enter the trimmed time as a <i>negative</i> number.</li>
+<li><b>Dashes per character</b>: the length of the dashed line under the total. Use <code>1</code> with the HDZero OSD font, about <code>1.5</code> with normal fonts. The page remembers it.</li>
+</ul></li>
+<li>Press <b>Copy expression</b>.</li>
+</ol>
+<div class="note">If the page shows a note that the video FPS and the timeline FPS do not line up, the timers start and stop on the nearest timeline frame (a few milliseconds off). The frozen lap times shown at the end are still exact.</div>
+</section>
+
+<section id="textplus">
+<h2><span class="n">2</span>Add the Text+ box</h2>
+<ol>
+<li><b>Edit page:</b> open <b>Effects → Toolbox → Titles</b> and drag <b>Text+</b> onto a track above your video clip. Stretch it so it covers the whole clip (the text stays empty until the best 3 laps start).</li>
+<li>Select the Text+ box, then open the <b>Fusion</b> page.</li>
+<li>Click the Text+ node. In the <b>Inspector</b> open the <b>Text</b> tab.</li>
+<li><b>Right-click the “Styled Text” field → Expression.</b> A small expression field appears under the text box.</li>
+<li>Click into that field, paste (<kbd>Ctrl</kbd>+<kbd>V</kbd>) and press <kbd>Enter</kbd>. The text box now shows the timers when you move the playhead over the laps.</li>
+</ol>
+<p>The counters count up live, freeze when each lap ends, and show the 3-lap total on top:</p>
+<div class="shot"><div><div class="osd">15.378
+------
+05.289
+05.078
+05.011</div><div class="cap">With the HDZero OSD font, 1 dash per character.</div></div></div>
+</section>
+
+<section id="settings">
+<h2><span class="n">3</span>Position and look</h2>
+<p>These are the values used for HDZero 4:3 DVR footage (960×720) with the overlay in the top right. <b>Green</b> values differ from a plain Text+.</p>
+<h3 style="font-size:15px;margin:14px 0 4px">Text tab</h3>
+<div class="scroll"><table>
+<tr><th>Setting</th><th>Value</th><th>Text+ default</th></tr>
+<tr><td>Font</td><td class="chg">HDZero OSD, Regular</td><td>Open Sans</td></tr>
+<tr><td>Color</td><td>white</td><td>white</td></tr>
+<tr><td>Size</td><td class="chg">0.034</td><td>about 0.08</td></tr>
+<tr><td>Tracking / Line Spacing</td><td>1.0 / 1.0</td><td>1.0 / 1.0</td></tr>
+<tr><td>V and H Anchor, V and H Justify</td><td>0.0 (text is centred on the Center point)</td><td>0.0</td></tr>
+</table></div>
+<h3 style="font-size:15px;margin:14px 0 4px">Layout tab</h3>
+<div class="scroll"><table>
+<tr><th>Setting</th><th>Value</th><th>Default</th></tr>
+<tr><td>Type</td><td>Point</td><td>Point</td></tr>
+<tr><td>Center X</td><td class="chg">0.88</td><td>0.5</td></tr>
+<tr><td>Center Y</td><td class="chg">0.86</td><td>0.5</td></tr>
+<tr><td>Center Z</td><td>0.0</td><td>0.0</td></tr>
+<tr><td>Pivot X / Y</td><td>0.5 / 0.5</td><td>0.5 / 0.5</td></tr>
+<tr><td>Size / Perspective</td><td>1.0 / 1.0</td><td>1.0 / 1.0</td></tr>
+</table></div>
+<h3 style="font-size:15px;margin:14px 0 4px">Shading tab: the black edge the real OSD has</h3>
+<p>Turn on <b>Element 2</b> (it is off by default) and set:</p>
+<div class="scroll"><table>
+<tr><th>Setting</th><th>Value</th></tr>
+<tr><td>Name / Enabled</td><td>Black Outline / on</td></tr>
+<tr><td>Sort By</td><td>Priority</td></tr>
+<tr><td>Opacity / Blending</td><td>1.0 / Composite</td></tr>
+<tr><td>Appearance</td><td class="chg">Outline (second icon)</td></tr>
+<tr><td>Thickness</td><td class="chg">0.06</td></tr>
+<tr><td>Adapt to Perspective, Outside Only, Clean Intersections</td><td>all off</td></tr>
+<tr><td>Line Style</td><td>Solid</td></tr>
+<tr><td>Type / Color</td><td>Solid, black (R 0, G 0, B 0), Alpha 1.0</td></tr>
+</table></div>
+<div class="note">Using another resolution or aspect ratio? Change only <b>Size</b> until the digits are as tall as the OSD digits, then adjust <b>Center X/Y</b>. If you change Size, scale the outline <b>Thickness</b> by the same factor.</div>
+</section>
+
+<section id="font">
+<h2><span class="n">4</span>The HDZero OSD font</h2>
+<p>The goggle OSD is drawn from a bitmap, not a normal font, so Resolve has nothing like it. This font is that bitmap converted to a real <code>.ttf</code>: wide, rounded-square letters and <b>digits that are all the same width</b>, so the numbers do not jitter as they count.</p>
+<div class="shot"><div><div class="osd s">F:4:25
+4S 3.93V
+MAXDAX 3
+0123456789</div><div class="cap">Live preview: this text is set in the font itself.</div></div></div>
+<div class="dl"><a class="btn primary" href="HDZeroOSD.ttf" download>↓ Download HDZeroOSD.ttf</a><a class="btn" href="HDZeroOSD-LICENSE.txt">License (MIT)</a></div>
+<h3 style="font-size:15px;margin:16px 0 4px">Install</h3>
+<ul>
+<li><b>Windows:</b> right-click the file → <b>Install for all users</b>.</li>
+<li><b>Mac:</b> double-click the file → <b>Install Font</b>.</li>
+<li>Then <b>restart DaVinci Resolve</b>. The font appears as <b>HDZero OSD</b> in the Text+ <b>Font</b> list.</li>
+</ul>
+<h3 style="font-size:15px;margin:16px 0 4px">What is in it</h3>
+<p>Digits, capital letters A–Z (lowercase shows as capitals, like the OSD), and <code>. : - + / % &amp; ( ) ! ? , ; = &lt; &gt; @ [ ] \ ^ _ #</code>. No arrows or battery symbols. It is a pixel font: scaled up a lot it looks blocky, like the OSD itself. It has no black edge, which is why the Shading outline above is used.</p>
+<p style="color:var(--muted);font-size:14px">The shapes come from the HDZero goggle firmware font <code>BTFL_000.bmp</code> (<a href="https://github.com/hd-zero/hdzero-goggle" style="color:var(--accent)">hd-zero/hdzero-goggle</a>, MIT license). This is an unofficial conversion, not made or endorsed by HDZero.</p>
+</section>
+
+<section id="trouble">
+<h2><span class="n">5</span>If something looks wrong</h2>
+<ul>
+<li><b>The font is not in the list:</b> restart Resolve after installing. On Windows pick “Install for all users”.</li>
+<li><b>The timers start at the wrong moment:</b> check <b>Clip start on timeline (s)</b> and the timeline FPS, then copy the expression again. A pasted expression does not update itself.</li>
+<li><b>The dashed line is too long or too short:</b> change <b>Dashes per character</b> on the lap timer page and copy the expression again.</li>
+<li><b>Nothing is shown:</b> the text stays empty before the best 3 laps begin, and the Text+ box has to cover that part of the timeline.</li>
+<li><b>The text is too big or too small:</b> change Text <b>Size</b> only, then fix the outline thickness to match.</li>
+</ul>
+</section>
+
+<footer>Part of <a href="../">Video Lap Tracking Lab</a>. Everything stays in your browser; no video is uploaded.</footer>
+</div>
+<script>
+(function(){
+function get(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+var btn=document.getElementById('themeBtn');
+function apply(t){document.documentElement.dataset.theme=t;btn.textContent=t==='dark'?'Light mode':'Dark mode';set('fpvLapTheme',t)}
+apply(get('fpvLapTheme')==='light'?'light':'dark');
+btn.onclick=function(){apply(document.documentElement.dataset.theme==='dark'?'light':'dark')};
+})();
+</script>
+</body></html>
