@@ -66,7 +66,7 @@ footer a{color:var(--accent)}
 
 <h1>Lap timer overlay for DaVinci Resolve</h1>
 <p class="lead">Step by step, with screenshots: put live lap times on your HDZero footage with one Text+ box. Click any picture to enlarge it. Red numbers in a picture match the numbered list under it.</p>
-<nav class="toc" aria-label="Sections"><a href="#font">1 Font</a><a href="#start">2 Project and video</a><a href="#expression">3 Expression</a><a href="#settings">4 Text, Layout, Shading</a><a href="#result">5 Result</a><a href="#trouble">Problems?</a></nav>
+<nav class="toc" aria-label="Sections"><a href="#font">1 Font</a><a href="#start">2 Project and video</a><a href="#expression">3 Expression</a><a href="#settings">4 Text, Layout, Shading</a><a href="#result">5 Result</a><a href="#edit">6 Trim and edit</a><a href="#trouble">Problems?</a></nav>
 
 <section id="font">
 <h2><span class="n">1</span>Install the HDZero OSD font</h2>
@@ -165,7 +165,8 @@ MAXDAX 3
 <h3><span class="sn">4.1</span>Text tab: font and size</h3>
 <div class="fig"><img src="img/16-font.png" alt="Font drop-down with HDZero OSD highlighted" loading="lazy">
 <ol><li data-n="1">Click the <b>Font</b> box.</li><li data-n="2">Pick <b>HDZero OSD</b>, style <b>Regular</b>. It is near the “H” fonts. (Not in the list? See step 1 and restart Resolve.)</li></ol></div>
-<p>Then set <b>Size</b> to <code>0.025</code> (the field is a bit lower, under Color). Leave the rest as it is.</p>
+<div class="fig"><img src="img/17-size.png" alt="Text tab with font HDZero OSD Regular and Size 0.025" loading="lazy">
+<ol><li data-n="1">Font is now <b>HDZero OSD</b>, style <b>Regular</b>.</li><li data-n="2">Set <b>Size</b> to <code>0.025</code>. Leave the rest as it is.</li></ol></div>
 </div>
 
 <div class="step">
@@ -228,6 +229,17 @@ MAXDAX 3
 04.989
 05.078
 04.889</div><div class="cap">With the HDZero OSD font and a black outline.</div></div></div>
+</section>
+
+<section id="edit">
+<h2><span class="n">6</span>Trim and edit your video</h2>
+<p>When the setup above is finished, you can cut and trim as much as you like. <b>Link the video and the Text+ box first</b>, so they stay lined up (the timers count from the start of the Text+ box).</p>
+<ol>
+<li>In the timeline, select the Text+ clip and your video clip.</li>
+<li>Right-click one of them → <b>Link Clips</b> (shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd>). A tick next to it means they are linked.</li>
+<li>Now trim, cut and move the clips as much as you want. The video and the Text+ box move together, so the timers stay in step with the video.</li>
+</ol>
+<div class="note">Do the setup and check the timers <i>before</i> linking. If you trim the video or the Text+ box on their own (not linked), the timers no longer match the video.</div>
 </section>
 
 <section id="trouble">
