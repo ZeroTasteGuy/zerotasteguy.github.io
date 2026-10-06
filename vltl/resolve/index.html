@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Resolve Guide</title>
-<meta name="description" content="Step-by-step tutorial with screenshots: add the lap-timer overlay to DaVinci Resolve with a Text+ box, and install the HDZero OSD font.">
+<meta name="description" content="Add the lap-timer overlay to DaVinci Resolve with one copied script, and install the HDZero OSD font.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1116'/%3E%3Cg font-family='Arial,Helvetica,sans-serif' font-weight='800' font-size='27' fill='%233dd68c' text-anchor='middle'%3E%3Ctext x='16' y='28'%3EV%3C/text%3E%3Ctext x='48' y='28'%3EL%3C/text%3E%3Ctext x='16' y='57'%3ET%3C/text%3E%3Ctext x='48' y='57'%3EL%3C/text%3E%3C/g%3E%3Cg fill='%238b96a5'%3E%3Crect x='27' y='19' width='10' height='3' rx='1.5'/%3E%3Crect x='27' y='48' width='10' height='3' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
 <style>
 @font-face{font-family:"HDZero OSD";src:url(HDZeroOSD.ttf) format("truetype");font-display:swap}
@@ -34,7 +34,7 @@ code,kbd{font:600 .88em ui-monospace,SFMono-Regular,Menlo,monospace;background:v
 table{border-collapse:collapse;width:100%;font-size:14px;min-width:420px}
 th,td{text-align:left;padding:9px 12px;border-top:1px solid var(--line)}
 th{background:var(--panel2);color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;border-top:0}
-td.chg{color:var(--accent);font-weight:700}
+
 .note{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:10px 14px;margin:12px 0;font-size:14px}
 .shot{background:var(--shot);border-radius:10px;padding:22px 26px;display:flex;gap:30px;flex-wrap:wrap;align-items:flex-start;margin:14px 0}
 .osd{font-family:"HDZero OSD",monospace;color:#fff;font-size:30px;line-height:1.25;white-space:pre;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 0 #000}
@@ -65,8 +65,8 @@ footer a{color:var(--accent)}
 <div class="bar"><a class="logo" href="../" aria-label="Video Lap Tracking Lab">V<i></i>L<i></i>T<i></i>L<span>Video Lap Tracking Lab</span></a><div><a class="btn" href="../">← Back to the lap timer</a> <button class="btn" id="themeBtn" type="button">Light mode</button></div></div>
 
 <h1>Lap timer overlay for DaVinci Resolve</h1>
-<p class="lead">Step by step, with screenshots: put live lap times on your HDZero footage with one Text+ box. Click any picture to enlarge it. Red numbers in a picture match the numbered list under it.</p>
-<nav class="toc" aria-label="Sections"><a href="#font">1 Font</a><a href="#start">2 Project and video</a><a href="#expression">3 Expression</a><a href="#settings">4 Text, Layout, Shading</a><a href="#result">5 Result</a><a href="#edit">6 Trim and edit</a><a href="#trouble">Problems?</a></nav>
+<p class="lead">Put live lap times on your HDZero footage. You mark your laps in the lap timer, copy one script, and paste it into Resolve. It works in the free version of DaVinci Resolve. Click any picture to enlarge it.</p>
+<nav class="toc" aria-label="Sections"><a href="#font">1 Font</a><a href="#start">2 Project and video</a><a href="#script">3 Run the script</a><a href="#result">4 Result</a><a href="#edit">5 Trim and edit</a><a href="#trouble">Problems?</a></nav>
 
 <section id="font">
 <h2><span class="n">1</span>Install the HDZero OSD font</h2>
@@ -82,144 +82,86 @@ MAXDAX 3
 <li><b>Windows:</b> right-click the file → <b>Install for all users</b>.</li>
 <li><b>Mac:</b> double-click the file → <b>Install Font</b>.</li>
 <li>If DaVinci Resolve is open, <b>close it and start it again</b>. Resolve only reads the font list at start.</li>
-<li>You will see the font as <b>HDZero OSD</b> in the Text+ Font list (step 4 below).</li>
+<li>That is all. The script in step 3 picks the font <b>HDZero OSD</b> by itself.</li>
 </ol>
 <h3 style="margin:16px 0 4px">What is in it</h3>
-<p>Digits, capital letters A–Z (lowercase shows as capitals, like the OSD), and <code>. : - + / % &amp; ( ) ! ? , ; = &lt; &gt; @ [ ] \ ^ _ #</code>. No arrows or battery symbols. It is a pixel font: scaled up a lot it looks blocky, like the OSD itself. It has no black edge, which is why a Shading outline is added in step 4.</p>
+<p>Digits, capital letters A–Z (lowercase shows as capitals, like the OSD), and <code>. : - + / % &amp; ( ) ! ? , ; = &lt; &gt; @ [ ] \ ^ _ #</code>. No arrows or battery symbols. It is a pixel font: scaled up a lot it looks blocky, like the OSD itself. It has no black edge, which is why the script adds a black outline.</p>
 <p style="color:var(--muted);font-size:14px">The shapes come from the HDZero goggle firmware font <code>BTFL_000.bmp</code> (<a href="https://github.com/hd-zero/hdzero-goggle">hd-zero/hdzero-goggle</a>, MIT license). This is an unofficial conversion, not made or endorsed by HDZero.</p>
 </section>
 
 <section id="start">
-<h2><span class="n">2</span>Project, video and Text+ box</h2>
+<h2><span class="n">2</span>Project and video</h2>
 
 <div class="step">
 <h3><span class="sn">2.1</span>Create a project</h3>
-<div class="fig"><img src="img/01-new-project.png" alt="Project Manager with the New Project tile marked" loading="lazy">
-<ol><li data-n="1">Start Resolve. In the Project Manager, double-click <b>New Project</b>.</li></ol></div>
-<div class="fig"><img src="img/02-name-create.png" alt="Create New Project dialog" loading="lazy">
-<ol><li data-n="1">Type a name, for example <code>Lap Timer Overlay</code>.</li><li data-n="2">Click <b>Create</b>.</li></ol></div>
+<div class="fig"><img src="img/02-new-project.png" alt="Create New Project dialog with a name typed in" loading="lazy">
+<ol><li data-n="1">Start Resolve, double-click <b>New Project</b> and type a name, for example <code>Lap Timer Overlay</code>.</li><li data-n="2">Click <b>Create</b>.</li></ol></div>
 </div>
 
 <div class="step">
-<h3><span class="sn">2.2</span>Import the video</h3>
-<div class="fig"><img src="img/03-file-import.png" alt="File menu, Import submenu" loading="lazy">
-<ol><li data-n="1">Open the <b>File</b> menu.</li><li data-n="2">Go to <b>Import</b>.</li><li data-n="3">Choose <b>Media…</b> (shortcut <kbd>Ctrl</kbd>+<kbd>I</kbd>).</li></ol></div>
-<div class="fig"><img src="img/04-import-dialog.jpg" alt="Import Media dialog with the file name box" loading="lazy">
-<ol><li data-n="1">Type or paste the path of your video file, or browse to it.</li><li data-n="2">Click <b>Open</b>.</li></ol></div>
-<div class="fig"><img src="img/05-in-pool.jpg" alt="The imported clip in the media pool" loading="lazy">
-<ol><li data-n="1">Your clip now sits in the <b>Media Pool</b>.</li></ol></div>
+<h3><span class="sn">2.2</span>Put your video on the timeline</h3>
+<div class="fig"><img src="img/03-media-pool.png" alt="Dragging the video file from a folder window into the empty Media Pool" loading="lazy">
+<ol><li data-n="1">Drag your video file from its folder.</li><li data-n="2">Drop it into the <b>Media Pool</b>.</li></ol></div>
+<div class="fig"><img src="img/04-timeline.png" alt="The clip in the Media Pool and dragged onto the empty timeline" loading="lazy">
+<ol><li data-n="1">On the <b>Edit</b> page the clip now sits in the Media Pool. Drag it from there...</li><li data-n="2">...into the empty timeline. Resolve creates the timeline for you, and your video is on track <b>V1</b>.</li></ol></div>
 <div class="note">HDZero <code>.ts</code> files import fine. If Resolve cannot read yours, convert it to MP4 first with the <a href="https://github.com/ZeroTasteGuy/ts2mp4">ts2mp4 converter</a> (ffmpeg scripts for converting, upscaling and cropping <code>.ts</code> files).</div>
-</div>
-
-<div class="step">
-<h3><span class="sn">2.3</span>Make a timeline</h3>
-<div class="fig"><img src="img/06-new-timeline.png" alt="Right-click menu on the clip" loading="lazy">
-<ol><li data-n="1">Right-click the clip.</li><li data-n="2">Choose <b>Create New Timeline Using Selected Clips…</b></li></ol></div>
-<div class="fig"><img src="img/07-timeline-dialog.png" alt="Create New Timeline dialog" loading="lazy">
-<ol><li data-n="1">Click <b>Create</b>.</li></ol></div>
-<div class="fig"><img src="img/08-fps.png" alt="Project Settings showing 60 frames per second" loading="lazy">
-<ol><li data-n="1">Check your timeline frame rate: <b>File → Project Settings</b> (<kbd>Shift</kbd>+<kbd>9</kbd>) → <b>Timeline frame rate</b>. Remember the number (here <b>60</b>). You enter it in the lap timer in step 3.</li></ol></div>
-</div>
-
-<div class="step">
-<h3><span class="sn">2.4</span>Add the Text+ box</h3>
-<div class="fig"><img src="img/09-titles.png" alt="Titles list with Text+" loading="lazy">
-<ol><li data-n="1">On the <b>Edit</b> page open <b>Effects → Toolbox → Titles</b>.</li><li data-n="2">Drag <b>Text+</b> onto the timeline, <b>above</b> your video. Drop it at the very start of the clip. Resolve creates a new track (V2) for it.</li></ol></div>
-<div class="fig"><img src="img/10-duration.png" alt="Change Clip Duration dialog" loading="lazy">
-<ol><li data-n="1">Click the Text+ clip and press <kbd>Ctrl</kbd>+<kbd>D</kbd> (Change Clip Duration). Type the length of your video (the time shown next to the timeline name).</li><li data-n="2">Click <b>Change</b>.</li></ol></div>
-<div class="fig"><img src="img/11-text-on-v2.jpg" alt="Text+ clip on track V2 above the video" loading="lazy">
-<ol><li data-n="1">The Text+ clip now covers the whole video. The text stays empty until the best 3 laps start, so it must cover that part.</li></ol></div>
+<div class="note">Any frame rate works; the script reads it from your timeline. The timer is added on V2, above your video.</div>
 </div>
 </section>
 
-<section id="expression">
-<h2><span class="n">3</span>Copy the expression and paste it in</h2>
+<section id="script">
+<h2><span class="n">3</span>Copy the script and run it</h2>
 
 <div class="step">
 <h3><span class="sn">3.1</span>Copy it from the lap timer</h3>
-<div class="fig"><img src="img/12-lap-timer.png" alt="Lap timer page with the Resolve panel and Copy expression button" loading="lazy">
+<p>First mark your laps in the <a href="../">lap timer</a> until it shows your best 3 consecutive laps, with the same video file that is in Resolve.</p>
+<div class="fig"><img src="img/12-lap-timer.png" alt="Lap timer page with the Copy Resolve script button, the Font box and Dashes per character marked" loading="lazy">
 <ol>
-<li data-n="1"><b>Resolve timeline FPS</b>: the number from step 2.3 (here 60).</li>
-<li data-n="2"><b>Clip start on timeline (s)</b>: <code>0</code> when the Text+ box and your video start at the same place. If the video starts <i>later</i> than the Text+ box, enter that gap in seconds. If the start of the video is trimmed off, enter the trimmed time as a <i>negative</i> number.</li>
-<li data-n="3"><b>Dashes per character</b>: length of the dashed line under the total. <code>1</code> with the HDZero OSD font, about <code>1.5</code> with normal fonts.</li>
-<li data-n="4">Press <b>Copy expression</b>.</li>
+<li data-n="1">Click <b>Copy Resolve script</b>. The script now holds your best 3 laps.</li>
+<li data-n="2"><b>Font</b>: the page uses <b>HDZero OSD</b> when it is installed on your computer (step 1). If it is not, it starts with Open Sans. You can type any font name or pick one from the list. <b>Load my fonts</b> lists the fonts installed on this computer (Chrome and Edge ask once for permission). The font must be installed on the computer that runs Resolve.</li>
+<li data-n="3">Optional: <b>Dashes per character</b> is the length of the dashed line under the total. <code>1</code> fits the HDZero OSD font, about <code>1.5</code> fits normal fonts. It changes to 1 or 1.5 when you change the font, and you can set it by hand.</li>
 </ol></div>
-<p>Before this, mark your laps in the <a href="../">lap timer</a> until it shows your best 3 consecutive laps.</p>
-<div class="note">If the page shows a note that the video FPS and the timeline FPS do not line up, the timers start and stop on the nearest timeline frame (a few milliseconds off). The frozen lap times shown at the end are still exact.</div>
 </div>
 
 <div class="step">
-<h3><span class="sn">3.2</span>Add the expression to the Text+ box</h3>
-<div class="fig"><img src="img/14-expression-menu.png" alt="Inspector with the right-click menu on the text field and Expression at the bottom" loading="lazy">
-<ol><li data-n="1">Click the Text+ clip in the timeline. Open the <b>Inspector</b> (top right) → <b>Title</b> tab → <b>Text</b> tab.</li><li data-n="2">Right-click the big text field (“Styled Text”).</li><li data-n="3">Choose <b>Expression</b> at the bottom of the menu. A small expression line appears under the text field.</li></ol></div>
-<div class="fig"><img src="img/15-pasted.png" alt="Expression pasted, the text field now shows the lap times" loading="lazy">
-<ol><li data-n="1">Click into the expression line, select all (<kbd>Ctrl</kbd>+<kbd>A</kbd>), paste (<kbd>Ctrl</kbd>+<kbd>V</kbd>) and press <kbd>Enter</kbd>.</li><li data-n="2">The text field now shows the timers.</li></ol></div>
-</div>
-</section>
-
-<section id="settings">
-<h2><span class="n">4</span>Text, Layout and Shading settings</h2>
-<p>These are the values used for HDZero 4:3 DVR footage (960×720) with the overlay in the top right. All three tabs (Text, Layout, Shading) are in the same Inspector, under the <b>Title</b> tab.</p>
-
-<div class="step">
-<h3><span class="sn">4.1</span>Text tab: font and size</h3>
-<div class="fig"><img src="img/16-font.png" alt="Font drop-down with HDZero OSD highlighted" loading="lazy">
-<ol><li data-n="1">Click the <b>Font</b> box.</li><li data-n="2">Pick <b>HDZero OSD</b>, style <b>Regular</b>. It is near the “H” fonts. (Not in the list? See step 1 and restart Resolve.)</li></ol></div>
-<div class="fig"><img src="img/17-size.png" alt="Text tab with font HDZero OSD Regular and Size 0.025" loading="lazy">
-<ol><li data-n="1">Font is now <b>HDZero OSD</b>, style <b>Regular</b>.</li><li data-n="2">Set <b>Size</b> to <code>0.025</code>. Leave the rest as it is.</li></ol></div>
+<h3><span class="sn">3.2</span>Paste it into Resolve's console</h3>
+<ol>
+<li>In Resolve, open your project and make sure the timeline with your video on V1 is open (Edit page).</li>
+<li>Press <kbd>F6</kbd> (or open the menu <b>Workspace → Console</b>). A small console window opens.</li>
+<li>Click into the line at the bottom of the console, press <kbd>Ctrl</kbd>+<kbd>V</kbd> and then <kbd>Enter</kbd>. (If the console has a language button, choose <b>Lua</b>.)</li>
+<li>The console prints lines that start with <code>VLTL:</code>. The last one says <b>done</b>. The timer is now on V2 above your video.</li>
+</ol>
+<div class="fig"><img src="img/05-console-result.png" alt="Console output ending in done, the timer clip on V2 and the VLTL bin in the Media Pool" loading="lazy">
+<ol><li data-n="1">The console prints lines that start with <code>VLTL:</code>. The last one says <b>done</b>.</li><li data-n="2">The timer is on <b>V2</b>, over the whole video.</li><li data-n="3">The very first time, the script also adds a small Text+ template to your Media Pool (a bin called <b>VLTL</b>). You do not need to touch it.</li></ol></div>
+<div class="note">If the video FPS and the timeline FPS do not divide evenly (for example a 90 fps video on a 60 fps timeline), the timers start and stop on the nearest timeline frame, a few milliseconds off. The frozen lap times shown at the end are still exact.</div>
 </div>
 
 <div class="step">
-<h3><span class="sn">4.2</span>Layout tab: move it to the top right</h3>
-<div class="fig"><img src="img/18-layout.png" alt="Layout tab with Center X 0.78 and Center Y 0.76" loading="lazy">
-<ol><li data-n="1">Open the <b>Layout</b> tab. Type stays <b>Point</b>.</li><li data-n="2">Set <b>Center X</b> to <code>0.78</code>.</li><li data-n="3">Set <b>Center Y</b> to <code>0.76</code>.</li></ol></div>
-</div>
-
-<div class="step">
-<h3><span class="sn">4.3</span>Shading tab: the black edge the real OSD has</h3>
-<div class="fig"><img src="img/21-shading.png" alt="Shading tab with element 2 enabled, thickness 0.06 and black color" loading="lazy">
-<ol><li data-n="1">Open the <b>Shading</b> tab.</li><li data-n="2">Click element <b>2</b>. It is switched off at first.</li><li data-n="3">Tick <b>Enabled</b>. You can rename it <code>Black Outline</code>.</li><li data-n="4">Appearance: the <b>outline</b> (second icon).</li><li data-n="5">Set <b>Thickness</b> to <code>0.06</code>.</li><li data-n="6">Set the color to black: <b>Red, Green, Blue</b> all <code>0.0</code>, Alpha <code>1.0</code>.</li></ol></div>
-</div>
-
+<h3><span class="sn">3.3</span>What the script does for you</h3>
+<ul>
+<li>Reads your timeline frame rate and finds your video on V1 (by file name, or the clip under the playhead).</li>
+<li>Adds the timer on V2 with the same start and length as your video. It also works if the start of the clip is trimmed.</li>
+<li>Sets the font you chose, the size, the position in the top right, and a black outline.</li>
+<li>Fills in the timer so it counts the best 3 laps live and freezes each lap at its exact time.</li>
+</ul>
 <details>
-<summary>All values at a glance (green = differs from a plain Text+)</summary>
-<h3 style="margin:14px 0 4px">Text tab</h3>
+<summary>The look it sets (if you want to change it afterwards)</summary>
+<p>You can change any of these in the Inspector: click the timer on V2, then the <b>Title</b> tab.</p>
 <div class="scroll"><table>
-<tr><th>Setting</th><th>Value</th><th>Text+ default</th></tr>
-<tr><td>Font</td><td class="chg">HDZero OSD, Regular</td><td>Open Sans</td></tr>
-<tr><td>Color</td><td>white</td><td>white</td></tr>
-<tr><td>Size</td><td class="chg">0.025</td><td>0.09</td></tr>
-<tr><td>Tracking / Line Spacing</td><td>1.0 / 1.0</td><td>1.0 / 1.0</td></tr>
-<tr><td>V and H Anchor, V and H Justify</td><td>0.0 (text is centred on the Center point)</td><td>0.0</td></tr>
+<tr><th>Where</th><th>Setting</th><th>Value</th></tr>
+<tr><td>Text tab</td><td>Font</td><td>the font you chose on the page (HDZero OSD, Regular by default)</td></tr>
+<tr><td>Text tab</td><td>Size</td><td>0.025</td></tr>
+<tr><td>Text tab</td><td>V Anchor</td><td>-1 (top: the lines grow downwards and the first line stays put)</td></tr>
+<tr><td>Layout tab</td><td>Center X / Y</td><td>0.78 / 0.844</td></tr>
+<tr><td>Shading tab, element 2</td><td>Enabled, outline, black</td><td>Thickness 0.06</td></tr>
 </table></div>
-<h3 style="margin:14px 0 4px">Layout tab</h3>
-<div class="scroll"><table>
-<tr><th>Setting</th><th>Value</th><th>Default</th></tr>
-<tr><td>Type</td><td>Point</td><td>Point</td></tr>
-<tr><td>Center X</td><td class="chg">0.78</td><td>0.5</td></tr>
-<tr><td>Center Y</td><td class="chg">0.76</td><td>0.5</td></tr>
-<tr><td>Center Z</td><td>0.0</td><td>0.0</td></tr>
-<tr><td>Pivot X / Y</td><td>0.5 / 0.5</td><td>0.5 / 0.5</td></tr>
-<tr><td>Size / Perspective</td><td>1.0 / 1.0</td><td>1.0 / 1.0</td></tr>
-</table></div>
-<h3 style="margin:14px 0 4px">Shading tab, Element 2</h3>
-<div class="scroll"><table>
-<tr><th>Setting</th><th>Value</th></tr>
-<tr><td>Name / Enabled</td><td>Black Outline / on</td></tr>
-<tr><td>Sort By</td><td>Priority</td></tr>
-<tr><td>Opacity / Blending</td><td>1.0 / Composite</td></tr>
-<tr><td>Appearance</td><td class="chg">Outline (second icon)</td></tr>
-<tr><td>Thickness</td><td class="chg">0.06</td></tr>
-<tr><td>Adapt to Perspective, Outside Only, Clean Intersections</td><td>all off</td></tr>
-<tr><td>Line Style</td><td>Solid</td></tr>
-<tr><td>Type / Color</td><td class="chg">Solid, black (R 0, G 0, B 0), Alpha 1.0</td></tr>
-</table></div>
-</details>
 <div class="note">Using another resolution or aspect ratio? Change only <b>Size</b> until the digits are as tall as the OSD digits, then adjust <b>Center X/Y</b>. If you change Size, scale the outline <b>Thickness</b> by the same factor.</div>
+</details>
+</div>
 </section>
 
 <section id="result">
-<h2><span class="n">5</span>Result</h2>
+<h2><span class="n">4</span>Result</h2>
 <p>Back on the Edit page, move the playhead over your best 3 laps. The counters count up live, freeze when each lap ends, and show the 3-lap total on top.</p>
 <div class="fig"><img src="img/22-result.png" alt="Finished overlay in the top right of the video" loading="lazy">
 <ol><li data-n="1">Total of the 3 laps, a dashed line, then lap 1, lap 2 and lap 3 (frozen at their exact times).</li></ol></div>
@@ -232,24 +174,26 @@ MAXDAX 3
 </section>
 
 <section id="edit">
-<h2><span class="n">6</span>Trim and edit your video</h2>
-<p>When the setup above is finished, you can cut and trim as much as you like. <b>Link the video and the Text+ box first</b>, so they stay lined up (the timers count from the start of the Text+ box).</p>
+<h2><span class="n">5</span>Trim and edit your video</h2>
+<p>When the timer looks right, you can cut and trim as much as you like. <b>Link the video and the timer first</b>, so they stay lined up (the timers count from the start of the timer clip).</p>
 <ol>
-<li>In the timeline, select the Text+ clip and your video clip.</li>
+<li>In the timeline, select the timer clip on V2 and your video clip.</li>
 <li>Right-click one of them → <b>Link Clips</b> (shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd>). A tick next to it means they are linked.</li>
-<li>Now trim, cut and move the clips as much as you want. The video and the Text+ box move together, so the timers stay in step with the video.</li>
+<li>Now trim, cut and move the clips as much as you want. The video and the timer move together, so the timers stay in step with the video.</li>
 </ol>
-<div class="note">Do the setup and check the timers <i>before</i> linking. If you trim the video or the Text+ box on their own (not linked), the timers no longer match the video.</div>
+<div class="note">If you trim the video or the timer on its own (not linked) after the script ran, the timers no longer match the video. To redo it, delete the timer clip on V2 and run the script again.</div>
 </section>
 
 <section id="trouble">
 <h2>If something looks wrong</h2>
 <ul>
-<li><b>The font is not in the list:</b> restart Resolve after installing. On Windows pick “Install for all users”.</li>
-<li><b>The timers start at the wrong moment:</b> check <b>Clip start on timeline (s)</b> and the timeline FPS, then copy the expression again. A pasted expression does not update itself.</li>
-<li><b>The dashed line is too long or too short:</b> change <b>Dashes per character</b> on the lap timer page and copy the expression again.</li>
-<li><b>Nothing is shown:</b> the text stays empty before the best 3 laps begin, and the Text+ box has to cover that part of the timeline.</li>
-<li><b>The text is too big or too small:</b> change Text <b>Size</b> only, then fix the outline thickness to match.</li>
+<li><b>The console shows an error, or nothing happens:</b> open your project and the timeline first, then paste again. Check that you copied the whole script.</li>
+<li><b>"Could not tell which clip on V1 is your video":</b> your video must be on track V1. Put the playhead on it and run the script again. It also helps when the video in the lap timer has the same file name as the clip in Resolve.</li>
+<li><b>"Could not add the template":</b> add it by hand once. On the Edit page open <b>Effects → Titles</b>, drag <b>Text+</b> into the Media Pool, rename it <code>VLTL_TextPlus</code>, and run the script again.</li>
+<li><b>The font looks wrong or is missing:</b> the font has to be installed on the computer that runs Resolve. For HDZero OSD, install it as in step 1 and restart Resolve. Resolve only reads its font list at start. If you typed a font name, check the spelling.</li>
+<li><b>I ran it twice and now there are two timers:</b> every run adds a new title on V2. Delete the extra one.</li>
+<li><b>The timers start at the wrong moment:</b> the marks come from the video loaded in the lap timer. Make sure it is the same file as in Resolve, check the lap marks, then copy and run the script again (after deleting the old timer).</li>
+<li><b>The dashed line is too long or too short:</b> change <b>Dashes per character</b> in the lap timer, copy the script again, and delete the old timer first.</li>
 </ul>
 </section>
 
