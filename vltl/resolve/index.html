@@ -99,9 +99,13 @@ MAXDAX 3
 </div>
 
 <div class="step">
-<h3><span class="sn">2.2</span>Put your video on the timeline</h3>
+<h3><span class="sn">2.2</span>Add your video to the Media Pool</h3>
 <div class="fig"><img src="img/03-media-pool.png" alt="Dragging the video file from a folder window into the empty Media Pool" loading="lazy">
 <ol><li data-n="1">Drag your video file from its folder.</li><li data-n="2">Drop it into the <b>Media Pool</b>.</li></ol></div>
+</div>
+
+<div class="step">
+<h3><span class="sn">2.3</span>Put your video on the timeline</h3>
 <div class="fig"><img src="img/04-timeline.png" alt="The clip in the Media Pool and dragged onto the empty timeline" loading="lazy">
 <ol><li data-n="1">On the <b>Edit</b> page the clip now sits in the Media Pool. Drag it from there...</li><li data-n="2">...into the empty timeline. Resolve creates the timeline for you, and your video is on track <b>V1</b>.</li></ol></div>
 <div class="note">HDZero <code>.ts</code> files import fine. If Resolve cannot read yours, convert it to MP4 first with the <a href="https://github.com/ZeroTasteGuy/ts2mp4">ts2mp4 converter</a> (ffmpeg scripts for converting, upscaling and cropping <code>.ts</code> files).</div>
@@ -131,13 +135,17 @@ MAXDAX 3
 <li>Click into the line at the bottom of the console, press <kbd>Ctrl</kbd>+<kbd>V</kbd> and then <kbd>Enter</kbd>. (If the console has a language button, choose <b>Lua</b>.)</li>
 <li>The console prints lines that start with <code>VLTL:</code>. The last one says <b>done</b>. The timer is now on V2 above your video.</li>
 </ol>
+</div>
+
+<div class="step">
+<h3><span class="sn">3.3</span>Check the result</h3>
 <div class="fig"><img src="img/05-console-result.png" alt="Console output ending in done, the timer clip on V2 and the VLTL bin in the Media Pool" loading="lazy">
 <ol><li data-n="1">The console prints lines that start with <code>VLTL:</code>. The last one says <b>done</b>.</li><li data-n="2">The timer is on <b>V2</b>, over the whole video.</li><li data-n="3">The very first time, the script also adds a small Text+ template to your Media Pool (a bin called <b>VLTL</b>). You do not need to touch it.</li></ol></div>
 <div class="note">If the video FPS and the timeline FPS do not divide evenly (for example a 90 fps video on a 60 fps timeline), the timers start and stop on the nearest timeline frame, a few milliseconds off. The frozen lap times shown at the end are still exact.</div>
 </div>
 
 <div class="step">
-<h3><span class="sn">3.3</span>What the script does for you</h3>
+<h3><span class="sn">3.4</span>What the script does for you</h3>
 <ul>
 <li>Reads your timeline frame rate and finds your video on V1 (by file name, or the clip under the playhead).</li>
 <li>Adds the timer on V2 with the same start and length as your video. It also works if the start of the clip is trimmed.</li>
