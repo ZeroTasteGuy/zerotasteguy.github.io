@@ -115,9 +115,9 @@ MAXDAX 3
 <div class="step">
 <h3><span class="sn">2.3</span>Put your video on the timeline</h3>
 <div class="fig"><img src="img/04-timeline.png" alt="The clip in the Media Pool and dragged onto the empty timeline" loading="lazy">
-<ol><li data-n="1">On the <b>Edit</b> page the clip now sits in the Media Pool. Drag it from there...</li><li data-n="2">...into the empty timeline. Resolve creates the timeline for you, and your video is on track <b>V1</b>.</li></ol></div>
+<ol><li data-n="1">On the <b>Edit</b> page the clip now sits in the Media Pool. Drag it from there...</li><li data-n="2">...into the empty timeline. Resolve creates the timeline for you, and your video is on track <b>Video 1</b>.</li></ol></div>
 <div class="note">HDZero <code>.ts</code> files import fine. If Resolve cannot read yours, convert it to MP4 first with the <a href="https://github.com/ZeroTasteGuy/ts2mp4">ts2mp4 converter</a> (ffmpeg scripts for converting, upscaling and cropping <code>.ts</code> files).</div>
-<div class="note">Any frame rate works; the script reads it from your timeline. The timer is added on V2, above your video.</div>
+<div class="note">Any frame rate works; the script reads it from your timeline. The timer is added on Video 2, above your video.</div>
 </div>
 </section>
 
@@ -138,31 +138,31 @@ MAXDAX 3
 <div class="step">
 <h3><span class="sn">3.2</span>Paste it into Resolve's console</h3>
 <ol>
-<li>In Resolve, open your project and make sure the timeline with your video on V1 is open (Edit page).</li>
+<li>In Resolve, open your project and make sure the timeline with your video on Video 1 is open (Edit page).</li>
 <li>Press <kbd>F6</kbd> (or open the menu <b>Workspace → Console</b>). A small console window opens.</li>
 <li>Click into the line at the bottom of the console, press <kbd>Ctrl</kbd>+<kbd>V</kbd> and then <kbd>Enter</kbd>. (If the console has a language button, choose <b>Lua</b>.)</li>
-<li>The console prints lines that start with <code>VLTL:</code>. The last one says <b>done</b>. The timer is now on V2 above your video.</li>
+<li>The console prints lines that start with <code>VLTL:</code>. The last one says <b>done</b>. The timer is now on Video 2 above your video.</li>
 </ol>
 </div>
 
 <div class="step">
 <h3><span class="sn">3.3</span>Check the result</h3>
-<div class="fig"><img src="img/05-console-result.png" alt="Console output ending in done, the timer clip on V2 and the VLTL bin in the Media Pool" loading="lazy">
-<ol><li data-n="1">The console prints lines that start with <code>VLTL:</code>. The last one says <b>done</b>.</li><li data-n="2">The timer is on <b>V2</b>, over the whole video.</li><li data-n="3">The very first time, the script also adds a small Text+ template to your Media Pool (a bin called <b>VLTL</b>). You do not need to touch it.</li></ol></div>
+<div class="fig"><img src="img/05-console-result.png" alt="Console output ending in done, the timer clip on Video 2 and the VLTL bin in the Media Pool" loading="lazy">
+<ol><li data-n="1">The console prints lines that start with <code>VLTL:</code>. The last one says <b>done</b>.</li><li data-n="2">The timer is on <b>Video 2</b>, over the whole video.</li><li data-n="3">The very first time, the script also adds a small Text+ template to your Media Pool (a bin called <b>VLTL</b>). You do not need to touch it.</li></ol></div>
 <div class="note">If the video FPS and the timeline FPS do not divide evenly (for example a 90 fps video on a 60 fps timeline), the timers start and stop on the nearest timeline frame, a few milliseconds off. The frozen lap times shown at the end are still exact.</div>
 </div>
 
 <div class="step">
 <h3><span class="sn">3.4</span>What the script does for you</h3>
 <ul>
-<li>Reads your timeline frame rate and finds your video on V1 (by file name, or the clip under the playhead).</li>
-<li>Adds the timer on V2 with the same start and length as your video. It also works if the start of the clip is trimmed.</li>
+<li>Reads your timeline frame rate and finds your video on Video 1 (by file name, or the clip under the playhead).</li>
+<li>Adds the timer on Video 2 with the same start and length as your video. It also works if the start of the clip is trimmed.</li>
 <li>Sets the font you chose, the size, the position in the top right, and a black outline.</li>
 <li>Fills in the timer so it counts the best 3 laps live and freezes each lap at its exact time.</li>
 </ul>
 <details>
 <summary>The look it sets (if you want to change it afterwards)</summary>
-<p>You can change any of these in the Inspector: click the timer on V2, then the <b>Title</b> tab.</p>
+<p>You can change any of these in the Inspector: click the timer on Video 2, then the <b>Title</b> tab.</p>
 <div class="scroll"><table>
 <tr><th>Where</th><th>Setting</th><th>Value</th></tr>
 <tr><td>Text tab</td><td>Font</td><td>the font you chose on the page (HDZero OSD, Regular by default)</td></tr>
@@ -193,21 +193,21 @@ MAXDAX 3
 <h2><span class="n">5</span>Trim and edit your video</h2>
 <p>When the timer looks right, you can cut and trim as much as you like. <b>Link the video and the timer first</b>, so they stay lined up (the timers count from the start of the timer clip).</p>
 <ol>
-<li>In the timeline, select the timer clip on V2 and your video clip.</li>
+<li>In the timeline, select the timer clip on Video 2 and your video clip.</li>
 <li>Right-click one of them → <b>Link Clips</b> (shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd>). A tick next to it means they are linked.</li>
 <li>Now trim, cut and move the clips as much as you want. The video and the timer move together, so the timers stay in step with the video.</li>
 </ol>
-<div class="note">If you trim the video or the timer on its own (not linked) after the script ran, the timers no longer match the video. To redo it, delete the timer clip on V2 and run the script again.</div>
+<div class="note">If you trim the video or the timer on its own (not linked) after the script ran, the timers no longer match the video. To redo it, delete the timer clip on Video 2 and run the script again.</div>
 </section>
 
 <section id="trouble">
 <h2>If something looks wrong</h2>
 <ul>
 <li><b>The console shows an error, or nothing happens:</b> open your project and the timeline first, then paste again. Check that you copied the whole script.</li>
-<li><b>"Could not tell which clip on V1 is your video":</b> your video must be on track V1. Put the playhead on it and run the script again. It also helps when the video in the lap timer has the same file name as the clip in Resolve.</li>
+<li><b>"Could not tell which clip on Video 1 is your video":</b> your video must be on Video 1. Put the playhead on it and run the script again. It also helps when the video in the lap timer has the same file name as the clip in Resolve.</li>
 <li><b>"Could not add the template":</b> add it by hand once. On the Edit page open <b>Effects → Titles</b>, drag <b>Text+</b> into the Media Pool, rename it <code>VLTL_TextPlus</code>, and run the script again.</li>
 <li><b>The font looks wrong or is missing:</b> the font has to be installed on the computer that runs Resolve. For HDZero OSD, install it as in step 1 and restart Resolve. Resolve only reads its font list at start. If you typed a font name, check the spelling.</li>
-<li><b>I ran it twice and now there are two timers:</b> every run adds a new title on V2. Delete the extra one.</li>
+<li><b>I ran it twice and now there are two timers:</b> every run adds a new title on Video 2. Delete the extra one.</li>
 <li><b>The timers start at the wrong moment:</b> the marks come from the video loaded in the lap timer. Make sure it is the same file as in Resolve, check the lap marks, then copy and run the script again (after deleting the old timer).</li>
 <li><b>The dashed line is too long or too short:</b> change <b>Dashes per character</b> in the lap timer, copy the script again, and delete the old timer first.</li>
 </ul>
