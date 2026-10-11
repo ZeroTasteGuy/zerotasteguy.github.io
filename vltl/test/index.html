@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" data-theme="dark">
 <head>
-<meta charset="utf-8"><meta name="robots" content="noindex"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0e1116"><meta name="description" content="Time FPV laps from video frame by frame, find your best 3 consecutive laps, and put live lap timers on your footage in DaVinci Resolve.">
+<meta charset="utf-8"><meta name="robots" content="noindex"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0e1116"><meta name="description" content="Time FPV laps from video frame by frame, find your best 3 consecutive laps, and put live lap timers on your footage in DaVinci Resolve.">
 <title>Video Lap Tracking Lab</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1116'/%3E%3Cg font-family='Arial,Helvetica,sans-serif' font-weight='800' font-size='27' fill='%233dd68c' text-anchor='middle'%3E%3Ctext x='16' y='28'%3EV%3C/text%3E%3Ctext x='48' y='28'%3EL%3C/text%3E%3Ctext x='16' y='57'%3ET%3C/text%3E%3Ctext x='48' y='57'%3EL%3C/text%3E%3C/g%3E%3Cg fill='%238b96a5'%3E%3Crect x='27' y='19' width='10' height='3' rx='1.5'/%3E%3Crect x='27' y='48' width='10' height='3' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/mux.js@6.3.0/dist/mux.min.js" integrity="sha384-29f0hrh97Q8CHyA4ZR77MTG4b7N0ko/1NaExi09Qg+uKatLBrjaH9cTAv8WwN7g/" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/mediainfo.js@0.3.5/dist/umd/index.min.js" integrity="sha384-oYGDoM2xupGN3+61W+/b7Pi9HcaIFRlkPokhVG9ajYqLhsKLzRUt6Z+1zu1vky4s" crossorigin="anonymous"></script>
@@ -25,18 +25,18 @@
 #zoom{padding:0;border:0;background:transparent;accent-color:var(--accent);width:150px}.controls{padding:14px;margin-top:12px}.transport{display:flex;align-items:center;justify-content:space-between;gap:8px}.steps{display:flex;gap:5px}.play,.record{background:var(--accent);color:var(--accentText);border:0;border-radius:9px;font-weight:700;padding:9px 20px}.play{min-width:110px}.play:hover:not(:disabled),.record:hover:not(:disabled){filter:brightness(1.1)}
 .actionRow{display:flex;gap:10px;margin-top:14px}.actionRow .btn{flex:1;height:40px}.actionRow .record{flex:2;height:40px}.controlBottom .btn,.controlBottom .fpsControl{height:32px;display:inline-flex;align-items:center}.controlBottom .fpsControl{padding:0 10px}.controlBottom .fpsControl input[type=number]{width:70px;background:transparent;color:var(--text);border:0;outline:0;font-weight:700;padding:0}.controlBottom .fpsControl input[type=checkbox]{width:auto;margin:0;accent-color:var(--accent)}.controlBottom .fpsControl[hidden]{display:none}.controlBottom{border-top:1px solid var(--line);margin-top:14px;padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.audio{display:flex;align-items:center;gap:8px}.audio input{width:100px;accent-color:var(--accent)}.extra{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.extra select,.extra input,.num{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:7px;padding:6px 8px;font-size:12px}.extra input{width:80px}
 .note{color:var(--muted);font-size:12px}#lapHint{color:var(--muted);font-size:11px;margin:10px 0 0}.hint{color:var(--muted);font-size:11px;margin:12px 2px 0}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.stat{padding:16px}.statTop{display:flex;justify-content:space-between;align-items:center;gap:6px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.05em}.statNumber{font:700 26px ui-monospace,monospace;margin-top:14px}.blue{color:var(--blue)}.statSub{color:var(--muted);font:12px ui-monospace,monospace;margin-top:4px}
+.stats{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.stat{padding:16px}.statTop{display:flex;justify-content:space-between;align-items:center;gap:6px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.05em}.statNumber{font:700 26px ui-monospace,monospace;margin-top:14px}.blue{color:var(--blue)}.statSub{color:var(--muted);font:12px ui-monospace,monospace;margin-top:4px}
 .badge,.pill{font-size:11px;font-weight:600;border-radius:999px;padding:2px 9px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);white-space:nowrap;letter-spacing:0}
 .resolve{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:10px 14px}.resolve label{color:var(--muted);font-size:12px;display:flex;align-items:center;gap:8px}.num{width:80px}
 .tableCard{overflow:hidden}.tableHead{display:flex;justify-content:space-between;align-items:center;padding:14px;gap:8px;font-weight:700;font-size:14px}.tableHead small{font-weight:400;color:var(--muted);font-size:12px}.tableHead strong{color:var(--text)}.tableScroll{overflow:auto;max-height:max(240px,calc(100vh - 480px))}
 table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th{text-align:left;color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.06em;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--panel2);position:sticky;top:0}td{padding:10px 12px;border-top:1px solid var(--line);font-family:ui-monospace,monospace}tr:first-child td{border-top:0}tr.best3 td{background:var(--best)}tr.best3 td:first-child{box-shadow:inset 3px 0 var(--accent)}td:first-child{font-weight:700}td button{background:transparent;color:var(--muted);border:0;border-radius:5px;padding:4px 6px;font-size:12px}td button:hover{background:var(--button);color:var(--text)}.bestLabel{color:var(--accent);font-weight:700}.secondary{color:var(--muted)}#lapRows tr.invalidLap td,#lapRows tr.invalidLap:hover td{background:#ff7b8a24;color:var(--danger)}#lapRows tr.invalidLap:hover td{background:#ff7b8a38}.invalidLap td:first-child{text-decoration:line-through}.invalidLap td .secondary{color:inherit}.marker.bad{background:#ff5a6e}#lapRows tr.nudging td{box-shadow:inset 0 0 0 1px var(--accent)}
 .session{overflow:hidden}.sessionBtns,.headBtns{display:flex;gap:6px;align-items:center}.headBtns{gap:10px}.rk{display:inline-block;min-width:20px;color:var(--muted);font:600 11px ui-monospace,monospace}.sRow .x{background:transparent;border:0;color:var(--muted);font-size:11px;padding:2px 5px;border-radius:5px;opacity:.4}.sRow:hover .x{opacity:1}.sRow .x:hover{background:var(--button);color:var(--danger)}#lapRows tr{cursor:pointer}#lapRows tr:hover td{background:var(--panel2)}.sessionRows{max-height:230px;overflow:auto;border-top:1px solid var(--line)}.sRow{display:grid;grid-template-columns:minmax(0,1fr) 64px 64px 58px 22px;gap:12px;align-items:center;padding:9px 14px;border-top:1px solid var(--line);cursor:pointer;font-size:12px}.sRow:first-child{border-top:0}.sRow:hover{background:var(--panel2)}.sRow.cur{background:var(--best);box-shadow:inset 3px 0 var(--accent)}.sRow .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sRow .t{font:700 12px ui-monospace,monospace}.sRow.top .t{color:var(--accent)}.sRow .r{color:var(--muted);font:11px ui-monospace,monospace;text-align:right}.sRow .t,.sRow .s{text-align:right}.sRow .s{color:var(--muted);font:11px ui-monospace,monospace}.sHead{display:grid;grid-template-columns:minmax(0,1fr) 64px 64px 58px 22px;gap:12px;padding:6px 14px;border-top:1px solid var(--line);color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.06em}.sHead span:nth-child(n+2){text-align:right}.statSub.clip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.modal{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}.modal.hidden{display:none}.modalInner{padding:20px;width:min(100%,460px)}.modalInner h2{margin:0;font-size:16px}.bindRow{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
+.modal{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}.modal.hidden{display:none}.modalInner{padding:20px;width:min(100%,460px)}.resolveBox{width:min(100%,520px);max-height:92vh;overflow:auto}.setHead{margin:16px 0 4px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.modalInner h2{margin:0;font-size:16px}.bindRow{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
 .dd{position:relative;display:inline-block}.ddBtn{display:inline-flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:7px;padding:6px 8px;font-size:12px;white-space:nowrap}.ddBtn::after{content:"▾";color:var(--muted);font-size:11px}.ddBtn:hover:not(:disabled),.dd.open .ddBtn{border-color:var(--accent)}.fpsControl .ddBtn{background:transparent;border:0;padding:0;font-weight:700}.ddList{position:absolute;left:0;top:calc(100% + 6px);z-index:25;min-width:100%;max-height:300px;overflow:auto;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 28px #0005;display:flex;flex-direction:column;gap:2px}.ddList.up{top:auto;bottom:calc(100% + 6px)}.ddList.right{left:auto;right:0}.ddList .btn{border:0;background:transparent;text-align:left;width:100%}.ddList .btn:hover:not(:disabled),.ddList .btn:focus-visible{background:var(--panel2)}.ddList .btn.sel{color:var(--accent)}
 .dlgBtns{display:flex;justify-content:flex-end;gap:8px}#dlgMsg{margin:10px 0 14px;font-size:13px;color:var(--text);white-space:pre-line}#dlgInput{width:100%;margin-bottom:14px}
 .vGrip{position:absolute;right:0;bottom:0;width:24px;height:24px;cursor:nwse-resize;z-index:5;touch-action:none;opacity:.45;background:linear-gradient(135deg,transparent 0 48%,#fff 48% 56%,transparent 56% 70%,#fff 70% 78%,transparent 78%)}.vGrip:hover{opacity:1}
-.videoWrap.badZone::before{content:"";position:absolute;inset:0;border:4px solid var(--danger);border-radius:12px;pointer-events:none;z-index:3}.videoWrap.badZone::after{content:"BAD LAP";position:absolute;left:12px;top:12px;z-index:3;background:var(--danger);color:#fff;border-radius:6px;padding:5px 10px;font:700 12px ui-monospace,monospace;pointer-events:none}#badBtn.on{border-color:var(--danger);color:var(--danger);background:#ff7b8a24}
-.statsBox{width:min(100%,980px);max-height:90vh;overflow:auto}.sumRow{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}.sumRow div{flex:1 1 110px;padding:10px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px}.sumRow b{display:block;font:700 18px ui-monospace,monospace}.sumRow span{color:var(--muted);font-size:11px}.statsBox h3{margin:18px 0 6px;font-size:13px}.chart{width:100%;height:auto;display:block}.chart .gl{stroke:var(--line)}.chart .ax{fill:var(--muted);font:10px ui-monospace,monospace}.chart .bx{fill:var(--best);stroke:var(--accent)}.chart .md,.chart .wh{stroke:var(--accent);stroke-width:2}.chart .wh{stroke-width:1}.chart .ol{fill:none;stroke:var(--accent)}.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11px;color:var(--muted);margin-top:6px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.videoWrap.badZone::before{content:"";position:absolute;inset:0;border:4px solid var(--danger);border-radius:12px;pointer-events:none;z-index:3}.videoWrap.badZone::after{content:"BAD LAP";position:absolute;left:12px;top:12px;z-index:3;background:var(--danger);color:#fff;border-radius:6px;padding:5px 10px;font:700 12px ui-monospace,monospace;pointer-events:none}.videoWrap.badPending::before{border-style:dashed}.videoWrap.badPending::after{content:"BAD LAP (PENDING)"}.badSpan.pending{background:repeating-linear-gradient(135deg,#ff5a6e66 0 6px,#ff5a6e22 6px 12px)}#badBtn.on{border-color:var(--danger);color:var(--danger);background:#ff7b8a24}
+.statsBox{width:min(100%,980px);min-width:0;max-height:90vh;overflow:auto}.sumRow{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}.sumRow div{flex:1 1 110px;padding:10px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px}.sumRow b{display:block;font:700 18px ui-monospace,monospace}.sumRow span{color:var(--muted);font-size:11px}.statsBox h3{margin:18px 0 6px;font-size:13px}.chart{display:block;max-width:none}.chartScroll{overflow-x:auto;max-width:100%}.chart .gl{stroke:var(--line)}.chart .ax{fill:var(--muted);font:11px ui-monospace,monospace}.chart .ax.big{fill:var(--text);font-size:12px}.chart .dot{fill:var(--accent);fill-opacity:.35}.vidPick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.vidPick .btn{padding:4px 10px;font-size:12px}.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;cursor:pointer;color:var(--muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chip.on{color:var(--text);background:var(--panel2)}.chip input{display:none}.chip i{flex:none;width:10px;height:10px;border-radius:50%}.chip:not(.on) i{opacity:.3}.chart .bx{fill:var(--best);stroke:var(--accent)}.chart .md,.chart .wh{stroke:var(--accent);stroke-width:2}.chart .wh{stroke-width:1}.chart .ol{fill:none;stroke:var(--accent)}.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11px;color:var(--muted);margin-top:6px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
 @media(max-width:1100px){.layout{grid-template-columns:1fr}.tableScroll{max-height:460px}}
 @media(max-width:650px){.app{padding:14px 12px}.top{align-items:flex-start;flex-direction:column}.topActions{justify-content:flex-start}.stat{padding:12px}.statNumber{font-size:19px}.transport{flex-wrap:wrap;justify-content:center}.layout{gap:14px}.videoTime{font-size:11px}.webInput{flex-wrap:wrap}.webInput input{flex-basis:100%}}
 </style></head><body><div class="app">
@@ -50,7 +50,7 @@ table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th{t
 <aside class="right"><div class="stats"><div class="panel stat"><div class="statTop"><span>BEST SINGLE LAP</span><span id="singleBadge" class="badge">NO LAPS</span></div><div id="singleBest" class="statNumber">—</div><div id="allSingle" class="statSub clip"></div></div><div class="panel stat"><div class="statTop"><span>3-CONSECUTIVE LAPS</span><span id="bestRange" class="badge">—</span></div><div id="bestTotal" class="statNumber blue">—</div><div id="bestAvg" class="statSub">Avg: —</div><div id="allBest" class="statSub clip"></div></div></div><div id="sessionPanel" class="panel session" hidden><div class="tableHead"><div>VIDEOS <span id="sessionCount" class="pill">0</span></div><div class="sessionBtns"><button id="prevVid" class="btn" title="Previous video (PageUp)">‹</button><button id="nextVid" class="btn" title="Next video (PageDown)">›</button><select id="sortSel" title="How the video list is ordered"><option value="queue">Sort: Queue</option><option value="name">Sort: Name A–Z</option><option value="fast">Sort: Fastest</option><option value="old">Sort: Oldest first</option><option value="new">Sort: Newest first</option><option value="big">Sort: Largest</option><option value="small">Sort: Smallest</option></select></div></div><div class="sHead"><span>VIDEO</span><span>BEST 3</span><span>BEST LAP</span><span></span><span></span></div><div id="sessionRows" class="sessionRows"></div></div>
 <div class="panel tableCard"><div class="tableHead"><div>LAP TIMES <span id="lapCount" class="pill">0 Laps</span></div><div class="headBtns"><small>Start: <strong id="startDisplay">—</strong></small><button id="goBest" class="btn" disabled title="Jump to the start of your fastest 3 laps">Go to best 3</button><button id="loopBest" class="btn" disabled title="Repeat your fastest 3 laps until you switch it off">Loop best 3</button></div></div><div class="tableScroll"><table><thead><tr><th>LAP</th><th>END TIME</th><th>LAP TIME</th><th>DELTA</th><th>ACTION</th></tr></thead><tbody id="lapRows"></tbody></table></div></div></aside></div></div>
 <div id="modal" class="modal hidden"><div class="panel modalInner"><div style="display:flex;justify-content:space-between;align-items:center"><h2>Keyboard shortcuts</h2><button id="closeModal" class="btn">✕</button></div><p class="note" style="margin:8px 0 12px">Click a binding, then press a key. Shift multiplies frame steps by 10.</p><div id="bindingList"></div><button id="defaults" class="btn">Restore defaults</button></div></div>
-<div id="resolveModal" class="modal hidden"><div class="panel modalInner"><div style="display:flex;justify-content:space-between;align-items:center"><h2>Resolve script settings</h2><button id="closeResolve" class="btn">✕</button></div><p class="note" style="margin:8px 0 12px">Used by Copy Resolve script. Saved in this browser.</p>
+<div id="resolveModal" class="modal hidden"><div class="panel modalInner resolveBox"><div style="display:flex;justify-content:space-between;align-items:center"><h2>Resolve script settings</h2><button id="closeResolve" class="btn">✕</button></div><p class="note" style="margin:8px 0 12px">Used by Copy Resolve script. Saved in this browser.</p>
 <div class="bindRow" title="The font of the timer in Resolve. It has to be installed on the computer that runs Resolve. Pick one, choose Other... to type a name, or press Load my fonts to list the fonts installed on this computer."><span>Font</span><select id="fontInput" class="num" style="width:auto;min-width:160px"></select></div>
 <div class="bindRow"><span id="fontNote" class="note"></span><button id="fontLoad" class="btn" title="List the fonts installed on this computer (Chrome and Edge ask once for permission)">Load my fonts</button></div>
 <div class="bindRow" title="Length of the dashed line under the total, as dashes per character of the time. About 1 fits the HDZero OSD font, about 1.5 normal fonts."><span>Dashes per character</span><input id="dashRatio" class="num" type="number" min="0" max="5" step=".1" value="1"></div>
@@ -58,7 +58,18 @@ table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th{t
 <div class="bindRow" title="Text+ Center X: 0 is the left edge, 1 the right edge"><span>Position X (0 left, 1 right)</span><input id="lookX" class="num" type="number" min="0" max="1" step=".01"></div>
 <div class="bindRow" title="Text+ Center Y: 0 is the bottom edge, 1 the top edge. The text grows downward from here"><span>Position Y (0 bottom, 1 top)</span><input id="lookY" class="num" type="number" min="0" max="1" step=".001"></div>
 <div class="bindRow" title="Thickness of the black outline (0 = none)"><span>Outline thickness</span><input id="lookOutline" class="num" type="number" min="0" max=".5" step=".01"></div>
-<div class="dlgBtns" style="align-items:center;margin-top:14px"><a class="note" style="color:var(--accent);margin-right:auto" href="../resolve/" title="Step-by-step guide and the HDZero OSD font download">Resolve guide &amp; HDZero font →</a><button id="lookReset" class="btn" title="Put size, position and outline back to the defaults">Reset look</button></div></div></div>
+<div class="bindRow" title="Space between the lines (Text+ Line Spacing, 1 = normal)"><span>Line spacing</span><input id="optLineSpacing" class="num" type="number" min=".5" max="3" step=".05"></div>
+<h3 class="setHead">Clips</h3>
+<div class="bindRow" title="One clip: a single title over the whole video (lightest for slow computers). Head, laps and tail: three clips one after the other on V2, so you can see the head and tail on the timeline and drag their edges to change them"><span>Clips on V2</span><select id="optMode" class="num" style="width:auto"><option value="single">One clip over the video</option><option value="pieces">Head, laps and tail clips</option></select></div>
+<div class="bindRow" title="Text+: all lines in one text. MultiText: every line is its own text layer, so you can move and style each line in Resolve (needs Resolve 20 or newer; experimental, please send what the console prints)"><span>Text tool</span><select id="optTool" class="num" style="width:auto"><option value="textplus">Text+</option><option value="multi">MultiText (experimental)</option></select></div>
+<div class="bindRow" title="How long the timer is on screen before the first lap starts (it shows zeros). 0 = it appears when the first lap starts"><span>Head (seconds before the laps)</span><input id="optHead" class="num" type="number" min="0" max="600" step=".1"></div>
+<div class="bindRow" title="How long the timer stays on screen after the last lap. Empty = until the video ends"><span>Tail (seconds after, empty = to the end)</span><input id="optTail" class="num" type="number" min="0" max="600" step=".1" placeholder="to end"></div>
+<h3 class="setHead">Text</h3>
+<div class="bindRow" title="An optional first line above the times, for example your name or the track"><span>Title line</span><input id="optTitle" class="num" type="text" maxlength="40" placeholder="none" style="width:160px"></div>
+<div class="bindRow" title="The line between the total and the laps"><span>Divider</span><select id="optDivider" class="num" style="width:auto"><option value="dashes">Dashed line</option><option value="blank">Empty line</option><option value="none">None</option></select></div>
+<div class="bindRow" title="Write L1, L2, L3 in front of the lap times"><span>Lap labels (L1 L2 L3)</span><input id="optLabels" type="checkbox"></div>
+<p class="note" style="margin:10px 0 0">Fades: drag the fade handles on the clips in Resolve.</p>
+<div class="dlgBtns" style="align-items:center;margin-top:14px"><a class="note" style="color:var(--accent);margin-right:auto" href="resolve/" title="Step-by-step guide and the OSD font downloads (HDZero and Betaflight analog)">Resolve guide &amp; OSD fonts →</a><button id="lookReset" class="btn" title="Put all the settings in this window back to the defaults (the font stays)">Reset</button></div></div></div>
 <div id="statsModal" class="modal hidden"><div class="panel modalInner statsBox"><div style="display:flex;justify-content:space-between;align-items:center"><h2>Session stats</h2><button id="closeStats" class="btn">✕</button></div><div id="statsBody"></div></div></div>
 <div id="dlg" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="dlgTitle"><div class="panel modalInner"><h2 id="dlgTitle"></h2><p id="dlgMsg"></p><input id="dlgInput" class="num" hidden><div class="dlgBtns"><button id="dlgCancel" class="btn">Cancel</button><button id="dlgOk" class="btn primary">OK</button></div></div></div>
 <script>
@@ -112,7 +123,8 @@ function commit(edit){snapshotLaps();edit();marks.sort((a,b)=>a.frame-b.frame);r
 let badArmed=false;const badOn=()=>badArmed&&!!marks.length;
 const cursorMark=()=>{const f=currentFrame();return marks.findIndex(m=>m.frame>f)}; // index of the first mark after the cursor, -1 if none
 function markBad(){if(!loaded||!marks.length)return;const j=cursorMark();if(j===0)return;if(j>0)commit(()=>{marks[j].valid=marks[j].valid===false});else{badArmed=!badArmed;renderAll()}}
-function updateBadBtn(){const j=loaded&&marks.length?cursorMark():-1,inBad=j>0&&marks[j].valid===false,armed=j<0&&badOn();$('#badBtn').disabled=!loaded||!marks.length;$('#badBtn').classList.toggle('on',inBad||armed);$('#badBtn').textContent=inBad?'Lap is bad':armed?'Lap marked bad':'Mark lap bad';$('#badBtn').title=j>0?'Toggle whether the lap the cursor is in is bad':'Mark the lap you are in as bad. The next mark you record is flagged invalid';$('.videoWrap').classList.toggle('badZone',inBad)}
+function updateBadBtn(){const j=loaded&&marks.length?cursorMark():-1,inBad=j>0&&marks[j].valid===false,armed=j<0&&badOn();$('#badBtn').disabled=!loaded||!marks.length;$('#badBtn').classList.toggle('on',inBad||armed);$('#badBtn').textContent=inBad?'Lap is bad':armed?'Lap marked bad':'Mark lap bad';$('#badBtn').title=j>0?'Toggle whether the lap the cursor is in is bad':'Mark the lap you are in as bad. The next mark you record is flagged invalid';$('.videoWrap').classList.toggle('badZone',inBad||armed);$('.videoWrap').classList.toggle('badPending',armed);updatePending(armed)}
+function updatePending(armed){const box=$('#markers'),L=length();let sp=$('#pendSpan');if(!armed||!L||!marks.length){if(sp)sp.remove();return}if(!sp){sp=document.createElement('div');sp.id='pendSpan';sp.className='badSpan pending';box.appendChild(sp)}const a=Math.min(1,marks[marks.length-1].frame/fps/L),b=Math.min(1,now()/L);sp.style.setProperty('--f1',Math.min(a,b));sp.style.setProperty('--f2',Math.max(a,b))}
 // Play key: a tap plays/pauses (on release); holding it plays at 2x (at least) until it is released, then restores the speed and the play/pause state.
 let hold=null;const rateNow=()=>ytOn()?yt.getPlaybackRate():video.playbackRate,setRate=r=>ytOn()?yt.setPlaybackRate(r):video.playbackRate=r;
 function holdStart(code){if(hold||!loaded||mode==='drive')return;const h=hold={code,on:false,was:false,rate:1,timer:setTimeout(()=>{h.on=true;h.was=playing();h.rate=rateNow();setRate(Math.max(2,h.rate));if(!h.was)playMedia()},250)}}
@@ -125,13 +137,13 @@ let nudgeMark=null,nudgeFrame=0;const nudgeOn=()=>!!nudgeMark&&marks.includes(nu
 function nudgeStart(i){snapshotLaps();nudgeMark=marks[i];nudgeFrame=nudgeMark.frame;pauseMedia();seek(nudgeMark.frame/fps);renderAll()}
 function nudgeEnd(cancel){if(!nudgeOn()){nudgeMark=null;return}if(cancel){nudgeMark.frame=nudgeFrame;marks.sort((a,b)=>a.frame-b.frame);undoStack.pop()}else if(nudgeMark.frame===nudgeFrame)undoStack.pop();$('#undoBtn').disabled=!undoStack.length;nudgeMark=null;renderAll()}
 function nudgeMove(n){const f=Math.max(0,nudgeMark.frame+n);if(f===nudgeMark.frame||marks.some(m=>m!==nudgeMark&&m.frame===f))return;nudgeMark.frame=f;marks.sort((a,b)=>a.frame-b.frame);seek(f/fps);renderAll()}
-function addMark(){if(!loaded)return;const frame=currentFrame();if(!marks.some(m=>m.frame===frame)){const bad=badOn()&&frame>marks[0].frame;if(bad)badArmed=false;commit(()=>marks.push(bad?{frame,valid:false}:{frame}))}}
+function addMark(){if(!loaded)return;const frame=currentFrame();if(!marks.some(m=>m.frame===frame)){const j=marks.findIndex(m=>m.frame>frame),split=j>0&&marks[j].valid===false,armed=badOn()&&frame>marks[0].frame,bad=split||armed;if(armed&&!split)badArmed=false;commit(()=>marks.push(bad?{frame,valid:false}:{frame}))}} // a mark inside a bad lap splits it into two bad laps
 function lapList(m,rate){return m.slice(1).map((x,i)=>({index:i+1,start:m[i].frame,end:x.frame,duration:(x.frame-m[i].frame)/rate,split:(x.frame-m[0].frame)/rate,valid:x.valid!==false}))}
 function laps(){return lapList(marks,fps)}
 function calcBest(ls){let best=null;for(let i=0;i<=ls.length-3;i++){const w=ls.slice(i,i+3);if(w.some(l=>!l.valid))continue;const total=w.reduce((s,l)=>s+l.duration,0);if(!best||total<best.total)best={start:i,total}}return best}
 function renderMarkers(){const box=$('#markers'),L=length();box.innerHTML='';if(!L)return;const fr=m=>Math.min(1,m.frame/fps/L); // same scale as the slider thumb, so a mark sits under the cursor on its frame
 marks.forEach((m,i)=>{if(i&&m.valid===false){const sp=document.createElement('div');sp.className='badSpan';sp.style.setProperty('--f1',fr(marks[i-1]));sp.style.setProperty('--f2',fr(m));box.appendChild(sp)}});
-marks.forEach((m,i)=>{const el=document.createElement('button');el.className='marker'+(m.valid===false?' bad':'');el.style.setProperty('--f',fr(m));el.dataset.tip=i?`Lap ${i} · ${fmt((m.frame-marks[i-1].frame)/fps,'sec')}${m.valid===false?' (invalid)':''}`:'Start · '+fmt(m.frame/fps);el.onclick=()=>seek(m.frame/fps);box.appendChild(el)})}
+marks.forEach((m,i)=>{const el=document.createElement('button');el.className='marker'+(m.valid===false?' bad':'');el.style.setProperty('--f',fr(m));el.dataset.tip=i?`Lap ${i} · ${fmt((m.frame-marks[i-1].frame)/fps,'sec')}${m.valid===false?' (invalid)':''}`:'Start · '+fmt(m.frame/fps);el.onclick=()=>seek(m.frame/fps);box.appendChild(el)});updatePending(loaded&&cursorMark()<0&&badOn())}
 function renderAll(){const ls=laps(), validLaps=ls.filter(l=>l.valid), bestLap=validLaps.length?Math.min(...validLaps.map(l=>l.duration)):0, best=calcBest(ls);if(loopSpec!==null){loopR=loopRange(ls,best);if(!loopR)loopSpec=null}else loopR=null;const startRow=marks.length?`<tr class="${marks[0]===nudgeMark?'nudging':''}" data-start="${marks[0].frame}"><td>Start</td><td class="secondary">${fmt(marks[0].frame/fps,'sec')}</td><td class="secondary">—</td><td class="secondary">—</td><td><button class="sync" data-i="0" title="Sync mark to cursor">◎</button><button class="edit${marks[0]===nudgeMark?' on':''}" data-i="0" title="Adjust this mark with D / F (Shift = 10 frames)">✎</button><button class="del" data-i="0" title="Delete mark">✕</button></td></tr>`:'';$('#lapRows').innerHTML=startRow+ls.map((l,i)=>`<tr data-start="${l.start}" class="${best&&i>=best.start&&i<best.start+3?'best3':''} ${!l.valid?'invalidLap':''} ${marks[i+1]===nudgeMark?'nudging':''}"><td>#${l.index}</td><td class="secondary">${fmt(l.end/fps,'sec')}</td><td><strong>${fmt(l.duration,'sec')}</strong></td><td class="${l.valid&&l.duration===bestLap?'bestLabel':'secondary'}">${!l.valid?'INVALID':l.duration===bestLap?'BEST':'+'+(l.duration-bestLap).toFixed(3)+'s'}</td><td><button class="loop${loopSpec===l.index?' on':''}" data-i="${l.index}" title="Loop this lap (click again to stop)">↻</button><button class="valid" data-i="${i+1}" title="Toggle valid / invalid">${l.valid?'✓':'⦸'}</button><button class="sync" data-i="${i+1}" title="Sync mark to cursor">◎</button><button class="edit${marks[i+1]===nudgeMark?' on':''}" data-i="${i+1}" title="Adjust this mark with D / F (Shift = 10 frames)">✎</button><button class="del" data-i="${i+1}" title="Delete mark">✕</button></td></tr>`).join('');
 $('#singleBest').textContent=validLaps.length?fmt(bestLap,'sec'):'—';$('#singleBadge').textContent=validLaps.length?'LAP '+validLaps.find(l=>l.duration===bestLap).index:'NO VALID LAPS';$('#lapCount').textContent=ls.length+' Laps';$('#startDisplay').textContent=marks.length?fmt(marks[0].frame/fps,'sec'):'—';$('#bestTotal').textContent=best?fmt(best.total,'sec'):'—';$('#bestRange').textContent=best?`LAPS ${best.start+1}–${best.start+3}`:'—';$('#resolveScriptBtn').disabled=!best;updateBadBtn();$('#lapHint').textContent=nudgeOn()?'Adjusting a mark: D/F move it 1 frame (Shift = 10), Enter or ✎ to finish, Esc to cancel.':loaded?'First mark sets the start; each next mark completes a lap.':'Load a video to begin.';$('#goBest').disabled=!best;$('#loopBest').disabled=!best;$('#loopBest').classList.toggle('on',loopSpec==='best');$('#bestAvg').textContent=best?'Avg: '+fmt(best.total/3,'sec'):'Avg: —';syncSession();renderMarkers()}
 // Lap table buttons (one delegated handler); data-i is the mark index, 0 = the start mark.
@@ -166,41 +178,55 @@ function lookGet(){const o={};for(const k in LOOK0){const e=lookEl[k],v=parseFlo
 function lookSet(o){for(const k in LOOK0){const v=parseFloat(o?.[k]);lookEl[k].value=Number.isFinite(v)?v:LOOK0[k]}}
 function lookSave(){lookSet(lookGet());store.set('fpvLapLook',JSON.stringify(lookGet()))}
 try{lookSet(JSON.parse(store.get('fpvLapLook')))}catch(e){lookSet(null)}
-Object.values(lookEl).forEach(e=>e.addEventListener('change',lookSave));$('#lookReset').onclick=()=>{lookSet(LOOK0);lookSave()};
+// Clip and text options of the Resolve timer (head/tail, clips, text tool, title, divider, labels, line spacing).
+const OUT0={mode:'single',tool:'textplus',head:0,tail:null,title:'',divider:'dashes',labels:false,lineSpacing:1};
+function optGet(){const num=(e,lo,hi,d)=>{const v=parseFloat(e.value);return Number.isFinite(v)?Math.min(hi,Math.max(lo,v)):d},t=$('#optTail').value.trim();return{mode:$('#optMode').value==='pieces'?'pieces':'single',tool:$('#optTool').value==='multi'?'multi':'textplus',head:num($('#optHead'),0,600,0),tail:t===''?null:num($('#optTail'),0,600,null),title:$('#optTitle').value.trim().slice(0,40),divider:['dashes','blank','none'].includes($('#optDivider').value)?$('#optDivider').value:'dashes',labels:$('#optLabels').checked,lineSpacing:num($('#optLineSpacing'),.5,3,1)}}
+function optSet(o){const p={...OUT0,...(o&&typeof o==='object'?o:{})};$('#optMode').value=p.mode==='pieces'?'pieces':'single';$('#optTool').value=p.tool==='multi'?'multi':'textplus';$('#optHead').value=+p.head>0?+p.head:0;$('#optTail').value=p.tail===null||p.tail===''||!Number.isFinite(+p.tail)?'':+p.tail;$('#optTitle').value=typeof p.title==='string'?p.title.slice(0,40):'';$('#optDivider').value=['dashes','blank','none'].includes(p.divider)?p.divider:'dashes';$('#optLabels').checked=!!p.labels;$('#optLineSpacing').value=+p.lineSpacing>0?+p.lineSpacing:1}
+function optSave(){optSet(optGet());store.set('fpvLapOut',JSON.stringify(optGet()))}
+try{optSet(JSON.parse(store.get('fpvLapOut')))}catch(e){optSet(null)}
+['#optMode','#optTool','#optHead','#optTail','#optTitle','#optDivider','#optLabels','#optLineSpacing'].forEach(q=>$(q).addEventListener('change',optSave));
+Object.values(lookEl).forEach(e=>e.addEventListener('change',lookSave));$('#lookReset').onclick=()=>{lookSet(LOOK0);lookSave();optSet(OUT0);optSave()};
 $('#resolveBtn').onclick=()=>$('#resolveModal').classList.remove('hidden');$('#closeResolve').onclick=()=>$('#resolveModal').classList.add('hidden');
 // Font of the Resolve timer: a dropdown. HDZero OSD is the default; the list can be filled with the system fonts (Chrome/Edge only) or a name can be typed (Other...).
-const HDZ='HDZero OSD',commonFonts=['Open Sans','Arial','Arial Black','Calibri','Cambria','Century Gothic','Consolas','Courier New','Impact','Lucida Console','Segoe UI','Tahoma','Trebuchet MS','Verdana','Roboto','Montserrat','Helvetica'];
+const HDZ='HDZero OSD',BFO='Betaflight OSD',OWN=[HDZ,BFO],OWN_LINK={[HDZ]:'resolve/#font',[BFO]:'resolve/#analogfont'},commonFonts=['Open Sans','Arial','Arial Black','Calibri','Cambria','Century Gothic','Consolas','Courier New','Impact','Lucida Console','Segoe UI','Tahoma','Trebuchet MS','Verdana','Roboto','Montserrat','Helvetica'];
 function fontInstalled(name){const c=document.createElement('canvas').getContext('2d'),t='mmmmmmmmmmlli 0123456789WWW';return['monospace','serif','sans-serif'].some(b=>{c.font='72px '+b;const w=c.measureText(t).width;c.font='72px "'+name+'",'+b;return c.measureText(t).width!==w})}
-let hdzState=fontInstalled(HDZ)?'yes':'unknown'; // 'yes' = seen here, 'no' = the full font list says it is missing, 'unknown' = the browser may be hiding fonts
+const ownState={};OWN.forEach(n=>ownState[n]=fontInstalled(n)?'yes':'unknown'); // per own font: 'yes' = seen here, 'no' = the full font list says it is missing, 'unknown' = the browser may be hiding fonts
 const fontSel=$('#fontInput');
 // Second, direct name lookup: ask the browser to load the font by its name (works where the width test is blocked).
-if(hdzState!=='yes'&&window.FontFace)Promise.any([HDZ,HDZ+' Regular','HDZeroOSD-Regular'].map(n=>new FontFace('hdzprobe','local("'+n+'")').load())).then(()=>{hdzState='yes';fontNote()}).catch(()=>{});
+OWN.forEach(f=>{if(ownState[f]!=='yes'&&window.FontFace)Promise.any([f,f+' Regular',f.replace(/ /g,'')+'-Regular'].map(n=>new FontFace('vltlprobe','local("'+n+'")').load())).then(()=>{ownState[f]='yes';fontNote()}).catch(()=>{})});
 function fontOptions(names,keep){const list=[...new Set(names.concat(keep?[keep]:[]))];fontSel.innerHTML=list.map(n=>{const o=document.createElement('option');o.value=o.textContent=n;return o.outerHTML}).join('')+'<option value="__other">Other...</option>';if(keep)fontSel.value=keep}
 function setFontValue(f){if(![...fontSel.options].some(o=>o.value===f))fontOptions([...fontSel.options].map(o=>o.value).filter(v=>v!=='__other'),f);fontSel.value=f}
-function fontNote(){const f=fontSel.value;$('#fontNote').innerHTML=f!==HDZ?'':hdzState==='yes'?'HDZero OSD is installed.':hdzState==='no'?'HDZero OSD is not installed on this computer. <a href="../resolve/#font" style="color:var(--accent)">Get the font</a>, or pick another font.':'Could not check whether HDZero OSD is installed (browsers can hide fonts). Press Load my fonts to check, or <a href="../resolve/#font" style="color:var(--accent)">get the font</a>.'}
+function fontNote(){const f=fontSel.value,st=ownState[f],a=`<a href="${OWN_LINK[f]}" style="color:var(--accent)">`;$('#fontNote').innerHTML=!OWN.includes(f)?'':st==='yes'?f+' is installed.':st==='no'?f+' is not installed on this computer. '+a+'Get the font</a>, or pick another font.':'Could not check whether '+f+' is installed (browsers can hide fonts). Press Load my fonts to check, or '+a+'get the font</a>.'}
 let lastFont=store.get('fpvLapFont')||HDZ;
-fontOptions([HDZ].concat(commonFonts),lastFont);fontNote();
-fontSel.addEventListener('change',async()=>{let f=fontSel.value;if(f==='__other'){f=(await uiPrompt('Font name, exactly as Resolve lists it:')||'').trim();if(!f){fontSel.value=lastFont;return}setFontValue(f)}lastFont=f;store.set('fpvLapFont',f);$('#dashRatio').value=f===HDZ?'1':'1.5';store.set('fpvLapDashRatio',$('#dashRatio').value);fontNote()});
+fontOptions(OWN.concat(commonFonts),lastFont);fontNote();
+fontSel.addEventListener('change',async()=>{let f=fontSel.value;if(f==='__other'){f=(await uiPrompt('Font name, exactly as Resolve lists it:')||'').trim();if(!f){fontSel.value=lastFont;return}setFontValue(f)}lastFont=f;store.set('fpvLapFont',f);$('#dashRatio').value=OWN.includes(f)?'1':'1.5';store.set('fpvLapDashRatio',$('#dashRatio').value);fontNote()});
 $('#fontLoad').hidden=!window.queryLocalFonts;
-$('#fontLoad').onclick=async()=>{try{const list=await window.queryLocalFonts(),fam=[...new Set(list.map(f=>f.family))].sort((a,b)=>a.localeCompare(b));if(!fam.length){$('#fontNote').textContent='The browser returned no fonts. You can still pick a font or choose Other... to type a name.';return}hdzState=fam.includes(HDZ)?'yes':'no';fontOptions((fam.includes(HDZ)?[HDZ]:[]).concat(fam.filter(n=>n!==HDZ)),lastFont);$('#fontLoad').textContent=fam.length+' fonts loaded';fontNote()}catch(e){$('#fontNote').textContent='Could not read the fonts ('+(e.name==='NotAllowedError'?'permission denied':e.message)+'). You can still pick a font or choose Other... to type a name.'}};
+$('#fontLoad').onclick=async()=>{try{const list=await window.queryLocalFonts(),fam=[...new Set(list.map(f=>f.family))].sort((a,b)=>a.localeCompare(b));if(!fam.length){$('#fontNote').textContent='The browser returned no fonts. You can still pick a font or choose Other... to type a name.';return}OWN.forEach(n=>ownState[n]=fam.includes(n)?'yes':'no');fontOptions(OWN.concat(fam.filter(n=>!OWN.includes(n))),lastFont);$('#fontLoad').textContent=fam.length+' fonts loaded';fontNote()}catch(e){$('#fontNote').textContent='Could not read the fonts ('+(e.name==='NotAllowedError'?'permission denied':e.message)+'). You can still pick a font or choose Other... to type a name.'}};
 // Function that takes an array of lap time objects/numbers and formats them 
 // into a Lua expression string for DaVinci Resolve's Text+ "Styled Text" field
-function generateDaVinciExpression(three, rate, offset, dashes = 1, tokens = false) {
+function generateDaVinciExpression(three, rate, offset, dashes = 1, tokens = false, opt = {}) {
   // three: the 3 lap objects of the best 3-consecutive window; rate: timeline FPS;
-  // offset: clip start on the timeline in seconds. Returns ONE Lua expression for a single
-  // Text+ node's Styled Text field: it shows the 3-lap total, a dashed line, then L1 and adds L2 and L3 as they start,
+  // offset: clip start on the timeline in seconds. Returns ONE Lua expression for a Text+ Styled Text field:
+  // an optional title, the 3-lap total, a divider, then L1 and adds L2 and L3 as they start,
   // each counting up live and freezing when that lap/total ends.
+  // opt: head (seconds shown before the first lap, as zeros), tail (seconds shown after the last lap; null = until the clip ends),
+  // title, labels (L1 / L2 / L3 in front of the laps), divider ('dashes', 'blank' or 'none').
+  const o = { ...OUT0, ...opt };
   const toFrame = sec => Math.round((offset + sec) * rate);
-  // tokens=true leaves @START@ @E1@ @E2@ @E3@ @FPS@ for the Resolve script to fill in from the real timeline.
+  // tokens=true leaves @START@ @E1@ @E2@ @E3@ @FPS@ @HEAD@ @TAIL@ @FROM@ @TO@ for the Resolve script to fill in from the real timeline.
   const start = tokens ? '@START@' : toFrame(three[0].start / fps);
   const e1 = tokens ? '@E1@' : toFrame(three[0].end / fps);
   const e2 = tokens ? '@E2@' : toFrame(three[1].end / fps);
   const e3 = tokens ? '@E3@' : toFrame(three[2].end / fps);
+  const head = !(o.head > 0) ? start : tokens ? '@HEAD@' : toFrame(three[0].start / fps - o.head);
+  const tail = o.tail === null || o.tail === '' || !(+o.tail >= 0) ? null : tokens ? '@TAIL@' : toFrame(three[2].end / fps + +o.tail);
   const d1 = three[0].duration.toFixed(6), d2 = three[1].duration.toFixed(6), d3 = three[2].duration.toFixed(6);
   const dT = (three[0].duration + three[1].duration + three[2].duration).toFixed(6);
+  const lab = n => o.labels ? `"L${n} " .. ` : '';
+  const divider = o.divider === 'none' ? '' : o.divider === 'blank' ? '  table.insert(out, "")\n' : `  table.insert(out, string.rep("-", math.floor(#top * ${dashes} + 0.5)))\n`;
   return `(function()
-  if time < ${start} then return "" end
-
+  if time < ${head} then return "" end
+${tail === null ? '' : `  if time >= ${tail} then return "" end\n`}
   local fps = ${tokens ? '@FPS@' : rate}
   local out = {}
 
@@ -213,26 +239,34 @@ function generateDaVinciExpression(three, rate, offset, dashes = 1, tokens = fal
 
   local conSecs = (time >= ${e3}) and ${dT} or (time - ${start}) / fps
   local top = fmt(conSecs)
-  table.insert(out, top)
-  table.insert(out, string.rep("-", math.floor(#top * ${dashes} + 0.5)))
-
+${o.title ? `  table.insert(out, ${luaStr(o.title)})\n` : ''}  table.insert(out, top)
+${divider}
   if time >= ${start} then
     local l1Secs = (time >= ${e1}) and ${d1} or (time - ${start}) / fps
-    table.insert(out, fmt(l1Secs))
+    table.insert(out, ${lab(1)}fmt(l1Secs))
   end
 
   if time >= ${e1} then
     local l2Secs = (time >= ${e2}) and ${d2} or (time - ${e1}) / fps
-    table.insert(out, fmt(l2Secs))
+    table.insert(out, ${lab(2)}fmt(l2Secs))
   end
 
   if time >= ${e2} then
     local l3Secs = (time >= ${e3}) and ${d3} or (time - ${e2}) / fps
-    table.insert(out, fmt(l3Secs))
+    table.insert(out, ${lab(3)}fmt(l3Secs))
   end
 
-  return table.concat(out, "\\n")
+  local from, to = ${tokens ? '@FROM@' : 1}, ${tokens ? '@TO@' : 99}
+  return table.concat(out, "\\n", from, math.min(to, #out))
 end)()`;
+}
+// The same formatting as fmt() in the expression, for the fixed head and tail text.
+function luaFmt(secs) { if (secs < 0) secs = 0; const s = Math.floor(secs), ms = Math.floor((secs - s) * 1000 + 0.5); return String(s).padStart(2, '0') + '.' + String(ms).padStart(3, '0'); }
+// Lines of the head clip (before the first lap) and the tail clip (after the last lap), same layout as the live text.
+function fixedLines(three, dashes, opt, tail) {
+  const o = { ...OUT0, ...opt }, ds = three.map(l => +l.duration.toFixed(6)), tot = luaFmt(+(three[0].duration + three[1].duration + three[2].duration).toFixed(6)), top = tail ? tot : luaFmt(0);
+  const div = o.divider === 'none' ? [] : o.divider === 'blank' ? [''] : ['-'.repeat(Math.floor(top.length * dashes + 0.5))];
+  return [...(o.title ? [o.title] : []), top, ...div, ...(tail ? ds.map((d, i) => (o.labels ? 'L' + (i + 1) + ' ' : '') + luaFmt(d)) : [])];
 }
 // Builds the whole Resolve setup as one Lua script for Workspace > Console: it adds the title on V2, fills in the frame numbers from the real timeline and styles the Text+.
 const RESOLVE_LUA = `-- VLTL lap timer for DaVinci Resolve. Paste into Workspace > Console (Lua).
@@ -241,7 +275,13 @@ VIDEO_NAME = __NAME__
 LAPS = __LAPS__
 FONT, STYLE, SIZE = __FONT__, "Regular", __SIZE__
 CENTER_X, CENTER_Y, OUTLINE, V_ANCHOR = __CX__, __CY__, __OUTLINE__, -1
+LINE_SPACING = __LS__
+-- MODE "single": one clip over the whole video. MODE "pieces": a head clip (before the first lap), the laps clip and a tail clip (after the last lap).
+-- TOOL "TextPlus" or "MultiText" (MultiText: each line goes into its own text layer).
+MODE, TOOL = __MODE__, __TOOL__
 EXPR = [==[__EXPR__]==]
+HEAD_LINES = __HEADLINES__
+TAIL_LINES = __TAILLINES__
 -- Text+ template (a small Resolve bin file). Imported into the Media Pool the first time, as the bin VLTL.
 DRB = [==[
 UEsDBBQAAAAIAIagRl1c0KaBFREAAEwlAAALAAAAcHJvamVjdC54bWydmtlyHEeSRd/1FRi+lxD70gahTSNK0zQjJRrB1utYrGhI
@@ -420,53 +460,120 @@ function vltl_run()
     return
   end
   while tl:GetTrackCount("video") < 2 do tl:AddTrack("video") end
-  local res = project:GetMediaPool():AppendToTimeline({{mediaPoolItem = pool, startFrame = 0, endFrame = vDur, trackIndex = 2, recordFrame = vStart}})
-  local title = res and res[1]
-  if not title then say("Resolve would not add the title. Is V2 locked?") return end
-  local tt = title:GetTrackTypeAndIndex()
-  say("title is on track", tt and tt[2], "| start", title:GetStart(), "| length", title:GetDuration(), "(wanted", vStart, "and", vDur .. ")")
+  local vEnd = vid:GetEnd()
+  local function T(sec) return vStart - trim + math.floor(sec * rate + 0.5) end -- timeline frame of a moment in the video file
+  local function place(a, b, what)
+    a, b = math.max(a, vStart), math.min(b, vEnd)
+    if b - a < 1 then say(what, "clip skipped (no room on the video)") return nil end
+    local res = project:GetMediaPool():AppendToTimeline({{mediaPoolItem = pool, startFrame = 0, endFrame = b - a, trackIndex = 2, recordFrame = a}})
+    local it = res and res[1]
+    if not it then say("Resolve would not add the", what, "clip. Is V2 locked?") return nil end
+    local tt = it:GetTrackTypeAndIndex()
+    say(what, "clip on track", tt and tt[2], "| start", it:GetStart(), "| length", it:GetDuration(), "(wanted", a, "and", (b - a) .. ")")
+    return it
+  end
 
-  -- 3. fill in the frame numbers from where the clips really are
-  local offset = (vStart - title:GetStart()) / rate - trim / rate
-  local function f(sec) return math.floor((offset + sec) * rate + 0.5) end
-  local ex = EXPR
-  ex = ex:gsub("@START@", f(LAPS.s))
-  ex = ex:gsub("@E1@", f(LAPS.e1))
-  ex = ex:gsub("@E2@", f(LAPS.e2))
-  ex = ex:gsub("@E3@", f(LAPS.e3))
-  ex = ex:gsub("@FPS@", tostring(rate))
+  -- the text node of a clip; for MultiText the Text+ node of the template is swapped for a MultiText node
+  local function textTool(item)
+    local comp = item:GetFusionCompByIndex(1)
+    if not comp then return nil end
+    if TOOL ~= "MultiText" then return comp:GetToolList(false, "TextPlus")[1] end
+    local mt = comp:GetToolList(false, "MultiText")[1]
+    if mt then return mt end
+    local tp = comp:GetToolList(false, "TextPlus")[1]
+    local out = comp:GetToolList(false, "MediaOut")[1]
+    pcall(function() comp:Lock() end)
+    pcall(function()
+      mt = comp:AddTool("MultiText", -32768, -32768)
+      if mt and out then out:ConnectInput("Input", mt) end
+      if mt and tp then tp:Delete() end
+    end)
+    pcall(function() comp:Unlock() end)
+    if not mt then say("could not add a MultiText node (needs Resolve 20 or newer). Using Text+ instead.") return tp end
+    return mt
+  end
+  -- MultiText: its text inputs (one per layer), in layer order
+  local function layers(tool)
+    local L, all = {}, {}
+    for _, inp in pairs(tool:GetInputList() or {}) do
+      local id = inp:GetAttrs().INPS_ID
+      if id then all[#all + 1] = id if id:find("StyledText") then L[#L + 1] = {id = id, inp = inp} end end
+    end
+    table.sort(L, function(x, y) local a, b = tonumber(x.id:match("%d+")) or 0, tonumber(y.id:match("%d+")) or 0 if a ~= b then return a < b end return x.id < y.id end)
+    if #L == 0 then table.sort(all) say("no text layer found. Inputs of the node:", table.concat(all, " ")) end
+    return L
+  end
+  local function style(tool, id, k, n)
+    local function s(name, v) local nid = id and id:gsub("StyledText", name) or name try(nid, function() tool:SetInput(nid, v) end) end
+    s("Font", FONT) s("Style", STYLE) s("Size", SIZE) s("LineSpacing", LINE_SPACING) s("VerticalTopCenterBottom", V_ANCHOR)
+    s("Center", {CENTER_X, CENTER_Y - (k - 1) * SIZE * 1.25 * LINE_SPACING})
+    s("Enabled2", 1) s("Thickness2", OUTLINE) s("Red2", 0) s("Green2", 0) s("Blue2", 0)
+  end
+  -- fill one clip: the live expression (laps) or fixed lines (head, tail)
+  local function fill(item, lines)
+    local tool = textTool(item)
+    if not tool then say("could not reach the text node") return end
+    local s0 = item:GetStart()
+    local function expr(from, to)
+      local function f(sec) return T(sec) - s0 end
+      local ex = EXPR
+      ex = ex:gsub("@START@", f(LAPS.s)) ex = ex:gsub("@HEAD@", f(LAPS.h)) ex = ex:gsub("@TAIL@", f(LAPS.t))
+      ex = ex:gsub("@E1@", f(LAPS.e1)) ex = ex:gsub("@E2@", f(LAPS.e2)) ex = ex:gsub("@E3@", f(LAPS.e3))
+      ex = ex:gsub("@FPS@", tostring(rate)) ex = ex:gsub("@FROM@", from) ex = ex:gsub("@TO@", to)
+      return ex
+    end
+    local function text(from, to) return table.concat(lines, "\\n", from, math.min(to, #lines)) end
+    if tool:GetAttrs().TOOLS_RegID ~= "MultiText" then
+      if lines then try("text", function() tool:SetInput("StyledText", text(1, 99)) end)
+      else try("expression", function() tool.StyledText:SetExpression(expr(1, 99)) end) end
+      style(tool, nil, 1, 1)
+      return
+    end
+    local L = layers(tool)
+    if #L == 0 then return end
+    local n = math.min(#L, LINE_COUNT)
+    say("MultiText:", #L, "text layer(s):", L[1].id, L[#L].id, "| using", n)
+    for k = 1, n do
+      local to = (k == n) and 99 or k -- with fewer layers than lines, the last layer gets the rest
+      if lines then try(L[k].id, function() tool:SetInput(L[k].id, text(k, to)) end)
+      else try(L[k].id, function() L[k].inp:SetExpression(expr(k, to)) end) end
+      style(tool, L[k].id, k, n)
+    end
+  end
 
-  -- 4. style the Text+ node
-  local comp = title:GetFusionCompByIndex(1)
-  local tool = comp and comp:GetToolList(false, "TextPlus")[1]
-  if not tool then say("could not reach the Text+ node") return end
-  try("expression", function() tool.StyledText:SetExpression(ex) end)
-  try("font", function() tool:SetInput("Font", FONT) end)
-  try("style", function() tool:SetInput("Style", STYLE) end)
-  try("size", function() tool:SetInput("Size", SIZE) end)
-  try("center", function() tool:SetInput("Center", {CENTER_X, CENTER_Y}) end)
-  try("anchor", function() tool:SetInput("VerticalTopCenterBottom", V_ANCHOR) end)
-  try("outline", function()
-    tool:SetInput("Enabled2", 1) tool:SetInput("Thickness2", OUTLINE)
-    tool:SetInput("Red2", 0) tool:SetInput("Green2", 0) tool:SetInput("Blue2", 0)
-  end)
-  say("done. Timer starts at title frame", f(LAPS.s), "and ends at", f(LAPS.e3), "(offset", string.format("%.3f", offset), "s). Tip: select the title and the video, right-click > Link Clips.")
+  if MODE == "pieces" then
+    local h, s, e = T(LAPS.h), T(LAPS.s), T(LAPS.e3)
+    local t = LAPS.t < 0 and vEnd or T(LAPS.t)
+    local head = h < s and place(h, s, "head")
+    local laps = place(s, e, "laps")
+    local tail = e < t and place(e, t, "tail")
+    if head then fill(head, HEAD_LINES) end
+    if laps then fill(laps, nil) end
+    if tail then fill(tail, TAIL_LINES) end
+    say("done. Head, laps and tail are separate clips on V2: drag their edges to change the head and tail length. Tip: select them and the video, right-click > Link Clips.")
+  else
+    local title = place(vStart, vEnd, "title")
+    if not title then return end
+    fill(title, nil)
+    say("done. Timer starts at title frame", T(LAPS.s) - title:GetStart(), "and ends at", T(LAPS.e3) - title:GetStart() .. ". Tip: select the title and the video, right-click > Link Clips.")
+  end
 end
 vltl_run()
 `;
 // A JavaScript string as a Lua string literal (UTF-8 bytes above ASCII become \ddd escapes).
 function luaStr(t) { return '"' + [...new TextEncoder().encode(t)].map(b => b === 34 ? '\\"' : b === 92 ? '\\\\' : b >= 32 && b < 127 ? String.fromCharCode(b) : '\\' + String(b).padStart(3, '0')).join('') + '"'; }
-function generateResolveScript(three, dashes, name, font = 'HDZero OSD', look = {}) {
-  const o = { ...LOOK0, ...look };
+function generateResolveScript(three, dashes, name, font = 'HDZero OSD', look = {}, opt = {}) {
+  const o = { ...LOOK0, ...look }, p = { ...OUT0, ...opt }, pieces = p.mode === 'pieces', tailSec = p.tail === null || p.tail === '' || !(+p.tail >= 0) ? null : +p.tail;
   const ok = /^[\x20-\x7e]*$/.test(name || '');
   const secs = { s: three[0].start / fps, e1: three[0].end / fps, e2: three[1].end / fps, e3: three[2].end / fps };
-  const laps = '{s=' + secs.s + ', e1=' + secs.e1 + ', e2=' + secs.e2 + ', e3=' + secs.e3 + '}';
-  return RESOLVE_LUA.replace('__NAME__', () => JSON.stringify(ok ? name || '' : '')).replace('__FONT__', () => luaStr(font || 'HDZero OSD')).replace('__SIZE__', () => String(o.size)).replace('__CX__', () => String(o.x)).replace('__CY__', () => String(o.y)).replace('__OUTLINE__', () => String(o.outline)).replace('__LAPS__', () => laps).replace('__EXPR__', () => generateDaVinciExpression(three, 1, 0, dashes, true));
+  const laps = '{s=' + secs.s + ', e1=' + secs.e1 + ', e2=' + secs.e2 + ', e3=' + secs.e3 + ', h=' + (secs.s - (+p.head > 0 ? +p.head : 0)) + ', t=' + (tailSec === null ? -1 : secs.e3 + tailSec) + '}';
+  const lines = l => '{' + l.map(luaStr).join(', ') + '}', live = fixedLines(three, dashes, p, true);
+  return RESOLVE_LUA.replace('__NAME__', () => JSON.stringify(ok ? name || '' : '')).replace('__FONT__', () => luaStr(font || 'HDZero OSD')).replace('__SIZE__', () => String(o.size)).replace('__CX__', () => String(o.x)).replace('__CY__', () => String(o.y)).replace('__OUTLINE__', () => String(o.outline)).replace('__LS__', () => String(+p.lineSpacing > 0 ? +p.lineSpacing : 1)).replace('__MODE__', () => pieces ? '"pieces"' : '"single"').replace('__TOOL__', () => p.tool === 'multi' ? '"MultiText"' : '"TextPlus"').replace('__HEADLINES__', () => lines(fixedLines(three, dashes, p, false)) + '\nLINE_COUNT = ' + live.length).replace('__TAILLINES__', () => lines(live)).replace('__LAPS__', () => laps).replace('__EXPR__', () => generateDaVinciExpression(three, 1, 0, dashes, true, pieces ? { ...p, head: 0, tail: null } : { ...p, tail: tailSec }));
 }
 // Copies the single live-timer Lua expression to the clipboard.
 async function copyText(text){try{await navigator.clipboard.writeText(text);return true}catch(e){uiAlert('Could not copy to clipboard. Check browser clipboard permissions.');return false}}
 async function copyButton(btn,label,text){if(await copyText(text)){btn.textContent='Copied';setTimeout(()=>btn.textContent=label,900)}}
-$('#resolveScriptBtn').onclick=()=>{const ls=laps(),best=calcBest(ls);if(!best){uiAlert('Record three consecutive valid laps first.');return}const dashes=Number($('#dashRatio').value);if(!Number.isFinite(dashes)||dashes<0||dashes>5){uiAlert('Dashes per character must be between 0 and 5.');return}copyButton($('#resolveScriptBtn'),'Copy Resolve script',generateResolveScript(ls.slice(best.start,best.start+3),dashes,session[cur]?.name||'',(fontSel.value==='__other'?HDZ:fontSel.value)||HDZ,lookGet()))};
+$('#resolveScriptBtn').onclick=()=>{const ls=laps(),best=calcBest(ls);if(!best){uiAlert('Record three consecutive valid laps first.');return}const dashes=Number($('#dashRatio').value);if(!Number.isFinite(dashes)||dashes<0||dashes>5){uiAlert('Dashes per character must be between 0 and 5.');return}copyButton($('#resolveScriptBtn'),'Copy Resolve script',generateResolveScript(ls.slice(best.start,best.start+3),dashes,session[cur]?.name||'',(fontSel.value==='__other'?HDZ:fontSel.value)||HDZ,lookGet(),optGet()))};
 // The title starts as the name of the first imported file (without extension) unless you typed or loaded one.
 const sTitle=$('#sessionTitle');let titleEdited=false;sTitle.addEventListener('input',()=>{titleEdited=true});
 // With a session title the exported file names start with it instead of "fpv".
@@ -574,31 +681,49 @@ const quant=(s,p)=>{const i=(s.length-1)*p,a=Math.floor(i);return s[a]+(s[Math.m
 const meanOf=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0, sdOf=a=>{const m=meanOf(a);return a.length>1?Math.sqrt(a.reduce((x,y)=>x+(y-m)**2,0)/(a.length-1)):0};
 function statsData(){syncSession();const list=session.length?session.map(e=>({name:e.name,ls:lapList(e.marks,e.fps)})):[{name:'This video',ls:laps()}];
 return list.filter(v=>v.ls.length).map(v=>{const ok=v.ls.filter(l=>l.valid),d=ok.map(l=>l.duration),s=[...d].sort((a,b)=>a-b);return{name:v.name,ok,d,s,bad:v.ls.length-ok.length,best3:calcBest(v.ls)}})}
-function chartFrame(W,H,L,T,B,lo,hi,xTicks){const y=t=>T+(1-(t-lo)/(hi-lo))*(H-T-B);let g='';for(let i=0;i<=4;i++){const t=lo+(hi-lo)*i/4;g+=`<line class="gl" x1="${L}" x2="${W-8}" y1="${y(t)}" y2="${y(t)}"/><text class="ax" x="${L-6}" y="${y(t)+3}" text-anchor="end">${t.toFixed(2)}</text>`}return{y,g}}
-function boxSvg(D){const V=D.filter(v=>v.d.length);if(!V.length)return '';const lo0=Math.min(...V.map(v=>v.s[0])),hi0=Math.max(...V.map(v=>v.s[v.s.length-1])),pad=(hi0-lo0||1)*.08,lo=lo0-pad,hi=hi0+pad,W=Math.max(560,V.length*84+70),H=270,L=50,T=10,B=44,{y,g}=chartFrame(W,H,L,T,B,lo,hi),sx=i=>L+(i+.5)*(W-L-8)/V.length;let o='';
-V.forEach((v,i)=>{const q1=quant(v.s,.25),md=quant(v.s,.5),q3=quant(v.s,.75),iqr=q3-q1,lw=v.s.find(t=>t>=q1-1.5*iqr),hw=[...v.s].reverse().find(t=>t<=q3+1.5*iqr),x=sx(i),nm=v.name.length>13?v.name.slice(0,12)+'…':v.name;
-o+=`<g><title>${esc(v.name)} · ${v.d.length} laps · median ${md.toFixed(3)}s</title><line class="wh" x1="${x}" x2="${x}" y1="${y(lw)}" y2="${y(q1)}"/><line class="wh" x1="${x}" x2="${x}" y1="${y(q3)}" y2="${y(hw)}"/><line class="wh" x1="${x-8}" x2="${x+8}" y1="${y(lw)}" y2="${y(lw)}"/><line class="wh" x1="${x-8}" x2="${x+8}" y1="${y(hw)}" y2="${y(hw)}"/><rect class="bx" x="${x-15}" y="${y(q3)}" width="30" height="${Math.max(1,y(q1)-y(q3))}"/><line class="md" x1="${x-15}" x2="${x+15}" y1="${y(md)}" y2="${y(md)}"/>${v.s.filter(t=>t<lw||t>hw).map(t=>`<circle class="ol" cx="${x}" cy="${y(t)}" r="3"/>`).join('')}<text class="ax" x="${x}" y="${H-B+16}" text-anchor="middle">${esc(nm)}</text></g>`});
-return `<svg class="chart" viewBox="0 0 ${W} ${H}">${g}${o}</svg>`}
+function chartFrame(W,H,L,T,B,lo,hi){const y=t=>T+(1-(t-lo)/(hi-lo))*(H-T-B);let g='';for(let i=0;i<=4;i++){const t=lo+(hi-lo)*i/4;g+=`<line class="gl" x1="${L}" x2="${W-8}" y1="${y(t)}" y2="${y(t)}"/><text class="ax" x="${L-6}" y="${y(t)+3}" text-anchor="end">${t.toFixed(2)}</text>`}return{y,g}}
+// Charts are drawn at their real pixel size (no scaling), so text stays readable; when there are many videos the chart scrolls sideways instead of shrinking.
+const svgOpen=(W,H)=>`<svg class="chart" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
+function boxStats(s){const q1=quant(s,.25),md=quant(s,.5),q3=quant(s,.75),iqr=q3-q1;return{q1,md,q3,lw:s.find(t=>t>=q1-1.5*iqr),hw:[...s].reverse().find(t=>t<=q3+1.5*iqr)}}
+function boxSvg(V,cw){if(!V.length)return '';const lo0=Math.min(...V.map(v=>v.s[0])),hi0=Math.max(...V.map(v=>v.s[v.s.length-1])),pad=(hi0-lo0||1)*.08,lo=lo0-pad,hi=hi0+pad,L=50,W=Math.max(cw,L+8+V.length*72),H=300,T=10,B=44,{y,g}=chartFrame(W,H,L,T,B,lo,hi),slot=(W-L-8)/V.length,sx=i=>L+(i+.5)*slot,bw=Math.min(22,slot*.25),mx=Math.max(6,Math.floor(slot/7.2));let o='';
+V.forEach((v,i)=>{const{q1,md,q3,lw,hw}=boxStats(v.s),x=sx(i),c=v.c,nm=v.name.length>mx?v.name.slice(0,mx-1)+'…':v.name;
+o+=`<g><title>${esc(v.name)} · ${v.d.length} laps · median ${md.toFixed(3)}s</title><line stroke="${c}" x1="${x}" x2="${x}" y1="${y(lw)}" y2="${y(q1)}"/><line stroke="${c}" x1="${x}" x2="${x}" y1="${y(q3)}" y2="${y(hw)}"/><line stroke="${c}" x1="${x-8}" x2="${x+8}" y1="${y(lw)}" y2="${y(lw)}"/><line stroke="${c}" x1="${x-8}" x2="${x+8}" y1="${y(hw)}" y2="${y(hw)}"/><rect fill="${c}" fill-opacity=".22" stroke="${c}" x="${x-bw}" y="${y(q3)}" width="${bw*2}" height="${Math.max(1,y(q1)-y(q3))}"/><line stroke="${c}" stroke-width="2.5" x1="${x-bw}" x2="${x+bw}" y1="${y(md)}" y2="${y(md)}"/>${v.s.filter(t=>t<lw||t>hw).map(t=>`<circle fill="none" stroke="${c}" cx="${x}" cy="${y(t)}" r="3"/>`).join('')}<text class="ax" x="${x}" y="${H-B+16}" text-anchor="middle">${esc(nm)}</text></g>`});
+return `<div class="chartScroll">${svgOpen(W,H)}${g}${o}</svg></div>`}
+// One wide horizontal box plot of every lap of the videos that are shown.
+function totalSvg(s,cw){if(!s.length)return '';const W=Math.max(300,cw),H=150,L=24,R=24,lo0=s[0],hi0=s[s.length-1],pad=(hi0-lo0||1)*.06,lo=lo0-pad,hi=hi0+pad,x=t=>L+(t-lo)/(hi-lo)*(W-L-R),{q1,md,q3,lw,hw}=boxStats(s),cy=62,bh=56,n=Math.max(2,Math.min(8,Math.floor(W/110)));let g='';
+for(let i=0;i<=n;i++){const t=lo+(hi-lo)*i/n;g+=`<line class="gl" x1="${x(t)}" x2="${x(t)}" y1="22" y2="${H-28}"/><text class="ax" x="${x(t)}" y="${H-10}" text-anchor="middle">${t.toFixed(2)}</text>`}
+const lab=(t,yy,txt)=>`<text class="ax big" x="${x(t)}" y="${yy}" text-anchor="middle">${txt}</text>`;
+return `${svgOpen(W,H)}${g}<g><title>${s.length} laps · fastest ${s[0].toFixed(3)}s · Q1 ${q1.toFixed(3)}s · median ${md.toFixed(3)}s · Q3 ${q3.toFixed(3)}s · slowest ${s[s.length-1].toFixed(3)}s</title>${s.map(t=>`<circle class="dot" cx="${x(t)}" cy="${cy}" r="2.5"/>`).join('')}<line class="wh" x1="${x(lw)}" x2="${x(q1)}" y1="${cy}" y2="${cy}"/><line class="wh" x1="${x(q3)}" x2="${x(hw)}" y1="${cy}" y2="${cy}"/><line class="wh" x1="${x(lw)}" x2="${x(lw)}" y1="${cy-14}" y2="${cy+14}"/><line class="wh" x1="${x(hw)}" x2="${x(hw)}" y1="${cy-14}" y2="${cy+14}"/><rect class="bx" x="${x(q1)}" y="${cy-bh/2}" width="${Math.max(1,x(q3)-x(q1))}" height="${bh}"/><line class="md" x1="${x(md)}" x2="${x(md)}" y1="${cy-bh/2}" y2="${cy+bh/2}"/>${s.filter(t=>t<lw||t>hw).map(t=>`<circle class="ol" cx="${x(t)}" cy="${cy}" r="4"/>`).join('')}</g>${lab(md,cy-bh/2-7,'median '+md.toFixed(3))}${lab(lw,cy+bh/2+16,lw.toFixed(3))}${hw!==lw?lab(hw,cy+bh/2+16,hw.toFixed(3)):''}</svg>`}
 const hue=(i,n)=>`hsl(${Math.round(i*360/Math.max(n,1))} 70% 55%)`;
-function lineSvg(D){const V=D.filter(v=>v.d.length);if(!V.length)return '';const all=V.flatMap(v=>v.d),lo0=Math.min(...all),hi0=Math.max(...all),pad=(hi0-lo0||1)*.08,lo=lo0-pad,hi=hi0+pad,N=Math.max(...V.map(v=>v.ok[v.ok.length-1].index)),W=760,H=270,L=50,T=10,B=28,{y,g}=chartFrame(W,H,L,T,B,lo,hi),x=k=>L+(N>1?(k-1)/(N-1):.5)*(W-L-16)+4;let ax='';for(let k=1;k<=N;k++)ax+=`<text class="ax" x="${x(k)}" y="${H-B+16}" text-anchor="middle">${k}</text>`;
-const lines=V.map((v,i)=>{const c=hue(i,V.length),pts=v.ok.map(l=>`${x(l.index)},${y(l.duration)}`).join(' ');return `<polyline fill="none" stroke="${c}" stroke-width="1.6" stroke-opacity=".85" points="${pts}"/>`+v.ok.map(l=>`<circle cx="${x(l.index)}" cy="${y(l.duration)}" r="3" fill="${c}"><title>${esc(v.name)} · lap ${l.index} · ${l.duration.toFixed(3)}s</title></circle>`).join('')}).join('');
-return `<svg class="chart" viewBox="0 0 ${W} ${H}">${g}${ax}${lines}</svg><div class="legend">${V.map((v,i)=>`<span><i style="background:${hue(i,V.length)}"></i>${esc(v.name)}</span>`).join('')}</div>`}
+function lineSvg(V,cw){if(!V.length)return '';const all=V.flatMap(v=>v.d),lo0=Math.min(...all),hi0=Math.max(...all),pad=(hi0-lo0||1)*.08,lo=lo0-pad,hi=hi0+pad,N=Math.max(...V.map(v=>v.ok[v.ok.length-1].index)),L=50,W=Math.max(cw,L+16+N*26),H=300,T=10,B=28,{y,g}=chartFrame(W,H,L,T,B,lo,hi),x=k=>L+(N>1?(k-1)/(N-1):.5)*(W-L-16)+4;let ax='';for(let k=1;k<=N;k++)ax+=`<text class="ax" x="${x(k)}" y="${H-B+16}" text-anchor="middle">${k}</text>`;
+const lines=V.map(v=>{const c=v.c,pts=v.ok.map(l=>`${x(l.index)},${y(l.duration)}`).join(' ');return `<polyline fill="none" stroke="${c}" stroke-width="1.8" stroke-opacity=".85" points="${pts}"/>`+v.ok.map(l=>`<circle cx="${x(l.index)}" cy="${y(l.duration)}" r="3.5" fill="${c}"><title>${esc(v.name)} · lap ${l.index} · ${l.duration.toFixed(3)}s</title></circle>`).join('')}).join('');
+return `<div class="chartScroll">${svgOpen(W,H)}${g}${ax}${lines}</svg></div>`}
+// Videos switched off in the plots (by name; kept while the page is open).
+const statsOff=new Set();
 function renderStats(){const D=statsData(),root=$('#statsBody'),f=t=>fmt(t,'sec');if(!D.length||!D.some(v=>v.d.length)){root.innerHTML='<p class="note">Record some laps first. Only valid laps are counted.</p>';return}
-const all=D.flatMap(v=>v.d),s=[...all].sort((a,b)=>a-b),tile=(b,l)=>`<div><b>${b}</b><span>${l}</span></div>`;
-root.innerHTML=`<div class="sumRow">${tile(D.filter(v=>v.d.length).length,'videos with laps')}${tile(all.length,'valid laps')}${tile(D.reduce((a,v)=>a+v.bad,0),'invalid laps')}${tile(f(s[0]),'fastest lap')}${tile(f(quant(s,.5)),'median lap')}${tile(f(meanOf(all)),'mean lap')}${tile(f(sdOf(all)),'std deviation')}${tile(f(s[s.length-1]),'slowest lap')}</div>
-<h3>Box plot of lap times per video</h3>${boxSvg(D)}<h3>Lap times by lap number</h3>${lineSvg(D)}
-<h3>Per video</h3><div class="tableScroll"><table><thead><tr><th>VIDEO</th><th>LAPS</th><th>INVALID</th><th>BEST</th><th>MEDIAN</th><th>MEAN</th><th>STD DEV</th><th>BEST 3</th></tr></thead><tbody>${D.map(v=>`<tr><td>${esc(v.name)}</td><td>${v.d.length}</td><td>${v.bad}</td><td>${v.d.length?f(v.s[0]):'—'}</td><td>${v.d.length?f(quant(v.s,.5)):'—'}</td><td>${v.d.length?f(meanOf(v.d)):'—'}</td><td>${v.d.length?f(sdOf(v.d)):'—'}</td><td>${v.best3?f(v.best3.total):'—'}</td></tr>`).join('')}</tbody></table></div>`}
-$('#statsBtn').onclick=()=>{renderStats();$('#statsModal').classList.remove('hidden')};$('#closeStats').onclick=()=>$('#statsModal').classList.add('hidden');$('#statsModal').addEventListener('pointerdown',e=>{if(e.target.id==='statsModal')e.target.classList.add('hidden')});
+D.forEach((v,i)=>v.c=hue(i,D.length));const P=D.filter(v=>v.d.length),V=P.filter(v=>!statsOff.has(v.name)),cw=Math.floor(root.clientWidth||900)-20,sel=V.flatMap(v=>v.d).sort((a,b)=>a-b);
+const all=D.flatMap(v=>v.d),s=[...all].sort((a,b)=>a-b),tile=(b,l)=>`<div><b>${b}</b><span>${l}</span></div>`,keep=root.closest('.statsBox')?.scrollTop||0;
+root.innerHTML=`<div class="sumRow">${tile(P.length,'videos with laps')}${tile(all.length,'valid laps')}${tile(D.reduce((a,v)=>a+v.bad,0),'invalid laps')}${tile(f(s[0]),'fastest lap')}${tile(f(quant(s,.5)),'median lap')}${tile(f(meanOf(all)),'mean lap')}${tile(f(sdOf(all)),'std deviation')}${tile(f(s[s.length-1]),'slowest lap')}</div>
+<h3>Videos in the plots</h3><div class="vidPick"><button class="btn" data-pick="all">All</button><button class="btn" data-pick="none">None</button>${P.map(v=>`<label class="chip${statsOff.has(v.name)?'':' on'}" title="${esc(v.name)}"><input type="checkbox" data-name="${esc(v.name)}"${statsOff.has(v.name)?'':' checked'}><i style="background:${v.c}"></i>${esc(v.name)}</label>`).join('')}</div>
+${V.length?`<h3>All laps of the videos shown (${sel.length})</h3><div class="chartScroll">${totalSvg(sel,cw)}</div><h3>Box plot of lap times per video</h3>${boxSvg(V,cw)}<h3>Lap times by lap number</h3>${lineSvg(V,cw)}`:'<p class="note">No video selected. Tick a video above to show it in the plots.</p>'}
+<h3>Per video</h3><div class="tableScroll"><table><thead><tr><th>VIDEO</th><th>LAPS</th><th>INVALID</th><th>BEST</th><th>MEDIAN</th><th>MEAN</th><th>STD DEV</th><th>BEST 3</th></tr></thead><tbody>${D.map(v=>`<tr><td>${esc(v.name)}</td><td>${v.d.length}</td><td>${v.bad}</td><td>${v.d.length?f(v.s[0]):'—'}</td><td>${v.d.length?f(quant(v.s,.5)):'—'}</td><td>${v.d.length?f(meanOf(v.d)):'—'}</td><td>${v.d.length?f(sdOf(v.d)):'—'}</td><td>${v.best3?f(v.best3.total):'—'}</td></tr>`).join('')}</tbody></table></div>`;if(root.closest('.statsBox'))root.closest('.statsBox').scrollTop=keep}
+$('#statsBody').addEventListener('change',e=>{const n=e.target.dataset?.name;if(n===undefined)return;e.target.checked?statsOff.delete(n):statsOff.add(n);renderStats()});
+$('#statsBody').addEventListener('click',e=>{const p=e.target.dataset?.pick;if(!p)return;statsData().filter(v=>v.d.length).forEach(v=>p==='all'?statsOff.delete(v.name):statsOff.add(v.name));renderStats()});
+$('#statsBtn').onclick=()=>{$('#statsModal').classList.remove('hidden');renderStats()};$('#closeStats').onclick=()=>$('#statsModal').classList.add('hidden');$('#statsModal').addEventListener('pointerdown',e=>{if(e.target.id==='statsModal')e.target.classList.add('hidden')});
+let statsRz=0;window.addEventListener('resize',()=>{clearTimeout(statsRz);statsRz=setTimeout(()=>{if(!$('#statsModal').classList.contains('hidden'))renderStats()},120)});
 renderHint();
 // Settings file: keys, Resolve settings, theme, time format and autoplay. Separate from the laps file.
-function settingsObj(){return{app:'vltl',kind:'settings',version:1,bindings:{...bindings},resolve:{font:lastFont,dashes:+$('#dashRatio').value,...lookGet()},theme:document.documentElement.dataset.theme,timeFormat:timeStyle,autoNext:$('#autoNext').checked}}
+function settingsObj(){return{app:'vltl',kind:'settings',version:1,bindings:{...bindings},resolve:{font:lastFont,dashes:+$('#dashRatio').value,...lookGet(),...optGet()},theme:document.documentElement.dataset.theme,timeFormat:timeStyle,autoNext:$('#autoNext').checked}}
 function applySettings(d){const n=[];if(d.bindings&&typeof d.bindings==='object'){Object.keys(defaults).forEach(k=>{if(typeof d.bindings[k]==='string')bindings[k]=d.bindings[k]});saveBindings();n.push('keys')}
-const r=d.resolve;if(r&&typeof r==='object'){if(typeof r.font==='string'&&r.font.trim()){setFontValue(r.font);lastFont=r.font;store.set('fpvLapFont',r.font);fontNote()}if(+r.dashes>=0&&+r.dashes<=5){$('#dashRatio').value=+r.dashes;store.set('fpvLapDashRatio',$('#dashRatio').value)}lookSet(r);lookSave();n.push('Resolve settings')}
+const r=d.resolve;if(r&&typeof r==='object'){if(typeof r.font==='string'&&r.font.trim()){setFontValue(r.font);lastFont=r.font;store.set('fpvLapFont',r.font);fontNote()}if(+r.dashes>=0&&+r.dashes<=5){$('#dashRatio').value=+r.dashes;store.set('fpvLapDashRatio',$('#dashRatio').value)}lookSet(r);lookSave();optSet({...optGet(),...Object.fromEntries(Object.keys(OUT0).filter(k=>k in r).map(k=>[k,r[k]]))});optSave();n.push('Resolve settings')}
 if(d.theme==='dark'||d.theme==='light'){applyTheme(d.theme);n.push('theme')}if(d.timeFormat==='tc'||d.timeFormat==='sec'){$('#timeMode').value=d.timeFormat;$('#timeMode').onchange();n.push('time format')}
 if(typeof d.autoNext==='boolean'){$('#autoNext').checked=d.autoNext;$('#autoNext').onchange({target:$('#autoNext')});n.push('autoplay')}return n}
 $('#exportSettings').onclick=()=>downloadText('vltl-settings.json',JSON.stringify(settingsObj(),null,2),'application/json');
 $('#importSettings').onclick=()=>$('#settingsInput').click();
 $('#settingsInput').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;let d;try{d=JSON.parse(await f.text());if(d.kind!=='settings')throw 0}catch(x){uiAlert('That is not a settings file saved by this page. Make one with File > Export settings.');return}const n=applySettings(d);uiAlert(n.length?'Settings loaded: '+n.join(', ')+'.':'The file had no settings I could use.')};
 // Offline use: the service worker (sw.js) keeps the page and its libraries in the browser cache; the browser can also install the page as an app.
-if('serviceWorker' in navigator&&(location.protocol==='https:'||/^(localhost|127\.0\.0\.1)$/.test(location.hostname)))navigator.serviceWorker.register('sw.js').catch(()=>{});
+// Held back for now (turn on with PWA=true when it is released). While it is off, a worker left over from an earlier test build is removed.
+const PWA=false;
+if(PWA){const l=document.createElement('link');l.rel='manifest';l.href='manifest.webmanifest';document.head.appendChild(l)}
+if('serviceWorker' in navigator&&(location.protocol==='https:'||/^(localhost|127\.0\.0\.1)$/.test(location.hostname))){if(PWA)navigator.serviceWorker.register('sw.js').catch(()=>{});else navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{})}
 </script></body></html>

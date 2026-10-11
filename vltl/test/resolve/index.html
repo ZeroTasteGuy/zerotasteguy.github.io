@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Resolve Guide</title>
+<meta name="description" content="Add the lap-timer overlay to DaVinci Resolve with one copied script, and install the HDZero OSD font.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1116'/%3E%3Cg font-family='Arial,Helvetica,sans-serif' font-weight='800' font-size='27' fill='%233dd68c' text-anchor='middle'%3E%3Ctext x='16' y='28'%3EV%3C/text%3E%3Ctext x='48' y='28'%3EL%3C/text%3E%3Ctext x='16' y='57'%3ET%3C/text%3E%3Ctext x='48' y='57'%3EL%3C/text%3E%3C/g%3E%3Cg fill='%238b96a5'%3E%3Crect x='27' y='19' width='10' height='3' rx='1.5'/%3E%3Crect x='27' y='48' width='10' height='3' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+@font-face{font-family:"HDZero OSD";src:url(HDZeroOSD.ttf) format("truetype");font-display:swap}@font-face{font-family:"Betaflight OSD";src:url(BetaflightOSD.ttf) format("truetype");font-display:swap}.osd.bf{font-family:"Betaflight OSD",monospace}
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark;--bg:#0e1116;--panel:#161b22;--panel2:#12161c;--text:#e6edf3;--muted:#8b96a5;--line:#262d38;--accent:#3dd68c;--accentText:#04130b;--blue:#5cc8ff;--shot:#2a4a73;--mark:#eb2828}
+:root[data-theme=light]{color-scheme:light;--bg:#f6f7f9;--panel:#fff;--panel2:#f3f5f8;--text:#16202e;--muted:#667085;--line:#e3e7ee;--accent:#16915f;--accentText:#fff;--blue:#0a74a8;--shot:#2a4a73}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:auto;padding:22px 16px 60px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:7px;font-weight:800;font-size:22px;line-height:1;color:var(--accent);text-decoration:none}
+.logo i{display:block;width:9px;height:2px;border-radius:2px;background:var(--muted);opacity:.6}
+.logo span{margin-left:10px;padding-left:12px;border-left:1px solid var(--line);font-size:15px;font-weight:600;color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:7px 12px;border-radius:8px;font:600 13px inherit;text-decoration:none;cursor:pointer}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accentText);padding:10px 18px;font-size:14px}
+.btn.primary:hover{filter:brightness(1.1);color:var(--accentText)}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px;letter-spacing:-.02em}
+h2{font-size:20px;margin:0 0 10px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+h2 .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accentText);font-size:14px;flex:none}
+h3{font-size:16px;margin:0 0 6px}
+p{margin:0 0 12px}
+section a{color:var(--accent)}
+.lead{color:var(--muted);font-size:17px;margin-bottom:20px}
+section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:18px}
+ol,ul{margin:0 0 12px;padding-left:22px}li{margin-bottom:6px}
+code,kbd{font:600 .88em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.scroll{overflow-x:auto;margin:6px 0 14px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:420px}
+th,td{text-align:left;padding:9px 12px;border-top:1px solid var(--line)}
+th{background:var(--panel2);color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;border-top:0}
+
+.note{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:10px 14px;margin:12px 0;font-size:14px}
+.shot{background:var(--shot);border-radius:10px;padding:22px 26px;display:flex;gap:30px;flex-wrap:wrap;align-items:flex-start;margin:14px 0}
+.osd{font-family:"HDZero OSD",monospace;color:#fff;font-size:30px;line-height:1.25;white-space:pre;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 0 #000}
+.osd.s{font-size:19px}
+.cap{color:var(--muted);font-size:13px;margin-top:8px}
+.dl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0 4px}
+.toc{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+.toc a{font-size:13px;font-weight:600;padding:5px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--text);text-decoration:none}
+.toc a:hover{border-color:var(--accent);color:var(--accent)}
+.step{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.step:first-of-type{border-top:0;padding-top:0;margin-top:6px}
+.step h3{display:flex;align-items:center;gap:9px;font-size:17px}
+.step h3 .sn{display:inline-grid;place-items:center;min-width:26px;height:22px;padding:0 7px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;flex:none}
+.fig{margin:10px 0 14px}
+.fig img{display:block;width:auto;max-width:100%;height:auto;border:1px solid var(--line);border-radius:10px;cursor:zoom-in;background:#000}
+.fig ol{margin:10px 0 0;padding-left:0;list-style:none;counter-reset:m}
+.fig ol li{counter-increment:m;position:relative;padding-left:32px;margin-bottom:6px}
+.fig ol li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:22px;height:22px;border-radius:50%;background:var(--mark);color:#fff;font-weight:700;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center}
+details{margin:8px 0}
+summary{cursor:pointer;font-weight:600;color:var(--accent)}
+#zoom{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;padding:16px;z-index:9;cursor:zoom-out}
+#zoom.on{display:flex}
+#zoom img{max-width:100%;max-height:100%;border-radius:8px}
+footer{color:var(--muted);font-size:13px;margin-top:26px}
+footer a{color:var(--accent)}
+@media(max-width:560px){h1{font-size:25px}section{padding:16px}.osd{font-size:24px}}
+</style></head><body><div class="wrap">
+<div class="bar"><a class="logo" href="../" aria-label="Video Lap Tracking Lab">V<i></i>L<i></i>T<i></i>L<span>Video Lap Tracking Lab</span></a><div><a class="btn" href="../">← Back to the lap timer</a> <button class="btn" id="themeBtn" type="button">Light mode</button></div></div>
+
+<h1>Lap timer overlay for DaVinci Resolve</h1>
+<p class="lead">Put live lap times on your HDZero footage. You mark your laps in the lap timer, copy one script, and paste it into Resolve. It works in the free version of DaVinci Resolve. Click any picture to enlarge it.</p>
+<nav class="toc" aria-label="Sections"><a href="#font">1 Font</a><a href="#start">2 Project and video</a><a href="#script">3 Run the script</a><a href="#result">4 Result</a><a href="#edit">5 Trim and edit</a><a href="#trouble">Problems?</a></nav>
+
+<section id="font">
+<h2><span class="n">1</span>Install the HDZero OSD font</h2>
+<p>Do this first, so the font is in Resolve's list later. The goggle OSD is drawn from a bitmap, not a normal font, so Resolve has nothing like it. This font is that bitmap converted to a real <code>.ttf</code>: wide, rounded-square letters and <b>digits that are all the same width</b>, so the numbers do not jitter as they count.</p>
+<div class="shot"><div><div class="osd s">F:4:25
+4S 3.93V
+MAXDAX 3
+0123456789</div><div class="cap">Live preview: this text is set in the font itself.</div></div></div>
+<div class="dl"><a class="btn primary" href="HDZeroOSD.ttf" download>↓ Download HDZeroOSD.ttf</a><a class="btn" href="HDZeroOSD-LICENSE.txt">License (MIT)</a></div>
+<h3 style="margin:16px 0 4px">Install</h3>
+<ol>
+<li>Download the file with the green button.</li>
+<li><b>Windows:</b> right-click the file → <b>Install for all users</b>.</li>
+<li><b>Mac:</b> double-click the file → <b>Install Font</b>.</li>
+<li>If DaVinci Resolve is open, <b>close it and start it again</b>. Resolve only reads the font list at start.</li>
+<li>That is all. The script in step 3 picks the font <b>HDZero OSD</b> by itself.</li>
+</ol>
+<h3 style="margin:16px 0 4px">What is in it</h3>
+<p>Digits, capital letters A–Z (lowercase shows as capitals, like the OSD), and <code>. : - + / % &amp; ( ) ! ? , ; = &lt; &gt; @ [ ] \ ^ _ #</code>. No arrows or battery symbols. It is a pixel font: scaled up a lot it looks blocky, like the OSD itself. It has no black edge, which is why the script adds a black outline.</p>
+<p style="color:var(--muted);font-size:14px">The shapes come from the HDZero goggle firmware font <code>BTFL_000.bmp</code> (<a href="https://github.com/hd-zero/hdzero-goggle">hd-zero/hdzero-goggle</a>, MIT license). This is an unofficial conversion, not made or endorsed by HDZero.</p>
+<h3 id="analogfont" style="margin:22px 0 4px">Flying analog? The Betaflight OSD font</h3>
+<p>The same idea for analog footage: Betaflight's default analog OSD font (MAX7456) as a <code>.ttf</code>. Install it the same way, then pick <b>Betaflight OSD</b> at the top of the Font list in the lap timer's <b>Resolve settings</b>.</p>
+<div class="shot"><div><div class="osd s bf">F:4:25
+4S 3.93V
+MAXDAX 3
+0123456789</div><div class="cap">Live preview in the Betaflight OSD font.</div></div></div>
+<div class="dl"><a class="btn primary" href="BetaflightOSD.ttf" download>↓ Download BetaflightOSD.ttf</a><a class="btn" href="BetaflightOSD-LICENSE.txt">License (GPL-3.0)</a></div>
+<p style="color:var(--muted);font-size:14px">Converted from <code>default.mcm</code> in <a href="https://github.com/betaflight/betaflight-configurator">betaflight/betaflight-configurator</a> (GPL-3.0). Capitals, digits and the usual punctuation; no symbols. Unofficial, not made or endorsed by Betaflight.</p>
+</section>
+
+<section id="start">
+<h2><span class="n">2</span>Project and video</h2>
+
+<div class="step">
+<h3><span class="sn">2.1</span>Create a project</h3>
+<div class="fig"><img src="img/02-new-project.png" alt="Create New Project dialog with a name typed in" loading="lazy">
+<ol><li data-n="1">Start Resolve, double-click <b>New Project</b> and type a name, for example <code>Lap Timer Overlay</code>.</li><li data-n="2">Click <b>Create</b>.</li></ol></div>
+</div>
+
+<div class="step">
+<h3><span class="sn">2.2</span>Add your video to the Media Pool</h3>
+<div class="fig"><img src="img/03-media-pool.png" alt="Dragging the video file from a folder window into the empty Media Pool" loading="lazy">
+<ol><li data-n="1">Drag your video file from its folder.</li><li data-n="2">Drop it into the <b>Media Pool</b>.</li></ol></div>
+</div>
+
+<div class="step">
+<h3><span class="sn">2.3</span>Put your video on the timeline</h3>
+<div class="fig"><img src="img/04-timeline.png" alt="The clip in the Media Pool and dragged onto the empty timeline" loading="lazy">
+<ol><li data-n="1">On the <b>Edit</b> page the clip now sits in the Media Pool. Drag it from there...</li><li data-n="2">...into the empty timeline. Resolve creates the timeline for you, and your video is on track <b>V1</b>.</li></ol></div>
+<div class="note">HDZero <code>.ts</code> files import fine. If Resolve cannot read yours, convert it to MP4 first with the <a href="https://github.com/ZeroTasteGuy/ts2mp4">ts2mp4 converter</a> (ffmpeg scripts for converting, upscaling and cropping <code>.ts</code> files).</div>
+<div class="note">Any frame rate works; the script reads it from your timeline. The timer is added on V2, above your video.</div>
+</div>
+</section>
+
+<section id="script">
+<h2><span class="n">3</span>Copy the script and run it</h2>
+
+<div class="step">
+<h3><span class="sn">3.1</span>Copy it from the lap timer</h3>
+<p>First mark your laps in the <a href="../">lap timer</a> until it shows your best 3 consecutive laps, with the same video file that is in Resolve.</p>
+<div class="fig"><img src="img/12-lap-timer.png" alt="Lap timer page with the Copy Resolve script button, the Font box and Dashes per character marked" loading="lazy">
+<ol>
+<li data-n="1">Click <b>Copy Resolve script</b>. The script now holds your best 3 laps.</li>
+<li data-n="2"><b>Font</b>: the page uses <b>HDZero OSD</b> when it is installed on your computer (step 1). If it is not, it starts with Open Sans. You can type any font name or pick one from the list. <b>Load my fonts</b> lists the fonts installed on this computer (Chrome and Edge ask once for permission). The font must be installed on the computer that runs Resolve.</li>
+<li data-n="3">Optional: <b>Dashes per character</b> is the length of the dashed line under the total. <code>1</code> fits the HDZero OSD font, about <code>1.5</code> fits normal fonts. It changes to 1 or 1.5 when you change the font, and you can set it by hand.</li>
+</ol></div>
+</div>
+
+<div class="step">
+<h3><span class="sn">3.2</span>Paste it into Resolve's console</h3>
+<ol>
+<li>In Resolve, open your project and make sure the timeline with your video on V1 is open (Edit page).</li>
+<li>Press <kbd>F6</kbd> (or open the menu <b>Workspace → Console</b>). A small console window opens.</li>
+<li>Click into the line at the bottom of the console, press <kbd>Ctrl</kbd>+<kbd>V</kbd> and then <kbd>Enter</kbd>. (If the console has a language button, choose <b>Lua</b>.)</li>
+<li>The console prints lines that start with <code>VLTL:</code>. The last one says <b>done</b>. The timer is now on V2 above your video.</li>
+</ol>
+</div>
+
+<div class="step">
+<h3><span class="sn">3.3</span>Check the result</h3>
+<div class="fig"><img src="img/05-console-result.png" alt="Console output ending in done, the timer clip on V2 and the VLTL bin in the Media Pool" loading="lazy">
+<ol><li data-n="1">The console prints lines that start with <code>VLTL:</code>. The last one says <b>done</b>.</li><li data-n="2">The timer is on <b>V2</b>, over the whole video.</li><li data-n="3">The very first time, the script also adds a small Text+ template to your Media Pool (a bin called <b>VLTL</b>). You do not need to touch it.</li></ol></div>
+<div class="note">If the video FPS and the timeline FPS do not divide evenly (for example a 90 fps video on a 60 fps timeline), the timers start and stop on the nearest timeline frame, a few milliseconds off. The frozen lap times shown at the end are still exact.</div>
+</div>
+
+<div class="step">
+<h3><span class="sn">3.4</span>What the script does for you</h3>
+<ul>
+<li>Reads your timeline frame rate and finds your video on V1 (by file name, or the clip under the playhead).</li>
+<li>Adds the timer on V2 with the same start and length as your video. It also works if the start of the clip is trimmed.</li>
+<li>Sets the font you chose, the size, the position in the top right, and a black outline.</li>
+<li>Fills in the timer so it counts the best 3 laps live and freezes each lap at its exact time.</li>
+</ul>
+<details>
+<summary>The look it sets (if you want to change it afterwards)</summary>
+<p>You can change any of these in the Inspector: click the timer on V2, then the <b>Title</b> tab.</p>
+<div class="scroll"><table>
+<tr><th>Where</th><th>Setting</th><th>Value</th></tr>
+<tr><td>Text tab</td><td>Font</td><td>the font you chose on the page (HDZero OSD, Regular by default)</td></tr>
+<tr><td>Text tab</td><td>Size</td><td>0.025</td></tr>
+<tr><td>Text tab</td><td>V Anchor</td><td>-1 (top: the lines grow downwards and the first line stays put)</td></tr>
+<tr><td>Layout tab</td><td>Center X / Y</td><td>0.78 / 0.844</td></tr>
+<tr><td>Shading tab, element 2</td><td>Enabled, outline, black</td><td>Thickness 0.06</td></tr>
+</table></div>
+<div class="note">Using another resolution or aspect ratio? Change only <b>Size</b> until the digits are as tall as the OSD digits, then adjust <b>Center X/Y</b>. If you change Size, scale the outline <b>Thickness</b> by the same factor.</div>
+</details>
+</div>
+</section>
+
+<section id="result">
+<h2><span class="n">4</span>Result</h2>
+<p>Back on the Edit page, move the playhead over your best 3 laps. The counters count up live, freeze when each lap ends, and show the 3-lap total on top.</p>
+<div class="fig"><img src="img/22-result.png" alt="Finished overlay in the top right of the video" loading="lazy">
+<ol><li data-n="1">Total of the 3 laps, a dashed line, then lap 1, lap 2 and lap 3 (frozen at their exact times).</li></ol></div>
+<p>This is how it looks with 1 dash per character:</p>
+<div class="shot"><div><div class="osd">14.956
+------
+04.989
+05.078
+04.889</div><div class="cap">With the HDZero OSD font and a black outline.</div></div></div>
+</section>
+
+<section id="edit">
+<h2><span class="n">5</span>Trim and edit your video</h2>
+<p>When the timer looks right, you can cut and trim as much as you like. <b>Link the video and the timer first</b>, so they stay lined up (the timers count from the start of the timer clip).</p>
+<ol>
+<li>In the timeline, select the timer clip on V2 and your video clip.</li>
+<li>Right-click one of them → <b>Link Clips</b> (shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd>). A tick next to it means they are linked.</li>
+<li>Now trim, cut and move the clips as much as you want. The video and the timer move together, so the timers stay in step with the video.</li>
+</ol>
+<div class="note">If you trim the video or the timer on its own (not linked) after the script ran, the timers no longer match the video. To redo it, delete the timer clip on V2 and run the script again.</div>
+</section>
+
+<section id="trouble">
+<h2>If something looks wrong</h2>
+<ul>
+<li><b>The console shows an error, or nothing happens:</b> open your project and the timeline first, then paste again. Check that you copied the whole script.</li>
+<li><b>"Could not tell which clip on V1 is your video":</b> your video must be on track V1. Put the playhead on it and run the script again. It also helps when the video in the lap timer has the same file name as the clip in Resolve.</li>
+<li><b>"Could not add the template":</b> add it by hand once. On the Edit page open <b>Effects → Titles</b>, drag <b>Text+</b> into the Media Pool, rename it <code>VLTL_TextPlus</code>, and run the script again.</li>
+<li><b>The font looks wrong or is missing:</b> the font has to be installed on the computer that runs Resolve. For HDZero OSD, install it as in step 1 and restart Resolve. Resolve only reads its font list at start. If you typed a font name, check the spelling.</li>
+<li><b>I ran it twice and now there are two timers:</b> every run adds a new title on V2. Delete the extra one.</li>
+<li><b>The timers start at the wrong moment:</b> the marks come from the video loaded in the lap timer. Make sure it is the same file as in Resolve, check the lap marks, then copy and run the script again (after deleting the old timer).</li>
+<li><b>The dashed line is too long or too short:</b> change <b>Dashes per character</b> in the lap timer, copy the script again, and delete the old timer first.</li>
+</ul>
+</section>
+
+<footer>Part of <a href="../">Video Lap Tracking Lab</a>. Everything stays in your browser; no video is uploaded. Screenshots are from DaVinci Resolve 21; other versions look a little different.</footer>
+</div>
+<div id="zoom" role="dialog" aria-label="Enlarged picture"><img alt=""></div>
+<script>
+(function(){
+function get(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+var btn=document.getElementById('themeBtn');
+function apply(t){document.documentElement.dataset.theme=t;btn.textContent=t==='dark'?'Light mode':'Dark mode';set('fpvLapTheme',t)}
+apply(get('fpvLapTheme')==='light'?'light':'dark');
+btn.onclick=function(){apply(document.documentElement.dataset.theme==='dark'?'light':'dark')};
+var z=document.getElementById('zoom'),zi=z.querySelector('img');
+document.addEventListener('click',function(e){var t=e.target;if(t.closest&&t.closest('.fig img')){zi.src=t.src;zi.alt=t.alt;z.classList.add('on')}else if(z.classList.contains('on')){z.classList.remove('on')}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')z.classList.remove('on')});
+})();
+</script>
+</body></html>
