@@ -483,14 +483,35 @@ function vltl_run()
     local tp = comp:GetToolList(false, "TextPlus")[1]
     local out = comp:GetToolList(false, "MediaOut")[1]
     pcall(function() comp:Lock() end)
-    pcall(function()
-      mt = comp:AddTool("MultiText", -32768, -32768)
-      if mt and out then out:ConnectInput("Input", mt) end
-      if mt and tp then tp:Delete() end
-    end)
+    pcall(function() mt = comp:AddTool("MultiText", -32768, -32768) end)
+    -- connect it to the clip output, then check that the link is really there (an unlinked node shows nothing)
+    local linked
+    if mt and out then
+      local function check() local ok, res = pcall(function() local c = out.Input:GetConnectedOutput() return c ~= nil and c:GetTool() == mt end) if ok then return res end end
+      pcall(function() out:ConnectInput("Input", mt) end)
+      linked = check()
+      if linked == false then pcall(function() out.Input = mt.Output end) linked = check() end
+    end
     pcall(function() comp:Unlock() end)
-    if not mt then say("could not add a MultiText node (needs Resolve 20 or newer). Using Text+ instead.") return tp end
+    say("MultiText node added:", mt ~= nil, "| linked to the clip output:", tostring(linked))
+    if not mt or linked == false then
+      if mt then pcall(function() mt:Delete() end) end
+      say("MultiText did not work here (needs Resolve 20 or newer). Using Text+ instead.")
+      return tp
+    end
+    if tp then pcall(function() tp:Delete() end) end
     return mt
+  end
+  -- prints every input of a node (id, name, type) so a wrong guess can be fixed from the console output
+  local function dump(tool)
+    local rows = {}
+    for _, inp in pairs(tool:GetInputList() or {}) do
+      local a = inp:GetAttrs()
+      rows[#rows + 1] = tostring(a.INPS_ID) .. "=" .. tostring(a.INPS_Name) .. "(" .. tostring(a.INPS_DataType) .. ")"
+    end
+    table.sort(rows)
+    say("MultiText inputs:", #rows)
+    for i = 1, #rows, 8 do say("  " .. table.concat(rows, "  ", i, math.min(i + 7, #rows))) end
   end
   -- MultiText: its text inputs (one per layer), in layer order
   local function layers(tool)
@@ -500,7 +521,13 @@ function vltl_run()
       if id then all[#all + 1] = id if id:find("StyledText") then L[#L + 1] = {id = id, inp = inp} end end
     end
     table.sort(L, function(x, y) local a, b = tonumber(x.id:match("%d+")) or 0, tonumber(y.id:match("%d+")) or 0 if a ~= b then return a < b end return x.id < y.id end)
-    if #L == 0 then table.sort(all) say("no text layer found. Inputs of the node:", table.concat(all, " ")) end
+    if #L == 0 then -- second try: any input that holds text
+      for _, inp in pairs(tool:GetInputList() or {}) do
+        local a = inp:GetAttrs()
+        if a.INPS_ID and a.INPS_DataType == "Text" then L[#L + 1] = {id = a.INPS_ID, inp = inp} end
+      end
+    end
+    if #L == 0 then say("no text layer found.") end
     return L
   end
   local function style(tool, id, k, n)
@@ -529,6 +556,7 @@ function vltl_run()
       style(tool, nil, 1, 1)
       return
     end
+    dump(tool)
     local L = layers(tool)
     if #L == 0 then return end
     local n = math.min(#L, LINE_COUNT)
@@ -538,6 +566,7 @@ function vltl_run()
       if lines then try(L[k].id, function() tool:SetInput(L[k].id, text(k, to)) end)
       else try(L[k].id, function() L[k].inp:SetExpression(expr(k, to)) end) end
       style(tool, L[k].id, k, n)
+      try("read back " .. L[k].id, function() say("layer", k, L[k].id, "now shows:", tostring(tool:GetInput(L[k].id)):sub(1, 60)) end)
     end
   end
 
