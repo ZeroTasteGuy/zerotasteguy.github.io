@@ -474,6 +474,7 @@ function vltl_run()
   end
 
   -- the text node of a clip; for MultiText the Text+ node of the template is swapped for a MultiText node
+  local DUMPED = false
   local function textTool(item)
     local comp = item:GetFusionCompByIndex(1)
     if not comp then return nil end
@@ -515,10 +516,10 @@ function vltl_run()
   end
   -- MultiText: its text inputs (one per layer), in layer order
   local function layers(tool)
-    local L, all = {}, {}
+    local L, all, byId = {}, {}, {}
     for _, inp in pairs(tool:GetInputList() or {}) do
       local id = inp:GetAttrs().INPS_ID
-      if id then all[#all + 1] = id if id:find("StyledText") then L[#L + 1] = {id = id, inp = inp} end end
+      if id then byId[id] = inp all[#all + 1] = id if id:find("StyledText") and not id:find("Character") then L[#L + 1] = {id = id, inp = inp} end end
     end
     table.sort(L, function(x, y) local a, b = tonumber(x.id:match("%d+")) or 0, tonumber(y.id:match("%d+")) or 0 if a ~= b then return a < b end return x.id < y.id end)
     if #L == 0 then -- second try: any input that holds text
@@ -528,13 +529,16 @@ function vltl_run()
       end
     end
     if #L == 0 then say("no text layer found.") end
-    return L
+    return L, byId
   end
   local function style(tool, id, k, n)
     local function s(name, v) local nid = id and id:gsub("StyledText", name) or name try(nid, function() tool:SetInput(nid, v) end) end
     s("Font", FONT) s("Style", STYLE) s("Size", SIZE) s("LineSpacing", LINE_SPACING) s("VerticalTopCenterBottom", V_ANCHOR)
     s("Center", {CENTER_X, CENTER_Y - (k - 1) * SIZE * 1.25 * LINE_SPACING})
     s("Enabled2", 1) s("Thickness2", OUTLINE) s("Red2", 0) s("Green2", 0) s("Blue2", 0)
+    if id then -- MultiText layer: text visible and not clipped, outline settings of this node
+      s("Clip", 0) s("Wrap", 0) s("Enable1", 1) s("Opacity1", 1) s("Enable2", 1) s("Thickness", OUTLINE)
+    end
   end
   -- fill one clip: the live expression (laps) or fixed lines (head, tail)
   local function fill(item, lines)
@@ -556,17 +560,33 @@ function vltl_run()
       style(tool, nil, 1, 1)
       return
     end
-    dump(tool)
-    local L = layers(tool)
+    if not DUMPED then DUMPED = true dump(tool) end
+    local L, byId = layers(tool)
     if #L == 0 then return end
     local n = math.min(#L, LINE_COUNT)
     say("MultiText:", #L, "text layer(s):", L[1].id, L[#L].id, "| using", n)
+    try("auto resolution", function() tool:SetInput("UseFrameFormatSettings", 1) end)
+    local probe = T(LAPS.s) - s0 + 30 -- a moment inside the laps, to read the text back
     for k = 1, n do
       local to = (k == n) and 99 or k -- with fewer layers than lines, the last layer gets the rest
-      if lines then try(L[k].id, function() tool:SetInput(L[k].id, text(k, to)) end)
-      else try(L[k].id, function() L[k].inp:SetExpression(expr(k, to)) end) end
+      -- the visible text box of the layer (TextValueN) and the layer's own StyledText: write both
+      local ids = {L[k].id}
+      local num = L[k].id:match("^Text(%d+)%.")
+      if num and byId["TextValue" .. num] then table.insert(ids, 1, "TextValue" .. num) end
+      for _, id in ipairs(ids) do
+        if lines then try(id, function() tool:SetInput(id, text(k, to)) end)
+        else try(id, function() byId[id]:SetExpression(expr(k, to)) end) end
+      end
       style(tool, L[k].id, k, n)
-      try("read back " .. L[k].id, function() say("layer", k, L[k].id, "now shows:", tostring(tool:GetInput(L[k].id)):sub(1, 60)) end)
+      for _, id in ipairs(ids) do
+        try("read back " .. id, function()
+          local v = tostring(tool:GetInput(id, probe)):gsub("\\n", "/")
+          say("layer", k, id, "| at frame", probe, "shows:", v:sub(1, 70), "| expression:", tostring(byId[id]:GetExpression()):sub(1, 25))
+        end)
+      end
+    end
+    for _, id in ipairs({"Text1.LayoutType", "Text1.LayoutWidth", "Text1.LayoutHeight", "Text1.Clip", "Text1.Wrap", "Text1.Enable1", "Text1.Opacity1", "Text1.Size", "Text1.Center", "Text1.Font", "Width", "Height", "UseFrameFormatSettings"}) do
+      try("read " .. id, function() say("  ", id, "=", tostring(tool:GetInput(id))) end)
     end
   end
 
