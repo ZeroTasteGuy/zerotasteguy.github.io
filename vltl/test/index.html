@@ -61,7 +61,6 @@ table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th{t
 <div class="bindRow" title="Space between the lines (Text+ Line Spacing, 1 = normal)"><span>Line spacing</span><input id="optLineSpacing" class="num" type="number" min=".5" max="3" step=".05"></div>
 <h3 class="setHead">Clips</h3>
 <div class="bindRow" title="One clip: a single title over the whole video (lightest for slow computers). Head, laps and tail: three clips one after the other on V2, so you can see the head and tail on the timeline and drag their edges to change them"><span>Clips on V2</span><select id="optMode" class="num" style="width:auto"><option value="single">One clip over the video</option><option value="pieces">Head, laps and tail clips</option></select></div>
-<div class="bindRow" title="Text+: all lines in one text. MultiText: every line is its own text layer, so you can move and style each line in Resolve (needs Resolve 20 or newer; experimental, please send what the console prints)"><span>Text tool</span><select id="optTool" class="num" style="width:auto"><option value="textplus">Text+</option><option value="multi">MultiText (experimental)</option></select></div>
 <div class="bindRow" title="How long the timer is on screen before the first lap starts (it shows zeros). 0 = it appears when the first lap starts"><span>Head (seconds before the laps)</span><input id="optHead" class="num" type="number" min="0" max="600" step=".1"></div>
 <div class="bindRow" title="How long the timer stays on screen after the last lap. Empty = until the video ends"><span>Tail (seconds after, empty = to the end)</span><input id="optTail" class="num" type="number" min="0" max="600" step=".1" placeholder="to end"></div>
 <h3 class="setHead">Text</h3>
@@ -178,13 +177,13 @@ function lookGet(){const o={};for(const k in LOOK0){const e=lookEl[k],v=parseFlo
 function lookSet(o){for(const k in LOOK0){const v=parseFloat(o?.[k]);lookEl[k].value=Number.isFinite(v)?v:LOOK0[k]}}
 function lookSave(){lookSet(lookGet());store.set('fpvLapLook',JSON.stringify(lookGet()))}
 try{lookSet(JSON.parse(store.get('fpvLapLook')))}catch(e){lookSet(null)}
-// Clip and text options of the Resolve timer (head/tail, clips, text tool, title, divider, labels, line spacing).
-const OUT0={mode:'single',tool:'textplus',head:0,tail:null,title:'',divider:'dashes',labels:false,lineSpacing:1};
-function optGet(){const num=(e,lo,hi,d)=>{const v=parseFloat(e.value);return Number.isFinite(v)?Math.min(hi,Math.max(lo,v)):d},t=$('#optTail').value.trim();return{mode:$('#optMode').value==='pieces'?'pieces':'single',tool:$('#optTool').value==='multi'?'multi':'textplus',head:num($('#optHead'),0,600,0),tail:t===''?null:num($('#optTail'),0,600,null),title:$('#optTitle').value.trim().slice(0,40),divider:['dashes','blank','none'].includes($('#optDivider').value)?$('#optDivider').value:'dashes',labels:$('#optLabels').checked,lineSpacing:num($('#optLineSpacing'),.5,3,1)}}
-function optSet(o){const p={...OUT0,...(o&&typeof o==='object'?o:{})};$('#optMode').value=p.mode==='pieces'?'pieces':'single';$('#optTool').value=p.tool==='multi'?'multi':'textplus';$('#optHead').value=+p.head>0?+p.head:0;$('#optTail').value=p.tail===null||p.tail===''||!Number.isFinite(+p.tail)?'':+p.tail;$('#optTitle').value=typeof p.title==='string'?p.title.slice(0,40):'';$('#optDivider').value=['dashes','blank','none'].includes(p.divider)?p.divider:'dashes';$('#optLabels').checked=!!p.labels;$('#optLineSpacing').value=+p.lineSpacing>0?+p.lineSpacing:1}
+// Clip and text options of the Resolve timer (head/tail, clips, title, divider, labels, line spacing).
+const OUT0={mode:'single',head:0,tail:null,title:'',divider:'dashes',labels:false,lineSpacing:1};
+function optGet(){const num=(e,lo,hi,d)=>{const v=parseFloat(e.value);return Number.isFinite(v)?Math.min(hi,Math.max(lo,v)):d},t=$('#optTail').value.trim();return{mode:$('#optMode').value==='pieces'?'pieces':'single',head:num($('#optHead'),0,600,0),tail:t===''?null:num($('#optTail'),0,600,null),title:$('#optTitle').value.trim().slice(0,40),divider:['dashes','blank','none'].includes($('#optDivider').value)?$('#optDivider').value:'dashes',labels:$('#optLabels').checked,lineSpacing:num($('#optLineSpacing'),.5,3,1)}}
+function optSet(o){const p={...OUT0,...(o&&typeof o==='object'?o:{})};$('#optMode').value=p.mode==='pieces'?'pieces':'single';$('#optHead').value=+p.head>0?+p.head:0;$('#optTail').value=p.tail===null||p.tail===''||!Number.isFinite(+p.tail)?'':+p.tail;$('#optTitle').value=typeof p.title==='string'?p.title.slice(0,40):'';$('#optDivider').value=['dashes','blank','none'].includes(p.divider)?p.divider:'dashes';$('#optLabels').checked=!!p.labels;$('#optLineSpacing').value=+p.lineSpacing>0?+p.lineSpacing:1}
 function optSave(){optSet(optGet());store.set('fpvLapOut',JSON.stringify(optGet()))}
 try{optSet(JSON.parse(store.get('fpvLapOut')))}catch(e){optSet(null)}
-['#optMode','#optTool','#optHead','#optTail','#optTitle','#optDivider','#optLabels','#optLineSpacing'].forEach(q=>$(q).addEventListener('change',optSave));
+['#optMode','#optHead','#optTail','#optTitle','#optDivider','#optLabels','#optLineSpacing'].forEach(q=>$(q).addEventListener('change',optSave));
 Object.values(lookEl).forEach(e=>e.addEventListener('change',lookSave));$('#lookReset').onclick=()=>{lookSet(LOOK0);lookSave();optSet(OUT0);optSave()};
 $('#resolveBtn').onclick=()=>$('#resolveModal').classList.remove('hidden');$('#closeResolve').onclick=()=>$('#resolveModal').classList.add('hidden');
 // Font of the Resolve timer: a dropdown. HDZero OSD is the default; the list can be filled with the system fonts (Chrome/Edge only) or a name can be typed (Other...).
@@ -213,7 +212,7 @@ function generateDaVinciExpression(three, rate, offset, dashes = 1, tokens = fal
   // title, labels (L1 / L2 / L3 in front of the laps), divider ('dashes', 'blank' or 'none').
   const o = { ...OUT0, ...opt };
   const toFrame = sec => Math.round((offset + sec) * rate);
-  // tokens=true leaves @START@ @E1@ @E2@ @E3@ @FPS@ @HEAD@ @TAIL@ @FROM@ @TO@ for the Resolve script to fill in from the real timeline.
+  // tokens=true leaves @START@ @E1@ @E2@ @E3@ @FPS@ @HEAD@ @TAIL@ for the Resolve script to fill in from the real timeline.
   const start = tokens ? '@START@' : toFrame(three[0].start / fps);
   const e1 = tokens ? '@E1@' : toFrame(three[0].end / fps);
   const e2 = tokens ? '@E2@' : toFrame(three[1].end / fps);
@@ -256,8 +255,7 @@ ${divider}
     table.insert(out, ${lab(3)}fmt(l3Secs))
   end
 
-  local from, to = ${tokens ? '@FROM@' : 1}, ${tokens ? '@TO@' : 99}
-  return table.concat(out, "\\n", from, math.min(to, #out))
+  return table.concat(out, "\\n")
 end)()`;
 }
 // The same formatting as fmt() in the expression, for the fixed head and tail text.
@@ -277,8 +275,7 @@ FONT, STYLE, SIZE = __FONT__, "Regular", __SIZE__
 CENTER_X, CENTER_Y, OUTLINE, V_ANCHOR = __CX__, __CY__, __OUTLINE__, -1
 LINE_SPACING = __LS__
 -- MODE "single": one clip over the whole video. MODE "pieces": a head clip (before the first lap), the laps clip and a tail clip (after the last lap).
--- TOOL "TextPlus" or "MultiText" (MultiText: each line goes into its own text layer).
-MODE, TOOL = __MODE__, __TOOL__
+MODE = __MODE__
 EXPR = [==[__EXPR__]==]
 HEAD_LINES = __HEADLINES__
 TAIL_LINES = __TAILLINES__
@@ -473,121 +470,32 @@ function vltl_run()
     return it
   end
 
-  -- the text node of a clip; for MultiText the Text+ node of the template is swapped for a MultiText node
-  local DUMPED = false
-  local function textTool(item)
-    local comp = item:GetFusionCompByIndex(1)
-    if not comp then return nil end
-    if TOOL ~= "MultiText" then return comp:GetToolList(false, "TextPlus")[1] end
-    local mt = comp:GetToolList(false, "MultiText")[1]
-    if mt then return mt end
-    local tp = comp:GetToolList(false, "TextPlus")[1]
-    local out = comp:GetToolList(false, "MediaOut")[1]
-    pcall(function() comp:Lock() end)
-    pcall(function() mt = comp:AddTool("MultiText", -32768, -32768) end)
-    -- connect it to the clip output, then check that the link is really there (an unlinked node shows nothing)
-    local linked
-    if mt and out then
-      local function check() local ok, res = pcall(function() local c = out.Input:GetConnectedOutput() return c ~= nil and c:GetTool() == mt end) if ok then return res end end
-      pcall(function() out:ConnectInput("Input", mt) end)
-      linked = check()
-      if linked == false then pcall(function() out.Input = mt.Output end) linked = check() end
-    end
-    pcall(function() comp:Unlock() end)
-    say("MultiText node added:", mt ~= nil, "| linked to the clip output:", tostring(linked))
-    if not mt or linked == false then
-      if mt then pcall(function() mt:Delete() end) end
-      say("MultiText did not work here (needs Resolve 20 or newer). Using Text+ instead.")
-      return tp
-    end
-    if tp then pcall(function() tp:Delete() end) end
-    return mt
-  end
-  -- prints every input of a node (id, name, type) so a wrong guess can be fixed from the console output
-  local function dump(tool)
-    local rows = {}
-    for _, inp in pairs(tool:GetInputList() or {}) do
-      local a = inp:GetAttrs()
-      rows[#rows + 1] = tostring(a.INPS_ID) .. "=" .. tostring(a.INPS_Name) .. "(" .. tostring(a.INPS_DataType) .. ")"
-    end
-    table.sort(rows)
-    say("MultiText inputs:", #rows)
-    for i = 1, #rows, 8 do say("  " .. table.concat(rows, "  ", i, math.min(i + 7, #rows))) end
-  end
-  -- MultiText: its text inputs (one per layer), in layer order
-  local function layers(tool)
-    local L, all, byId = {}, {}, {}
-    for _, inp in pairs(tool:GetInputList() or {}) do
-      local id = inp:GetAttrs().INPS_ID
-      if id then byId[id] = inp all[#all + 1] = id if id:find("StyledText") and not id:find("Character") then L[#L + 1] = {id = id, inp = inp} end end
-    end
-    table.sort(L, function(x, y) local a, b = tonumber(x.id:match("%d+")) or 0, tonumber(y.id:match("%d+")) or 0 if a ~= b then return a < b end return x.id < y.id end)
-    if #L == 0 then -- second try: any input that holds text
-      for _, inp in pairs(tool:GetInputList() or {}) do
-        local a = inp:GetAttrs()
-        if a.INPS_ID and a.INPS_DataType == "Text" then L[#L + 1] = {id = a.INPS_ID, inp = inp} end
-      end
-    end
-    if #L == 0 then say("no text layer found.") end
-    return L, byId
-  end
-  local function style(tool, id, k, n)
-    local function s(name, v) local nid = id and id:gsub("StyledText", name) or name try(nid, function() tool:SetInput(nid, v) end) end
-    s("Font", FONT) s("Style", STYLE) s("Size", SIZE) s("LineSpacing", LINE_SPACING) s("VerticalTopCenterBottom", V_ANCHOR)
-    s("Center", {CENTER_X, CENTER_Y - (k - 1) * SIZE * 1.25 * LINE_SPACING})
-    s("Enabled2", 1) s("Thickness2", OUTLINE) s("Red2", 0) s("Green2", 0) s("Blue2", 0)
-    if id then -- MultiText layer: text visible and not clipped, outline settings of this node
-      s("Clip", 0) s("Wrap", 0) s("Enable1", 1) s("Opacity1", 1) s("Enable2", 1) s("Thickness", OUTLINE)
-    end
-  end
   -- fill one clip: the live expression (laps) or fixed lines (head, tail)
   local function fill(item, lines)
-    local tool = textTool(item)
-    if not tool then say("could not reach the text node") return end
+    local comp = item:GetFusionCompByIndex(1)
+    local tool = comp and comp:GetToolList(false, "TextPlus")[1]
+    if not tool then say("could not reach the Text+ node") return end
     local s0 = item:GetStart()
-    local function expr(from, to)
-      local function f(sec) return T(sec) - s0 end
+    local function f(sec) return T(sec) - s0 end
+    if lines then
+      try("text", function() tool:SetInput("StyledText", table.concat(lines, "\\n")) end)
+    else
       local ex = EXPR
       ex = ex:gsub("@START@", f(LAPS.s)) ex = ex:gsub("@HEAD@", f(LAPS.h)) ex = ex:gsub("@TAIL@", f(LAPS.t))
       ex = ex:gsub("@E1@", f(LAPS.e1)) ex = ex:gsub("@E2@", f(LAPS.e2)) ex = ex:gsub("@E3@", f(LAPS.e3))
-      ex = ex:gsub("@FPS@", tostring(rate)) ex = ex:gsub("@FROM@", from) ex = ex:gsub("@TO@", to)
-      return ex
+      ex = ex:gsub("@FPS@", tostring(rate))
+      try("expression", function() tool.StyledText:SetExpression(ex) end)
     end
-    local function text(from, to) return table.concat(lines, "\\n", from, math.min(to, #lines)) end
-    if tool:GetAttrs().TOOLS_RegID ~= "MultiText" then
-      if lines then try("text", function() tool:SetInput("StyledText", text(1, 99)) end)
-      else try("expression", function() tool.StyledText:SetExpression(expr(1, 99)) end) end
-      style(tool, nil, 1, 1)
-      return
-    end
-    if not DUMPED then DUMPED = true dump(tool) end
-    local L, byId = layers(tool)
-    if #L == 0 then return end
-    local n = math.min(#L, LINE_COUNT)
-    say("MultiText:", #L, "text layer(s):", L[1].id, L[#L].id, "| using", n)
-    try("auto resolution", function() tool:SetInput("UseFrameFormatSettings", 1) end)
-    local probe = T(LAPS.s) - s0 + 30 -- a moment inside the laps, to read the text back
-    for k = 1, n do
-      local to = (k == n) and 99 or k -- with fewer layers than lines, the last layer gets the rest
-      -- the visible text box of the layer (TextValueN) and the layer's own StyledText: write both
-      local ids = {L[k].id}
-      local num = L[k].id:match("^Text(%d+)%.")
-      if num and byId["TextValue" .. num] then table.insert(ids, 1, "TextValue" .. num) end
-      for _, id in ipairs(ids) do
-        if lines then try(id, function() tool:SetInput(id, text(k, to)) end)
-        else try(id, function() byId[id]:SetExpression(expr(k, to)) end) end
-      end
-      style(tool, L[k].id, k, n)
-      for _, id in ipairs(ids) do
-        try("read back " .. id, function()
-          local v = tostring(tool:GetInput(id, probe)):gsub("\\n", "/")
-          say("layer", k, id, "| at frame", probe, "shows:", v:sub(1, 70), "| expression:", tostring(byId[id]:GetExpression()):sub(1, 25))
-        end)
-      end
-    end
-    for _, id in ipairs({"Text1.LayoutType", "Text1.LayoutWidth", "Text1.LayoutHeight", "Text1.Clip", "Text1.Wrap", "Text1.Enable1", "Text1.Opacity1", "Text1.Size", "Text1.Center", "Text1.Font", "Width", "Height", "UseFrameFormatSettings"}) do
-      try("read " .. id, function() say("  ", id, "=", tostring(tool:GetInput(id))) end)
-    end
+    try("font", function() tool:SetInput("Font", FONT) end)
+    try("style", function() tool:SetInput("Style", STYLE) end)
+    try("size", function() tool:SetInput("Size", SIZE) end)
+    try("line spacing", function() tool:SetInput("LineSpacing", LINE_SPACING) end)
+    try("center", function() tool:SetInput("Center", {CENTER_X, CENTER_Y}) end)
+    try("anchor", function() tool:SetInput("VerticalTopCenterBottom", V_ANCHOR) end)
+    try("outline", function()
+      tool:SetInput("Enabled2", 1) tool:SetInput("Thickness2", OUTLINE)
+      tool:SetInput("Red2", 0) tool:SetInput("Green2", 0) tool:SetInput("Blue2", 0)
+    end)
   end
 
   if MODE == "pieces" then
@@ -617,7 +525,7 @@ function generateResolveScript(three, dashes, name, font = 'HDZero OSD', look = 
   const secs = { s: three[0].start / fps, e1: three[0].end / fps, e2: three[1].end / fps, e3: three[2].end / fps };
   const laps = '{s=' + secs.s + ', e1=' + secs.e1 + ', e2=' + secs.e2 + ', e3=' + secs.e3 + ', h=' + (secs.s - (+p.head > 0 ? +p.head : 0)) + ', t=' + (tailSec === null ? -1 : secs.e3 + tailSec) + '}';
   const lines = l => '{' + l.map(luaStr).join(', ') + '}', live = fixedLines(three, dashes, p, true);
-  return RESOLVE_LUA.replace('__NAME__', () => JSON.stringify(ok ? name || '' : '')).replace('__FONT__', () => luaStr(font || 'HDZero OSD')).replace('__SIZE__', () => String(o.size)).replace('__CX__', () => String(o.x)).replace('__CY__', () => String(o.y)).replace('__OUTLINE__', () => String(o.outline)).replace('__LS__', () => String(+p.lineSpacing > 0 ? +p.lineSpacing : 1)).replace('__MODE__', () => pieces ? '"pieces"' : '"single"').replace('__TOOL__', () => p.tool === 'multi' ? '"MultiText"' : '"TextPlus"').replace('__HEADLINES__', () => lines(fixedLines(three, dashes, p, false)) + '\nLINE_COUNT = ' + live.length).replace('__TAILLINES__', () => lines(live)).replace('__LAPS__', () => laps).replace('__EXPR__', () => generateDaVinciExpression(three, 1, 0, dashes, true, pieces ? { ...p, head: 0, tail: null } : { ...p, tail: tailSec }));
+  return RESOLVE_LUA.replace('__NAME__', () => JSON.stringify(ok ? name || '' : '')).replace('__FONT__', () => luaStr(font || 'HDZero OSD')).replace('__SIZE__', () => String(o.size)).replace('__CX__', () => String(o.x)).replace('__CY__', () => String(o.y)).replace('__OUTLINE__', () => String(o.outline)).replace('__LS__', () => String(+p.lineSpacing > 0 ? +p.lineSpacing : 1)).replace('__MODE__', () => pieces ? '"pieces"' : '"single"').replace('__HEADLINES__', () => lines(fixedLines(three, dashes, p, false))).replace('__TAILLINES__', () => lines(live)).replace('__LAPS__', () => laps).replace('__EXPR__', () => generateDaVinciExpression(three, 1, 0, dashes, true, pieces ? { ...p, head: 0, tail: null } : { ...p, tail: tailSec }));
 }
 // Copies the single live-timer Lua expression to the clipboard.
 async function copyText(text){try{await navigator.clipboard.writeText(text);return true}catch(e){uiAlert('Could not copy to clipboard. Check browser clipboard permissions.');return false}}
