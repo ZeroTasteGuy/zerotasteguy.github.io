@@ -6,7 +6,7 @@
 <meta name="description" content="Add the lap-timer overlay to DaVinci Resolve with one copied script, and install the HDZero OSD font.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1116'/%3E%3Cg font-family='Arial,Helvetica,sans-serif' font-weight='800' font-size='27' fill='%233dd68c' text-anchor='middle'%3E%3Ctext x='16' y='28'%3EV%3C/text%3E%3Ctext x='48' y='28'%3EL%3C/text%3E%3Ctext x='16' y='57'%3ET%3C/text%3E%3Ctext x='48' y='57'%3EL%3C/text%3E%3C/g%3E%3Cg fill='%238b96a5'%3E%3Crect x='27' y='19' width='10' height='3' rx='1.5'/%3E%3Crect x='27' y='48' width='10' height='3' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
 <style>
-@font-face{font-family:"HDZero OSD";src:url(HDZeroOSD.ttf) format("truetype");font-display:swap}
+@font-face{font-family:"HDZero OSD";src:url(HDZeroOSD.ttf) format("truetype");font-display:swap}@font-face{font-family:"Betaflight OSD";src:url(BetaflightOSD.ttf) format("truetype");font-display:swap}.osd.bf{font-family:"Betaflight OSD",monospace}
 :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark;--bg:#0e1116;--panel:#161b22;--panel2:#12161c;--text:#e6edf3;--muted:#8b96a5;--line:#262d38;--accent:#3dd68c;--accentText:#04130b;--blue:#5cc8ff;--shot:#2a4a73;--mark:#eb2828}
 :root[data-theme=light]{color-scheme:light;--bg:#f6f7f9;--panel:#fff;--panel2:#f3f5f8;--text:#16202e;--muted:#667085;--line:#e3e7ee;--accent:#16915f;--accentText:#fff;--blue:#0a74a8;--shot:#2a4a73}
 *{box-sizing:border-box}
@@ -87,6 +87,14 @@ MAXDAX 3
 <h3 style="margin:16px 0 4px">What is in it</h3>
 <p>Digits, capital letters A–Z (lowercase shows as capitals, like the OSD), and <code>. : - + / % &amp; ( ) ! ? , ; = &lt; &gt; @ [ ] \ ^ _ #</code>. No arrows or battery symbols. It is a pixel font: scaled up a lot it looks blocky, like the OSD itself. It has no black edge, which is why the script adds a black outline.</p>
 <p style="color:var(--muted);font-size:14px">The shapes come from the HDZero goggle firmware font <code>BTFL_000.bmp</code> (<a href="https://github.com/hd-zero/hdzero-goggle">hd-zero/hdzero-goggle</a>, MIT license). This is an unofficial conversion, not made or endorsed by HDZero.</p>
+<h3 id="analogfont" style="margin:22px 0 4px">Flying analog? The Betaflight OSD font</h3>
+<p>The same idea for analog footage: Betaflight's default analog OSD font (MAX7456) as a <code>.ttf</code>. Install it the same way, then pick <b>Betaflight OSD</b> at the top of the Font list in the lap timer's <b>Resolve settings</b>.</p>
+<div class="shot"><div><div class="osd s bf">F:4:25
+4S 3.93V
+MAXDAX 3
+0123456789</div><div class="cap">Live preview in the Betaflight OSD font.</div></div></div>
+<div class="dl"><a class="btn primary" href="BetaflightOSD.ttf" download>↓ Download BetaflightOSD.ttf</a><a class="btn" href="BetaflightOSD-LICENSE.txt">License (GPL-3.0)</a></div>
+<p style="color:var(--muted);font-size:14px">Converted from <code>default.mcm</code> in <a href="https://github.com/betaflight/betaflight-configurator">betaflight/betaflight-configurator</a> (GPL-3.0). Capitals, digits and the usual punctuation; no symbols. Unofficial, not made or endorsed by Betaflight.</p>
 </section>
 
 <section id="start">
