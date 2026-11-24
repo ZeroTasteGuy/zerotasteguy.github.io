@@ -1,0 +1,18 @@
+# Copy this file to add a race, e.g. results/2026/2026-05-17-chapter-race.yml
+# The file name (without .yml) becomes the page address: maxd.ax/results/2026-05-17-chapter-race/
+# Files starting with _ are ignored. Only "event" and "date" are required.
+# Delete the lines you don't need.
+
+event: Chapter Race 3              # race name
+date: 2026-05-17                   # YYYY-MM-DD
+location: Hamburg                  # city or track
+country: Germany
+series: MultiGP Global Qualifier   # league or series, if any
+class: Open                        # class / spec you flew
+position: 3                        # your final place
+pilots: 24                         # how many pilots raced
+best_lap: 18.432                   # seconds, or 1:02.345
+best_3_laps: 57.120                # best 3 consecutive laps
+source: multigp                    # livetime, multigp, fpvscores, fpvtrackside, copterrace, fpvgg, f9u, manual, other
+url: https://www.multigp.com/races/view/?race=12345   # link to the full results
+notes: Short note shown on the race page.

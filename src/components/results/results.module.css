@@ -1,0 +1,126 @@
+.summaries {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.summary {
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.summary:hover {
+  background: var(--glass-bg-hover);
+}
+.summaryActive {
+  border-color: var(--ifm-color-primary);
+}
+.summaryYear {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem 1rem;
+  margin: 0;
+}
+.stats dt {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--site-muted);
+  margin: 0;
+}
+.stats dd {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+.panel {
+  padding: 1rem 1.25rem;
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.filters select {
+  font: inherit;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-item);
+  color: inherit;
+}
+.filters option {
+  background: var(--ifm-background-surface-color);
+}
+.tableWrap {
+  overflow-x: auto;
+}
+.table {
+  display: table;
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+}
+.table th,
+.table td {
+  border: 0;
+  border-bottom: 1px solid var(--glass-border);
+  background: transparent;
+  padding: 0.6rem 0.75rem;
+  vertical-align: top;
+}
+.table th {
+  text-align: left;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  color: var(--site-muted);
+}
+.table thead tr {
+  background: transparent;
+}
+.table td:nth-child(2) {
+  min-width: 12rem;
+}
+.table tr {
+  background: transparent;
+  border: 0;
+}
+.table tbody tr:hover {
+  background: var(--glass-item);
+}
+.table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.nowrap {
+  white-space: nowrap;
+}
+.sub {
+  font-size: 0.85rem;
+  color: var(--site-muted);
+}
+.details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem 1.5rem;
+  margin: 0;
+}
+.details dt {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--site-muted);
+}
+.details dd {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
