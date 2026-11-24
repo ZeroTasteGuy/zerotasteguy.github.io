@@ -1,26 +1,43 @@
 .hero {
-  padding: 5rem 0 4.5rem;
-  border-bottom: 1px solid var(--site-line);
+  padding: 3.5rem 0 2rem;
   text-align: center;
 }
 .title {
-  font-size: clamp(2.8rem, 9vw, 5rem);
-  font-weight: 800;
+  font-size: clamp(3.2rem, 12vw, 6.5rem);
+  font-weight: 900;
   font-style: italic;
-  letter-spacing: -0.03em;
-  margin-bottom: 0.5rem;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 0;
 }
 .dot {
   color: var(--ifm-color-primary);
 }
-.tagline {
-  color: var(--site-muted);
-  font-size: 1.25rem;
-  margin-bottom: 2rem;
+.intro {
+  text-align: center;
+  padding: 1.75rem 1.5rem 2rem;
+}
+.introTitle {
+  color: var(--ifm-color-primary);
+  font-size: 1.35rem;
+  margin-bottom: 0.5rem;
+  text-wrap: balance;
+}
+.introText {
+  max-width: 60ch;
+  margin: 0 auto 1.5rem;
 }
 .buttons {
   display: flex;
   gap: 0.75rem;
   justify-content: center;
   flex-wrap: wrap;
+}
+.block {
+  margin-top: 3rem;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
 }

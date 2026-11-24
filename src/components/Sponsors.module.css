@@ -1,21 +1,17 @@
 .section {
-  padding: 1rem 0 4rem;
-}
-.heading {
-  color: var(--ifm-color-primary);
-  font-size: 1.6rem;
-  margin-bottom: 1.25rem;
+  margin: 3rem 0 1rem;
 }
 
-/* Endless logo strip: the list is rendered twice and the track slides by
-   exactly one copy, so the loop has no visible jump. */
+/* Endless logo strip inside a glass box: the list is rendered twice and the
+   track slides by exactly one copy, so the loop has no visible jump. */
+.box {
+  padding: 0.5rem 0;
+  overflow: hidden;
+}
 .viewport {
   overflow: hidden;
-  border-top: 1px solid var(--site-line);
-  border-bottom: 1px solid var(--site-line);
-  background: var(--site-panel);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
 .track {
   list-style: none;

@@ -26,12 +26,20 @@ const sections = [
 export default function Home(): ReactNode {
   return (
     <Layout description="FPV tools, documentation and race results by maxd.ax.">
-      <header className={`hex-bg ${styles.hero}`}>
-        <div className="container">
+      <main className="container">
+        <header className={styles.hero}>
           <Heading as="h1" className={styles.title}>
             maxd<span className={styles.dot}>.</span>ax
           </Heading>
-          <p className={styles.tagline}>FPV tools, documentation and race results.</p>
+        </header>
+
+        <div className={`glass ${styles.intro}`}>
+          <Heading as="h2" className={styles.introTitle}>
+            FPV tools, documentation and race results
+          </Heading>
+          <p className={styles.introText}>
+            Free tools that run in your browser, guides to get the most out of them, and results from the races I fly.
+          </p>
           <div className={styles.buttons}>
             <Link className="button button--primary button--lg" to="pathname:///vltl/" target="_self">
               Open the lap timer
@@ -41,20 +49,23 @@ export default function Home(): ReactNode {
             </Link>
           </div>
         </div>
-      </header>
-      <main className="container margin-vert--xl">
-        <div className="row">
-          {sections.map(s => (
-            <div key={s.title} className="col col--4 margin-bottom--md">
-              <Link className="site-card" to={s.to}>
+
+        <section className={styles.block}>
+          <Heading as="h2" className="section-title">
+            Explore
+          </Heading>
+          <div className={styles.cards}>
+            {sections.map(s => (
+              <Link key={s.title} className="site-card" to={s.to}>
                 <Heading as="h3">{s.title}</Heading>
                 <p>{s.text}</p>
               </Link>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </section>
+
+        <Sponsors />
       </main>
-      <Sponsors />
     </Layout>
   );
 }
