@@ -355,3 +355,31 @@ a.site-card:hover {
     font-size: 24px;
   }
 }
+
+/* ---- Project docs: figures with captions ---- */
+.proj-fig {
+  margin: 1.25rem 0;
+}
+.proj-fig p {
+  margin: 0;
+}
+.proj-fig img {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--site-line);
+  border-radius: 10px;
+}
+.proj-fig figcaption {
+  color: var(--site-muted);
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+}
+.proj-fig--narrow {
+  max-width: 520px;
+}
+.proj-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0 1rem;
+  align-items: start;
+}
