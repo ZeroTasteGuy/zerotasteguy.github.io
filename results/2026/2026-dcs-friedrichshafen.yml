@@ -11,3 +11,4 @@ pilots: 54
 source: livefpv
 url: https://aircrasher.livefpv.com/results/?p=event_overall_ranking&id=523190
 notes: Combined result of the three finals (2nd, 12th and 7th), worked out from the LiveFPV results (events 523190, 523345, 523506) with DCS points (121 minus place). The official result is not published yet.
+notes_de: "Gesamtergebnis aus den drei Finals (2., 12. und 7.), berechnet aus den LiveFPV-Ergebnissen (Events 523190, 523345, 523506) mit DCS-Punkten (121 minus Platz). Das offizielle Ergebnis ist noch nicht veröffentlicht."

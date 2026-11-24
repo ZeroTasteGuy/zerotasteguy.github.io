@@ -1,0 +1,10 @@
+{
+  "version.label": {
+    "message": "Aktuell",
+    "description": "The label for version current"
+  },
+  "sidebar.docsSidebar.category.Video Lap Tracking Lab": {
+    "message": "Video Lap Tracking Lab",
+    "description": "The label for category 'Video Lap Tracking Lab' in sidebar 'docsSidebar'"
+  }
+}

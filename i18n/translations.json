@@ -1,0 +1,22 @@
+{
+  "docs/intro.md": {
+    "source": "en",
+    "en": "2fecce13d58def93",
+    "de": "bd0eb9e6df76254c"
+  },
+  "docs/vltl/index.md": {
+    "source": "en",
+    "en": "3580c06d4032b65b",
+    "de": "27ef1a2d96b8ffee"
+  },
+  "docs/vltl/resolve-guide.mdx": {
+    "source": "en",
+    "en": "dab56f3d7c01c5ec",
+    "de": "c2942a8599cd6349"
+  },
+  "src/pages/about.mdx": {
+    "source": "en",
+    "en": "cf25d83264790366",
+    "de": "48fa0c1a7eb58372"
+  }
+}

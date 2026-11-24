@@ -20,6 +20,8 @@ export type RaceResult = {
   bestLap?: number; // seconds
   best3Laps?: number; // seconds
   notes?: string;
+  /** German version of notes, shown on the German site. */
+  notesDe?: string;
 };
 
 export type YearSummary = {

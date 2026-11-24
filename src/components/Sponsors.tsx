@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import ThemedImage from '@theme/ThemedImage';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import Heading from '@theme/Heading';
+import Translate from '@docusaurus/Translate';
 import {sponsors, type Sponsor} from '@site/src/data/sponsors';
 import styles from './Sponsors.module.css';
 
@@ -42,7 +43,7 @@ export default function Sponsors(): ReactNode {
   return (
     <section className={styles.section} aria-labelledby="sponsors-heading">
       <Heading as="h2" id="sponsors-heading" className="section-title">
-        Sponsors
+        <Translate id="home.sponsors.heading">Sponsors</Translate>
       </Heading>
       <div className={clsx('glass', styles.box)}>
         <div className={styles.viewport}>

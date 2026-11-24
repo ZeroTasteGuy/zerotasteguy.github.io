@@ -355,3 +355,9 @@ a.site-card:hover {
     font-size: 24px;
   }
 }
+
+/* Note on machine-translated pages (src/theme/DocItem/Content). */
+.translation-note {
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}

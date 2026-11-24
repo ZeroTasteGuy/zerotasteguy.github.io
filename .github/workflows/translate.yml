@@ -1,0 +1,53 @@
+name: Translate new pages
+
+# After a push to main, translates new or changed docs and Markdown pages into the
+# other language with DeepL (scripts/translate.mjs), commits the result to main and
+# starts the deploy again. Needs the repository secret DEEPL_API_KEY (a free DeepL
+# API key works). Without it this workflow does nothing.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'src/pages/**/*.md'
+      - 'src/pages/**/*.mdx'
+      - 'i18n/de/docusaurus-plugin-content-docs/**'
+      - 'i18n/de/docusaurus-plugin-content-pages/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: translate
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Translate
+        env:
+          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+        run: node scripts/translate.mjs
+      - name: Commit and redeploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A docs src/pages i18n
+          git commit -m "Translate new and changed pages"
+          git push
+          # Pushes made by this workflow don't start other workflows, so start the deploy here.
+          gh workflow run deploy.yml --ref main
