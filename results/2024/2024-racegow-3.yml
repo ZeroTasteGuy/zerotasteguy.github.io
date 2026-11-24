@@ -1,11 +1,10 @@
 event: RaceGOW 3
 type: series
-status: self-reported
 date: 2024
 series: RaceGOW (International Game of Whoop)
 class: Whoop
 position: 15
-pilots: 300
+pilots: 535
 source: other
 url: https://www.racegow.com/racegow5/racegow3
-notes: Online whoop racing league. Season leaderboard place; the year is from memory and still needs checking against the RaceGOW 3 leaderboard.
+notes: "Online whoop racing league over 8 tracks. 15th of 535 on the season total-time leaderboard (25th in the points standings). The year is from memory; the RaceGOW site does not show it."

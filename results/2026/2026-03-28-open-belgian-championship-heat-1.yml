@@ -4,7 +4,10 @@ location: Leopoldsburg
 country: Belgium
 series: Open Belgian Drone Racing Championship
 class: 5"
+qualifying: 9
 position: 6
 pilots: 39
+best_lap: 16.118
+best_3_laps: 48.558
 source: fpvscores
 url: https://fpvscores.com/events/EqRMWNRgpu/ranking
