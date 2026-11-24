@@ -1,18 +1,21 @@
 // Sponsors shown on the homepage.
-// To add a logo: put the file in static/img/sponsors/ and set `logo` to its path,
-// e.g. '/img/sponsors/tattu.svg'. Logos should look good on a dark gray background
-// (a white or light version works best). Without a logo the name is shown instead.
+// Logos live in static/img/sponsors/. Each logo is shown in its own colours in
+// light mode. For dark mode, either give a separate `logoDark` file or set
+// `invertInDark` for black-only logos (they then show white).
 export type Sponsor = {
   name: string;
-  what: string;
+  what?: string;
   url?: string;
   logo?: string;
+  logoDark?: string;
+  invertInDark?: boolean;
 };
 
 export const sponsors: Sponsor[] = [
-  {name: 'Tattu', what: 'Batteries'},
-  {name: 'Gemfan', what: 'Propellers'},
-  {name: 'T-Hobby', what: 'Motors and electronics'},
-  {name: 'Superbrezn', what: ''},
-  {name: 'Sticky Fingers', what: ''},
+  {name: 'Tattu', what: 'Batteries', logo: '/img/sponsors/tattu.svg', invertInDark: true},
+  {name: 'Gemfan', what: 'Propellers', logo: '/img/sponsors/gemfan.svg', logoDark: '/img/sponsors/gemfan-dark.svg'},
+  {name: 'T-Hobby', what: 'Motors and electronics', logo: '/img/sponsors/t-hobby.svg', invertInDark: true},
+  {name: 'Superbrezn', logo: '/img/sponsors/superbrezn.svg'},
+  {name: 'Sticky Fingers', logo: '/img/sponsors/sticky-fingers.svg'},
+  {name: 'Rotormaniacs', logo: '/img/sponsors/rotormaniacs.webp'},
 ];

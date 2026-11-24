@@ -11,7 +11,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 16px;
 }
 .tile {
@@ -36,9 +36,12 @@ a.tile:hover {
   text-decoration: none;
 }
 .logo {
-  max-height: 56px;
-  max-width: 100%;
+  height: 64px;
+  width: 100%;
   object-fit: contain;
+}
+[data-theme='dark'] .invertInDark {
+  filter: invert(1);
 }
 .wordmark {
   font-size: 1.35rem;
