@@ -107,9 +107,8 @@ export default function Home(): ReactNode {
       <div className={styles.heroBg} aria-hidden="true" />
       <main className={`container ${styles.page}`}>
         <header className={styles.hero}>
-          <img className={styles.heroLogo} src="/img/logo.svg" alt="" width="132" height="132" />
           <Heading as="h1" className={styles.wordmark}>
-            <span className={styles.wmAccent}>MAXD</span>.AX
+            <span className={styles.wmAccent}>maxd</span>.ax
           </Heading>
         </header>
 

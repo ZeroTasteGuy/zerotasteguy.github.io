@@ -150,10 +150,6 @@ body {
 .footer__link-item {
   text-align: center;
 }
-.footer__logo {
-  max-width: 96px;
-  margin-top: 0.5rem;
-}
 .footer,
 .footer--dark {
   --ifm-footer-background-color: rgba(115, 115, 115, 0.05);

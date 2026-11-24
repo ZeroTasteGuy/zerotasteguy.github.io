@@ -29,11 +29,6 @@
   gap: 1.5rem;
   padding: 3rem 0 2rem;
 }
-.heroLogo {
-  width: clamp(72px, 14vw, 132px);
-  height: auto;
-  flex: none;
-}
 .wordmark {
   margin: 0;
   font-size: clamp(3rem, 12vw, 7rem);
