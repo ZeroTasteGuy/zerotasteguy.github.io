@@ -76,6 +76,46 @@
     {
       "en": "gates",
       "de": "Gates"
+    },
+    {
+      "en": "race gates",
+      "de": "Race Gates"
+    },
+    {
+      "en": "race gate",
+      "de": "Race Gate"
+    },
+    {
+      "en": "guy lines",
+      "de": "Abspannseile"
+    },
+    {
+      "en": "race direction",
+      "de": "Rennleitung"
+    },
+    {
+      "en": "chapters",
+      "de": "Chapter"
+    },
+    {
+      "en": "MultiGP European Championship",
+      "de": "MultiGP European Championship"
+    },
+    {
+      "en": "track build",
+      "de": "Streckenaufbau"
+    },
+    {
+      "en": "Aircrasher",
+      "de": "Aircrasher"
+    },
+    {
+      "en": "Bavarian Multirotor",
+      "de": "Bavarian Multirotor"
+    },
+    {
+      "en": "MultiGP",
+      "de": "MultiGP"
     }
   ]
 }

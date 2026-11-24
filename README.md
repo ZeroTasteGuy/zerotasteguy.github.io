@@ -5,7 +5,7 @@ Source of [maxd.ax](https://maxd.ax), built with [Docusaurus](https://docusaurus
 ## Layout
 
 - `src/pages/`: homepage, Tools, Race results and About pages.
-- `docs/`: documentation (sidebar is generated from the folders).
+- `docs/`: documentation (sidebar is generated from the folders). `docs/projects/` holds the project write-ups, their images are in `docs/projects/img/`.
 - `static/`: files served as they are. `static/vltl/` is the Video Lap Tracking Lab app, so edit VLTL there.
 - `src/css/custom.css`: colours and site-wide styles.
 - `docusaurus.config.ts`: navbar, footer and social links.

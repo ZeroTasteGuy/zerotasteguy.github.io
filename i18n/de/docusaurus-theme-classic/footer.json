@@ -34,5 +34,9 @@
   "link.item.label.GitHub": {
     "message": "GitHub",
     "description": "The label of footer link with label=GitHub linking to https://github.com/ZeroTasteGuy"
+  },
+  "copyright": {
+    "message": "© 2026 maxd.ax",
+    "description": "The footer copyright"
   }
 }

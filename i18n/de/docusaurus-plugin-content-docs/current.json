@@ -6,5 +6,9 @@
   "sidebar.docsSidebar.category.Video Lap Tracking Lab": {
     "message": "Video Lap Tracking Lab",
     "description": "The label for category 'Video Lap Tracking Lab' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Projects": {
+    "message": "Projekte",
+    "description": "The label for category 'Projects' in sidebar 'docsSidebar'"
   }
 }

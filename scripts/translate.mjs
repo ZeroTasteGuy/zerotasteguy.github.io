@@ -250,7 +250,7 @@ class Job {
       const joined = head + parts.map(i => this.out[i]).join(' ') + tail;
       // A broken translation (lost tokens, or the model repeating itself) is not used.
       if (!m.check(joined) || (looped(joined) && !looped(m.masked))) {
-        warnings.push(`Kept in the original language (formatting got lost): ${core.slice(0, 80)}`);
+        warnings.push(`Kept in the original language (translation failed): ${core.slice(0, 80)}`);
         return text;
       }
       return lead + m.unmask(joined) + trail;
@@ -261,9 +261,26 @@ class Job {
     const t = await translator(this.target);
     // One sentence at a time: batching pads the inputs, which makes these models
     // produce garbage for the shorter sentences.
+    // A translation much shorter or longer than the original usually means the model
+    // left something out or got stuck. Then it tries again more carefully (beam
+    // search), and if that is also off, the sentence counts as failed.
+    const sig = x => (x.match(/<\/?[xp]\d+\/?>/g) ?? []).sort().join();
+    const plain = x => x.replace(/<\/?[xp]\d+\/?>/g, '').trim().length;
+    const ok = (src, out) => {
+      const ratio = plain(out) / Math.max(1, plain(src));
+      return ratio > 0.6 && ratio < 2.2 && !(looped(out) && !looped(src)) && sig(src) === sig(out);
+    };
     for (const [i, unit] of this.units.entries()) {
-      const [r] = await t(unit, {max_new_tokens: Math.min(512, 2 * unit.length + 20)});
-      this.out[i] = r.translation_text;
+      const max = Math.min(512, 2 * unit.length + 20);
+      let [r] = await t(unit, {max_new_tokens: max});
+      if (!ok(unit, r.translation_text)) [r] = await t(unit, {max_new_tokens: max, num_beams: 4});
+      if (plain(unit) > 12 && !ok(unit, r.translation_text)) {
+        // Only this sentence stays in the original language; the rest of the line is translated.
+        warnings.push(`Sentence kept in the original language: ${unit.slice(0, 80)}`);
+        this.out[i] = unit;
+      } else {
+        this.out[i] = r.translation_text;
+      }
     }
   }
 }
