@@ -23,7 +23,11 @@ const config: Config = {
 
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'de'],
+    localeConfigs: {
+      en: {label: 'English', htmlLang: 'en'},
+      de: {label: 'Deutsch', htmlLang: 'de'},
+    },
   },
 
   plugins: [raceResults],
@@ -36,6 +40,8 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           editUrl:
             'https://github.com/ZeroTasteGuy/zerotasteguy.github.io/tree/main/',
+          // German pages link to their own file in i18n/de/.
+          editLocalizedFiles: true,
         },
         blog: false,
         sitemap: {
@@ -79,6 +85,7 @@ const config: Config = {
         },
         {to: '/results/', label: 'Race results', position: 'left'},
         {to: '/about/', label: 'About', position: 'left'},
+        {type: 'localeDropdown', position: 'right'},
       ],
     },
     footer: {

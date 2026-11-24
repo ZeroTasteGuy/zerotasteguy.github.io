@@ -1,0 +1,68 @@
+name: Translate new pages
+
+# After a push to main, translates new or changed docs and Markdown pages into the
+# other language (scripts/translate.mjs), commits the result to main and starts the
+# deploy again. It uses the open-source Opus-MT models, which run right here on the
+# GitHub runner: no account, key or paid service. The models are cached between runs.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'src/pages/**/*.md'
+      - 'src/pages/**/*.mdx'
+      - 'i18n/de/docusaurus-plugin-content-docs/**'
+      - 'i18n/de/docusaurus-plugin-content-pages/**'
+      - 'i18n/glossary.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: translate
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check what needs translating
+        id: check
+        run: |
+          node scripts/translate.mjs --dry-run | tee plan.txt
+          if grep -q '→' plan.txt; then echo "needed=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Install the translator
+        if: steps.check.outputs.needed == 'true'
+        run: npm install --no-save --no-package-lock @huggingface/transformers@4.3.2
+      - name: Cache the translation models
+        if: steps.check.outputs.needed == 'true'
+        uses: actions/cache@v4
+        with:
+          path: .cache/opus-mt
+          key: opus-mt-en-de-de-en-v1
+      - name: Translate
+        # Also runs when nothing needs translating, to record hand-made fixes.
+        run: node scripts/translate.mjs
+      - name: Commit and redeploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm -f plan.txt
+          if [ -z "$(git status --porcelain docs src/pages i18n)" ]; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A docs src/pages i18n
+          git commit -m "Translate new and changed pages"
+          git push
+          # Pushes made by this workflow don't start other workflows, so start the deploy here.
+          gh workflow run deploy.yml --ref main

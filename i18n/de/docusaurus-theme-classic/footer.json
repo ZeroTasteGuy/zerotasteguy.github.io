@@ -1,0 +1,38 @@
+{
+  "link.title.Site": {
+    "message": "Seite",
+    "description": "The title of the footer links column with title=Site in the footer"
+  },
+  "link.title.Follow": {
+    "message": "Folgen",
+    "description": "The title of the footer links column with title=Follow in the footer"
+  },
+  "link.item.label.Tools": {
+    "message": "Tools",
+    "description": "The label of footer link with label=Tools linking to /tools/"
+  },
+  "link.item.label.Docs": {
+    "message": "Anleitungen",
+    "description": "The label of footer link with label=Docs linking to /docs/"
+  },
+  "link.item.label.Race results": {
+    "message": "Rennergebnisse",
+    "description": "The label of footer link with label=Race results linking to /results/"
+  },
+  "link.item.label.About": {
+    "message": "Über mich",
+    "description": "The label of footer link with label=About linking to /about/"
+  },
+  "link.item.label.YouTube": {
+    "message": "YouTube",
+    "description": "The label of footer link with label=YouTube linking to https://www.youtube.com/@maxdax_fpv"
+  },
+  "link.item.label.Instagram": {
+    "message": "Instagram",
+    "description": "The label of footer link with label=Instagram linking to https://www.instagram.com/maxdax_fpv/"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "The label of footer link with label=GitHub linking to https://github.com/ZeroTasteGuy"
+  }
+}

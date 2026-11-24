@@ -11,7 +11,7 @@ import type {RaceResult, ResultsData, YearSummary} from './types';
 
 const FIELDS = [
   'event', 'type', 'status', 'date', 'end_date', 'source', 'url', 'location', 'country', 'series',
-  'class', 'qualifying', 'position', 'pilots', 'best_lap', 'best_3_laps', 'notes',
+  'class', 'qualifying', 'position', 'pilots', 'best_lap', 'best_3_laps', 'notes', 'notes_de',
 ];
 
 // Accepts 18.432, "18.432" or "1:02.345" and returns seconds.
@@ -116,6 +116,7 @@ export function readResult(file: string, root: string): RaceResult {
     bestLap: parseTime(d.best_lap, 'best_lap', fail),
     best3Laps: parseTime(d.best_3_laps, 'best_3_laps', fail),
     notes: optString(d.notes, 'notes', fail),
+    notesDe: optString(d.notes_de, 'notes_de', fail),
   };
 }
 
@@ -171,9 +172,11 @@ export default function raceResultsPlugin(context: LoadContext): Plugin {
     },
     async contentLoaded({content: loaded, actions}) {
       const content = loaded as ResultsData;
+      // baseUrl is "/" for English and "/de/" for German.
+      const base = context.baseUrl;
       const dataPath = await actions.createData('results.json', JSON.stringify(content));
       actions.addRoute({
-        path: '/results/',
+        path: `${base}results/`,
         component: '@site/src/components/results/ResultsPage.tsx',
         exact: true,
         modules: {data: dataPath},
@@ -181,7 +184,7 @@ export default function raceResultsPlugin(context: LoadContext): Plugin {
       for (const r of content.results) {
         const eventPath = await actions.createData(`result-${r.slug}.json`, JSON.stringify(r));
         actions.addRoute({
-          path: `/results/${r.slug}/`,
+          path: `${base}results/${r.slug}/`,
           component: '@site/src/components/results/EventPage.tsx',
           exact: true,
           modules: {result: eventPath},

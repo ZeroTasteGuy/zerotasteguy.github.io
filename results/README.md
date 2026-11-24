@@ -32,6 +32,7 @@ You can see the message under the repository's **Actions** tab.
 | `best_lap`, `best_3_laps` | no | `18.432` or `1:02.345` |
 | `source` | no (default `manual`) | `livetime`, `multigp`, `fpvscores`, `fpvtrackside`, `copterrace`, `fpvgg`, `f9u`, `livefpv`, `aircrasher`, `manual`, `other` |
 | `url` | no | link to the full results |
-| `notes` | no | free text |
+| `notes` | no | free text, in English or German |
+| `notes_de` | no | the same note in German, shown on the German site. Without it, both sites show `notes`. |
 
 New sources are added in `plugins/race-results/sources.ts`.
