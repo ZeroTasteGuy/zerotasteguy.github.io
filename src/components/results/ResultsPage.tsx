@@ -3,7 +3,7 @@ import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import type {ResultsData, YearSummary} from '@site/plugins/race-results/types';
-import {STATUS_LABEL, formatDates, formatPosition, formatTime, medal, ordinal} from './format';
+import {STATUS_LABEL, formatDates, formatPosition, medal, ordinal} from './format';
 import styles from './results.module.css';
 
 function SummaryCard({s, active, onClick}: {s: YearSummary; active: boolean; onClick: () => void}): ReactNode {
@@ -46,8 +46,6 @@ export default function ResultsPage({data}: {data: ResultsData}): ReactNode {
   );
 
   // Lap-time columns only show when at least one listed race has a time.
-  const showLap = shown.some(r => r.bestLap !== undefined);
-  const show3 = shown.some(r => r.best3Laps !== undefined);
   const showQuali = shown.some(r => r.qualifying !== undefined);
 
   return (
@@ -104,8 +102,6 @@ export default function ResultsPage({data}: {data: ResultsData}): ReactNode {
                       <th className={styles.hideSm}>Class</th>
                       {showQuali && <th className={`${styles.num} ${styles.hideSm}`}>Quali</th>}
                       <th className={styles.num}>Place</th>
-                      {showLap && <th className={styles.num}>Best lap</th>}
-                      {show3 && <th className={styles.num}>Best 3 laps</th>}
                       <th className={styles.hideSm}>Source</th>
                     </tr>
                   </thead>
@@ -126,8 +122,6 @@ export default function ResultsPage({data}: {data: ResultsData}): ReactNode {
                         <td className={`${styles.num} ${styles.nowrap}`}>
                           {medal(r.position)} {formatPosition(r.position, r.pilots, r.pilotsPlus)}
                         </td>
-                        {showLap && <td className={styles.num}>{formatTime(r.bestLap)}</td>}
-                        {show3 && <td className={styles.num}>{formatTime(r.best3Laps)}</td>}
                         <td className={styles.hideSm}>
                           {r.url ? (
                             <a href={r.url} target="_blank" rel="noopener noreferrer">{r.sourceLabel}</a>
