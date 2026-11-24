@@ -1,0 +1,10 @@
+@font-face {
+  font-family: 'HDZero OSD';
+  src: url('/vltl/resolve/HDZeroOSD.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Betaflight OSD';
+  src: url('/vltl/resolve/BetaflightOSD.ttf') format('truetype');
+  font-display: swap;
+}

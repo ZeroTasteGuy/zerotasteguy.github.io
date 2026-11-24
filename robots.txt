@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /vltl/test/
-
-Sitemap: https://zerotasteguy.github.io/sitemap.xml

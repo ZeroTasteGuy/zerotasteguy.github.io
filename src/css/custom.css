@@ -1,0 +1,175 @@
+/*
+ * maxd.ax theme. Dark first, one accent colour.
+ * To change the accent, edit the --ifm-color-primary shades below
+ * (:root is light mode, [data-theme=dark] is dark mode).
+ */
+
+/* The OSD fonts are loaded only on pages that need them: see static/css/osd-fonts.css. */
+
+:root {
+  --ifm-font-family-base: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --ifm-heading-font-family: var(--ifm-font-family-base);
+  --ifm-global-radius: 0.5rem;
+  --ifm-code-font-size: 95%;
+
+  --ifm-color-primary: #16915f;
+  --ifm-color-primary-dark: #148356;
+  --ifm-color-primary-darker: #137b51;
+  --ifm-color-primary-darkest: #0f6543;
+  --ifm-color-primary-light: #189f68;
+  --ifm-color-primary-lighter: #19a76d;
+  --ifm-color-primary-lightest: #1dbd7b;
+
+  --ifm-background-color: #f6f7f9;
+  --ifm-background-surface-color: #ffffff;
+  --site-panel: #ffffff;
+  --site-panel-2: #f3f5f8;
+  --site-line: #e3e7ee;
+  --site-muted: #667085;
+  --site-hex: rgba(22, 145, 95, 0.10);
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #3dd68c;
+  --ifm-color-primary-dark: #2bcf80;
+  --ifm-color-primary-darker: #29c479;
+  --ifm-color-primary-darkest: #22a163;
+  --ifm-color-primary-light: #57dc9b;
+  --ifm-color-primary-lighter: #63dea2;
+  --ifm-color-primary-lightest: #87e6b8;
+  --ifm-color-primary-contrast-foreground: #04130b;
+
+  --ifm-background-color: #0e1116;
+  --ifm-background-surface-color: #161b22;
+  --ifm-navbar-background-color: #0e1116;
+  --ifm-footer-background-color: #0b0e12;
+  --ifm-font-color-base: #e6edf3;
+  --ifm-toc-border-color: #262d38;
+  --ifm-color-emphasis-300: #262d38;
+  --site-panel: #161b22;
+  --site-panel-2: #12161c;
+  --site-line: #262d38;
+  --site-muted: #8b96a5;
+  --site-hex: rgba(61, 214, 140, 0.07);
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+.navbar {
+  border-bottom: 1px solid var(--site-line);
+  box-shadow: none;
+}
+.navbar__title {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.footer--dark {
+  --ifm-footer-background-color: #0b0e12;
+  border-top: 1px solid var(--site-line);
+}
+
+/* Primary buttons: dark text on the bright accent. */
+[data-theme='dark'] .button--primary {
+  color: #04130b;
+}
+
+/* Hexagon pattern used behind page headers. */
+.hex-bg {
+  background-color: var(--ifm-background-color);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 1 54 16v30L28 61 2 46V16Z M28 61v36' fill='none' stroke='%23888' stroke-opacity='.18' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: 56px 97px;
+}
+
+/* Cards (tools, results). */
+.site-card {
+  display: block;
+  height: 100%;
+  background: var(--site-panel);
+  border: 1px solid var(--site-line);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  color: var(--ifm-font-color-base);
+  transition: border-color 0.15s;
+}
+a.site-card:hover {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-font-color-base);
+  text-decoration: none;
+}
+.site-card h3 {
+  color: var(--ifm-color-primary);
+  margin-bottom: 0.35rem;
+}
+.site-card p {
+  color: var(--site-muted);
+  margin: 0;
+}
+.site-muted {
+  color: var(--site-muted);
+}
+
+/* ---- Resolve guide helpers ---- */
+.osd-shot {
+  background: #2a4a73;
+  border-radius: 10px;
+  padding: 22px 26px;
+  margin: 14px 0;
+}
+.osd {
+  font-family: 'HDZero OSD', monospace;
+  color: #fff;
+  font-size: 30px;
+  line-height: 1.25;
+  white-space: pre;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 0 #000;
+}
+.osd--small {
+  font-size: 19px;
+}
+.osd--bf {
+  font-family: 'Betaflight OSD', monospace;
+}
+.osd-cap {
+  color: var(--site-muted);
+  font-size: 13px;
+  margin-top: 8px;
+}
+.fig img {
+  display: block;
+  border: 1px solid var(--site-line);
+  border-radius: 10px;
+  margin: 10px 0;
+}
+/* Numbered red markers matching the numbers in the screenshots. */
+.fig ol {
+  list-style: none;
+  padding-left: 0;
+  counter-reset: mark;
+}
+.fig ol li {
+  counter-increment: mark;
+  position: relative;
+  padding-left: 32px;
+}
+.fig ol li::before {
+  content: counter(mark);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #eb2828;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 560px) {
+  .osd {
+    font-size: 24px;
+  }
+}
