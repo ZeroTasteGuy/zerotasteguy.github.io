@@ -41,20 +41,20 @@ function Item({s, hidden}: {s: Sponsor; hidden?: boolean}) {
 export default function Sponsors(): ReactNode {
   return (
     <section className={styles.section} aria-labelledby="sponsors-heading">
-      <div className="container">
-        <Heading as="h2" id="sponsors-heading" className={styles.heading}>
-          Sponsors
-        </Heading>
-      </div>
-      <div className={styles.viewport}>
-        <ul className={styles.track}>
-          {sponsors.map(s => (
-            <Item key={s.name} s={s} />
-          ))}
-          {sponsors.map(s => (
-            <Item key={`${s.name}-copy`} s={s} hidden />
-          ))}
-        </ul>
+      <Heading as="h2" id="sponsors-heading" className="section-title">
+        Sponsors
+      </Heading>
+      <div className={clsx('glass', styles.box)}>
+        <div className={styles.viewport}>
+          <ul className={styles.track}>
+            {sponsors.map(s => (
+              <Item key={s.name} s={s} />
+            ))}
+            {sponsors.map(s => (
+              <Item key={`${s.name}-copy`} s={s} hidden />
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );

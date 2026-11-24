@@ -57,10 +57,6 @@ const config: Config = {
     },
     navbar: {
       title: 'maxd.ax',
-      logo: {
-        alt: 'maxd.ax',
-        src: 'img/logo.svg',
-      },
       items: [
         {
           type: 'dropdown',

@@ -18,7 +18,9 @@ export default function Tools(): ReactNode {
   return (
     <Layout title="Tools" description="Free browser tools for FPV drone pilots.">
       <main className="container margin-vert--xl">
-        <Heading as="h1">Tools</Heading>
+        <Heading as="h1" className="section-title">
+          Tools
+        </Heading>
         <p className="site-muted">Free tools that run in your browser, made for FPV drone pilots.</p>
         <div className="row">
           {tools.map(t => (
