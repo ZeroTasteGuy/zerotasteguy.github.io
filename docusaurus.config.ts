@@ -97,8 +97,8 @@ const config: Config = {
         {
           title: 'Follow',
           items: [
-            {label: 'YouTube', href: 'https://www.youtube.com/@MaxStacksFPV'},
-            {label: 'Instagram', href: 'https://www.instagram.com/maxstacksfpv/'},
+            {label: 'YouTube', href: 'https://www.youtube.com/@maxdax_fpv'},
+            {label: 'Instagram', href: 'https://www.instagram.com/maxdax_fpv/'},
             {label: 'GitHub', href: 'https://github.com/ZeroTasteGuy'},
             {
               html: '<span class="footer__link-item" title="Discord username">Discord: ZeroTasteGuy</span>',
