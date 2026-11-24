@@ -4,10 +4,11 @@ end_date: 2026-11-22
 location: Aichtal
 country: Germany
 class: Whoop
+qualifying: 1
 position: 3
 pilots: 16
 best_lap: 15.285
 best_3_laps: 51.711
-source: livefpv
-url: https://rotormaniacs.livefpv.com/results/?p=event_overall_ranking&id=525573
-notes: Fastest 3 consecutive laps of the event (51.711 in qualifying round 10). Best lap is from qualifying.
+source: multigp
+url: https://www.multigp.com/races/view/?race=33080/Rotormaniacs---2026-Winter-Whooprace
+notes: Top qualifier. Fastest 3 consecutive laps of the event (51.711 in qualifying round 10). Best lap is from qualifying. Lap times from LiveFPV (rotormaniacs.livefpv.com, event 525573).
