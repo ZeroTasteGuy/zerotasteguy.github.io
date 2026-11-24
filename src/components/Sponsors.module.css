@@ -1,0 +1,52 @@
+.section {
+  padding: 1rem 0 4rem;
+}
+.heading {
+  color: var(--ifm-color-primary);
+  font-size: 1.6rem;
+  margin-bottom: 1.25rem;
+}
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+.tile {
+  height: 100%;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 1.25rem;
+  background: var(--site-panel);
+  border: 1px solid var(--site-line);
+  border-radius: 12px;
+  color: var(--ifm-font-color-base);
+  text-align: center;
+  transition: border-color 0.15s;
+}
+a.tile:hover {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-font-color-base);
+  text-decoration: none;
+}
+.logo {
+  max-height: 56px;
+  max-width: 100%;
+  object-fit: contain;
+}
+.wordmark {
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+.what {
+  color: var(--site-muted);
+  font-size: 0.85rem;
+}

@@ -2,6 +2,7 @@ import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
+import Sponsors from '@site/src/components/Sponsors';
 import styles from './index.module.css';
 
 const sections = [
@@ -53,6 +54,7 @@ export default function Home(): ReactNode {
           ))}
         </div>
       </main>
+      <Sponsors />
     </Layout>
   );
 }
