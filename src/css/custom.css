@@ -39,7 +39,8 @@
   --glass-blur: blur(12px);
   --glass-radius: 16px;
   --accent-tint: rgba(210, 60, 60, 0.12);
-  --hex-opacity: 0.22;
+  --tab-panel: #e9e9ec;
+  --tab-panel-hover: #e2e2e6;
   --ifm-navbar-height: 5.25rem;
 }
 
@@ -74,40 +75,17 @@
   --glass-border: rgba(255, 255, 255, 0.04);
   --glass-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.35), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
   --accent-tint: rgba(239, 91, 91, 0.2);
-  --hex-opacity: 0.42;
+  --tab-panel: #232327;
+  --tab-panel-hover: #29292e;
 }
 
-/* ---- Page background: hexagons that fade out down the page ---- */
+/* ---- Page background ---- */
 /* Only html paints the page colour, so the fixed layers below stay visible. */
 html {
   background-color: var(--ifm-background-color);
 }
 body {
   background: transparent;
-}
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: var(--hex-opacity);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='104' height='180' viewBox='0 0 104 180'%3E%3Cpath d='M52 2 100 30v56L52 114 4 86V30Z M52 114v64' fill='none' stroke='%23ef5b5b' stroke-width='2'/%3E%3C/svg%3E");
-  background-size: 104px 180px;
-  -webkit-mask-image: radial-gradient(ellipse 90% 65% at 25% 0%, #000 0%, rgba(0, 0, 0, 0.35) 45%, transparent 80%);
-  mask-image: radial-gradient(ellipse 90% 65% at 25% 0%, #000 0%, rgba(0, 0, 0, 0.35) 45%, transparent 80%);
-}
-body::after {
-  /* soft accent glow behind the top of the page */
-  content: '';
-  position: fixed;
-  inset: -20vh -10vw auto auto;
-  width: 70vw;
-  height: 70vh;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(closest-side, var(--accent-tint), transparent);
-  opacity: 0.6;
 }
 #__docusaurus,
 .main-wrapper {
@@ -160,7 +138,22 @@ body::after {
   font-weight: 800;
   letter-spacing: -0.01em;
 }
-/* ---- Footer: faint glass band ---- */
+/* ---- Footer: faint glass band, centred like Betaflight's ---- */
+.footer {
+  text-align: center;
+}
+.footer__links {
+  margin-bottom: 1.5rem;
+}
+.footer__col,
+.footer__items,
+.footer__link-item {
+  text-align: center;
+}
+.footer__logo {
+  max-width: 96px;
+  margin-top: 0.5rem;
+}
 .footer,
 .footer--dark {
   --ifm-footer-background-color: rgba(115, 115, 115, 0.05);

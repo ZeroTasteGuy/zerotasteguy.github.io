@@ -106,6 +106,7 @@ const config: Config = {
           ],
         },
       ],
+      logo: {alt: 'maxd.ax', src: 'img/logo.svg', href: '/', width: 96, height: 96},
       copyright: `© ${new Date().getFullYear()} maxd.ax`,
     },
     prism: {
