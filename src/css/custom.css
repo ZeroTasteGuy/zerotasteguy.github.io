@@ -12,46 +12,46 @@
   --ifm-global-radius: 0.5rem;
   --ifm-code-font-size: 95%;
 
-  --ifm-color-primary: #16915f;
-  --ifm-color-primary-dark: #148356;
-  --ifm-color-primary-darker: #137b51;
-  --ifm-color-primary-darkest: #0f6543;
-  --ifm-color-primary-light: #189f68;
-  --ifm-color-primary-lighter: #19a76d;
-  --ifm-color-primary-lightest: #1dbd7b;
+  --ifm-color-primary: #d23c3c;
+  --ifm-color-primary-dark: #c33232;
+  --ifm-color-primary-darker: #b82f2f;
+  --ifm-color-primary-darkest: #982727;
+  --ifm-color-primary-light: #d75050;
+  --ifm-color-primary-lighter: #d95959;
+  --ifm-color-primary-lightest: #df7373;
 
-  --ifm-background-color: #f6f7f9;
+  --ifm-background-color: #f5f5f6;
   --ifm-background-surface-color: #ffffff;
   --site-panel: #ffffff;
-  --site-panel-2: #f3f5f8;
-  --site-line: #e3e7ee;
-  --site-muted: #667085;
-  --site-hex: rgba(22, 145, 95, 0.10);
+  --site-panel-2: #f0f0f2;
+  --site-line: #e2e2e6;
+  --site-muted: #61616b;
+  --site-hex: rgba(210, 60, 60, 0.10);
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
 [data-theme='dark'] {
-  --ifm-color-primary: #3dd68c;
-  --ifm-color-primary-dark: #2bcf80;
-  --ifm-color-primary-darker: #29c479;
-  --ifm-color-primary-darkest: #22a163;
-  --ifm-color-primary-light: #57dc9b;
-  --ifm-color-primary-lighter: #63dea2;
-  --ifm-color-primary-lightest: #87e6b8;
-  --ifm-color-primary-contrast-foreground: #04130b;
+  --ifm-color-primary: #ef5b5b;
+  --ifm-color-primary-dark: #ec4040;
+  --ifm-color-primary-darker: #eb3232;
+  --ifm-color-primary-darkest: #d91616;
+  --ifm-color-primary-light: #f27676;
+  --ifm-color-primary-lighter: #f38484;
+  --ifm-color-primary-lightest: #f6abab;
+  --ifm-color-primary-contrast-foreground: #1a0606;
 
-  --ifm-background-color: #0e1116;
-  --ifm-background-surface-color: #161b22;
-  --ifm-navbar-background-color: #0e1116;
-  --ifm-footer-background-color: #0b0e12;
-  --ifm-font-color-base: #e6edf3;
-  --ifm-toc-border-color: #262d38;
-  --ifm-color-emphasis-300: #262d38;
-  --site-panel: #161b22;
-  --site-panel-2: #12161c;
-  --site-line: #262d38;
-  --site-muted: #8b96a5;
-  --site-hex: rgba(61, 214, 140, 0.07);
+  --ifm-background-color: #141416;
+  --ifm-background-surface-color: #1c1c20;
+  --ifm-navbar-background-color: #141416;
+  --ifm-footer-background-color: #0f0f11;
+  --ifm-font-color-base: #e7e7ea;
+  --ifm-toc-border-color: #2a2a30;
+  --ifm-color-emphasis-300: #2a2a30;
+  --site-panel: #1c1c20;
+  --site-panel-2: #18181b;
+  --site-line: #2a2a30;
+  --site-muted: #9a9aa3;
+  --site-hex: rgba(239, 91, 91, 0.07);
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
@@ -64,13 +64,13 @@
   letter-spacing: -0.01em;
 }
 .footer--dark {
-  --ifm-footer-background-color: #0b0e12;
+  --ifm-footer-background-color: #0f0f11;
   border-top: 1px solid var(--site-line);
 }
 
 /* Primary buttons: dark text on the bright accent. */
 [data-theme='dark'] .button--primary {
-  color: #04130b;
+  color: #1a0606;
 }
 
 /* Hexagon pattern used behind page headers. */
