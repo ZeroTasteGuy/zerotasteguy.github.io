@@ -48,6 +48,7 @@ export default function ResultsPage({data}: {data: ResultsData}): ReactNode {
   // Lap-time columns only show when at least one listed race has a time.
   const showLap = shown.some(r => r.bestLap !== undefined);
   const show3 = shown.some(r => r.best3Laps !== undefined);
+  const showQuali = shown.some(r => r.qualifying !== undefined);
 
   return (
     <Layout title="Race results" description="Max's FPV drone race results, with season summaries.">
@@ -101,6 +102,7 @@ export default function ResultsPage({data}: {data: ResultsData}): ReactNode {
                       <th>Date</th>
                       <th>Race</th>
                       <th className={styles.hideSm}>Class</th>
+                      {showQuali && <th className={`${styles.num} ${styles.hideSm}`}>Quali</th>}
                       <th className={styles.num}>Place</th>
                       {showLap && <th className={styles.num}>Best lap</th>}
                       {show3 && <th className={styles.num}>Best 3 laps</th>}
@@ -120,6 +122,7 @@ export default function ResultsPage({data}: {data: ResultsData}): ReactNode {
                           )}
                         </td>
                         <td className={`${styles.nowrap} ${styles.hideSm}`}>{r.class}</td>
+                        {showQuali && <td className={`${styles.num} ${styles.hideSm}`}>{r.qualifying}</td>}
                         <td className={`${styles.num} ${styles.nowrap}`}>
                           {medal(r.position)} {formatPosition(r.position, r.pilots, r.pilotsPlus)}
                         </td>

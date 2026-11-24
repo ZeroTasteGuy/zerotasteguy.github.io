@@ -12,6 +12,7 @@ location: Hamburg                  # city or track
 country: Germany
 series: MultiGP Global Qualifier   # league or series, if any
 class: Open                        # class / spec you flew
+qualifying: 5                      # your place after qualifying
 position: 3                        # your final place
 pilots: 24                         # how many pilots raced ("1100+" for "more than 1100")
 best_lap: 18.432                   # seconds, or 1:02.345

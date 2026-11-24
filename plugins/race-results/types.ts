@@ -14,6 +14,7 @@ export type RaceResult = {
   series?: string;
   class?: string;
   position?: number;
+  qualifying?: number; // qualifying place
   pilots?: number;
   pilotsPlus?: boolean; // "more than `pilots`"
   bestLap?: number; // seconds

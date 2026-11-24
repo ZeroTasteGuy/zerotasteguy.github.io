@@ -13,6 +13,7 @@ export default function EventPage({result: r}: {result: RaceResult}): ReactNode 
     ['Series', r.series],
     ['Class', r.class],
     ['Place', r.position !== undefined ? `${medal(r.position)} ${formatPosition(r.position, r.pilots, r.pilotsPlus)}` : ''],
+    ['Qualifying place', r.qualifying !== undefined ? String(r.qualifying) : ''],
     ['Best lap', formatTime(r.bestLap)],
     ['Best 3 consecutive laps', formatTime(r.best3Laps)],
     ['Status', r.status === 'provisional' ? 'Provisional, not yet official' : r.status === 'self-reported' ? 'Unconfirmed, no published results yet' : ''],

@@ -27,6 +27,7 @@ You can see the message under the repository's **Actions** tab.
 | `location`, `country` | no | `Hamburg`, `Germany` |
 | `series` | no | `MultiGP Global Qualifier` |
 | `class` | no | `Open` |
+| `qualifying` | no | `5` (place after qualifying) |
 | `position`, `pilots` | no | `3`, `24` (or `1100+`) |
 | `best_lap`, `best_3_laps` | no | `18.432` or `1:02.345` |
 | `source` | no (default `manual`) | `livetime`, `multigp`, `fpvscores`, `fpvtrackside`, `copterrace`, `fpvgg`, `f9u`, `livefpv`, `aircrasher`, `manual`, `other` |

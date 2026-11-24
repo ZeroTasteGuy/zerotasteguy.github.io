@@ -11,7 +11,7 @@ import type {RaceResult, ResultsData, YearSummary} from './types';
 
 const FIELDS = [
   'event', 'type', 'status', 'date', 'end_date', 'source', 'url', 'location', 'country', 'series',
-  'class', 'position', 'pilots', 'best_lap', 'best_3_laps', 'notes',
+  'class', 'qualifying', 'position', 'pilots', 'best_lap', 'best_3_laps', 'notes',
 ];
 
 // Accepts 18.432, "18.432" or "1:02.345" and returns seconds.
@@ -87,6 +87,7 @@ export function readResult(file: string, root: string): RaceResult {
   const url = optString(d.url, 'url', fail);
   if (url && !/^https?:\/\//.test(url)) fail(`"url" must start with https://, got "${url}"`);
   const position = parseInt(d.position, 'position', fail);
+  const qualifying = parseInt(d.qualifying, 'qualifying', fail);
   // "1100+" means "more than 1100".
   const pilotsPlus = typeof d.pilots === 'string' && /^\d+\+$/.test(d.pilots.trim());
   const pilots = parseInt(pilotsPlus ? Number((d.pilots as string).trim().slice(0, -1)) : d.pilots, 'pilots', fail);
@@ -109,6 +110,7 @@ export function readResult(file: string, root: string): RaceResult {
     series: optString(d.series, 'series', fail),
     class: optString(d.class, 'class', fail),
     position,
+    qualifying,
     pilots,
     pilotsPlus: pilotsPlus || undefined,
     bestLap: parseTime(d.best_lap, 'best_lap', fail),
