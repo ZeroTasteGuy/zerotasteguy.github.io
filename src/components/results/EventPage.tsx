@@ -3,18 +3,19 @@ import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import type {RaceResult} from '@site/plugins/race-results/types';
-import {formatDate, formatPosition, formatTime, medal} from './format';
+import {STATUS_LABEL, formatDates, formatPosition, formatTime, medal} from './format';
 import styles from './results.module.css';
 
 export default function EventPage({result: r}: {result: RaceResult}): ReactNode {
   const rows: [string, ReactNode][] = [
-    ['Date', formatDate(r.date)],
+    [r.type === 'series' ? 'Season' : 'Date', r.type === 'series' ? String(r.year) : formatDates(r)],
     ['Location', [r.location, r.country].filter(Boolean).join(', ')],
     ['Series', r.series],
     ['Class', r.class],
-    ['Place', r.position !== undefined ? `${medal(r.position)} ${formatPosition(r.position, r.pilots)}` : ''],
+    ['Place', r.position !== undefined ? `${medal(r.position)} ${formatPosition(r.position, r.pilots, r.pilotsPlus)}` : ''],
     ['Best lap', formatTime(r.bestLap)],
     ['Best 3 consecutive laps', formatTime(r.best3Laps)],
+    ['Status', r.status === 'provisional' ? 'Provisional, not yet official' : r.status === 'self-reported' ? 'Unconfirmed, no published results yet' : ''],
     [
       'Source',
       r.url ? (
@@ -25,7 +26,7 @@ export default function EventPage({result: r}: {result: RaceResult}): ReactNode 
     ],
   ];
   return (
-    <Layout title={`${r.event} – Race results`} description={`Max's result at ${r.event}, ${formatDate(r.date)}.`}>
+    <Layout title={`${r.event} – Race results`} description={`Max's result at ${r.event}, ${formatDates(r)}.`}>
       <main className="container margin-vert--xl">
         <Link to="/results/">← All race results</Link>
         <Heading as="h1" className="section-title margin-top--md">

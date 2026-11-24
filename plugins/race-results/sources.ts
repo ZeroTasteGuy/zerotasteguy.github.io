@@ -8,6 +8,8 @@ export const SOURCES: Record<string, string> = {
   copterrace: 'Copterrace',
   fpvgg: 'fpv.gg',
   f9u: 'F9U',
+  livefpv: 'LiveFPV',
+  aircrasher: 'Aircrasher',
   manual: 'Manual',
   other: 'Other',
 };

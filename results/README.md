@@ -20,13 +20,16 @@ You can see the message under the repository's **Actions** tab.
 | Field | Required | Example |
 | --- | --- | --- |
 | `event` | yes | `Chapter Race 3` |
-| `date` | yes | `2026-05-17` |
+| `date` | yes | `2026-05-17`, or `2026-05` / `2026` if the day is unknown |
+| `end_date` | no | `2026-05-18` for races over several days |
+| `type` | no (default `race`) | `series` for a season total. Series totals are listed but don't count as races in the year summaries. |
+| `status` | no | `provisional` or `self-reported`, shown as a label. Leave it out when the result is official. |
 | `location`, `country` | no | `Hamburg`, `Germany` |
 | `series` | no | `MultiGP Global Qualifier` |
 | `class` | no | `Open` |
-| `position`, `pilots` | no | `3`, `24` |
+| `position`, `pilots` | no | `3`, `24` (or `1100+`) |
 | `best_lap`, `best_3_laps` | no | `18.432` or `1:02.345` |
-| `source` | no (default `manual`) | `livetime`, `multigp`, `fpvscores`, `fpvtrackside`, `copterrace`, `fpvgg`, `f9u`, `manual`, `other` |
+| `source` | no (default `manual`) | `livetime`, `multigp`, `fpvscores`, `fpvtrackside`, `copterrace`, `fpvgg`, `f9u`, `livefpv`, `aircrasher`, `manual`, `other` |
 | `url` | no | link to the full results |
 | `notes` | no | free text |
 

@@ -3,7 +3,7 @@ import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import type {ResultsData, YearSummary} from '@site/plugins/race-results/types';
-import {formatDate, formatPosition, formatTime, medal} from './format';
+import {STATUS_LABEL, formatDates, formatPosition, formatTime, medal, ordinal} from './format';
 import styles from './results.module.css';
 
 function SummaryCard({s, active, onClick}: {s: YearSummary; active: boolean; onClick: () => void}): ReactNode {
@@ -18,6 +18,16 @@ function SummaryCard({s, active, onClick}: {s: YearSummary; active: boolean; onC
         <div><dt>Avg. place</dt><dd>{s.avgPosition !== undefined ? s.avgPosition.toFixed(1) : '–'}</dd></div>
         <div><dt>Countries</dt><dd>{s.countries.length || '–'}</dd></div>
       </dl>
+      {s.series.length > 0 && (
+        <ul className={styles.seriesList}>
+          {s.series.map(x => (
+            <li key={x.slug}>
+              {x.position ? <strong>{ordinal(x.position)}</strong> : null} {x.event}
+              {x.status && <span className={styles.status}>{STATUS_LABEL[x.status]}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
     </button>
   );
 }
@@ -34,6 +44,10 @@ export default function ResultsPage({data}: {data: ResultsData}): ReactNode {
   const shown = results.filter(
     r => (year === 'all' || String(r.year) === year) && (source === 'all' || r.source === source),
   );
+
+  // Lap-time columns only show when at least one listed race has a time.
+  const showLap = shown.some(r => r.bestLap !== undefined);
+  const show3 = shown.some(r => r.best3Laps !== undefined);
 
   return (
     <Layout title="Race results" description="Max's FPV drone race results, with season summaries.">
@@ -77,7 +91,7 @@ export default function ResultsPage({data}: {data: ResultsData}): ReactNode {
                     ))}
                   </select>
                 </label>
-                <span className="site-muted">{shown.length} {shown.length === 1 ? 'race' : 'races'}</span>
+                <span className="site-muted">{shown.length} {shown.length === 1 ? 'result' : 'results'}</span>
               </div>
 
               <div className={styles.tableWrap}>
@@ -86,28 +100,32 @@ export default function ResultsPage({data}: {data: ResultsData}): ReactNode {
                     <tr>
                       <th>Date</th>
                       <th>Race</th>
-                      <th>Class</th>
+                      <th className={styles.hideSm}>Class</th>
                       <th className={styles.num}>Place</th>
-                      <th className={styles.num}>Best lap</th>
-                      <th className={styles.num}>Best 3 laps</th>
-                      <th>Source</th>
+                      {showLap && <th className={styles.num}>Best lap</th>}
+                      {show3 && <th className={styles.num}>Best 3 laps</th>}
+                      <th className={styles.hideSm}>Source</th>
                     </tr>
                   </thead>
                   <tbody>
                     {shown.map(r => (
                       <tr key={r.slug}>
-                        <td className={styles.nowrap}>{formatDate(r.date)}</td>
+                        <td className={styles.nowrap}>{formatDates(r)}</td>
                         <td>
                           <Link to={`/results/${r.slug}/`}>{r.event}</Link>
-                          {r.location && <div className={styles.sub}>{r.location}</div>}
+                          {r.type === 'series' && <span className={styles.tag}>Series total</span>}
+                          {r.status && <span className={styles.status}>{STATUS_LABEL[r.status]}</span>}
+                          {(r.location || r.country) && (
+                            <div className={styles.sub}>{[r.location, r.country].filter(Boolean).join(', ')}</div>
+                          )}
                         </td>
-                        <td>{r.class}</td>
+                        <td className={`${styles.nowrap} ${styles.hideSm}`}>{r.class}</td>
                         <td className={`${styles.num} ${styles.nowrap}`}>
-                          {medal(r.position)} {formatPosition(r.position, r.pilots)}
+                          {medal(r.position)} {formatPosition(r.position, r.pilots, r.pilotsPlus)}
                         </td>
-                        <td className={styles.num}>{formatTime(r.bestLap)}</td>
-                        <td className={styles.num}>{formatTime(r.best3Laps)}</td>
-                        <td>
+                        {showLap && <td className={styles.num}>{formatTime(r.bestLap)}</td>}
+                        {show3 && <td className={styles.num}>{formatTime(r.best3Laps)}</td>}
+                        <td className={styles.hideSm}>
                           {r.url ? (
                             <a href={r.url} target="_blank" rel="noopener noreferrer">{r.sourceLabel}</a>
                           ) : (

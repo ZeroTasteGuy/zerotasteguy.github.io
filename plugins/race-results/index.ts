@@ -10,7 +10,7 @@ import {SOURCES} from './sources';
 import type {RaceResult, ResultsData, YearSummary} from './types';
 
 const FIELDS = [
-  'event', 'date', 'source', 'url', 'location', 'country', 'series',
+  'event', 'type', 'status', 'date', 'end_date', 'source', 'url', 'location', 'country', 'series',
   'class', 'position', 'pilots', 'best_lap', 'best_3_laps', 'notes',
 ];
 
@@ -35,6 +35,15 @@ function optString(value: unknown, field: string, fail: (m: string) => never): s
   if (value === undefined || value === null || value === '') return undefined;
   if (typeof value === 'string' || typeof value === 'number') return String(value);
   return fail(`"${field}" must be text`);
+}
+
+const TYPES = ['race', 'series'];
+const STATUSES = ['provisional', 'self-reported'];
+
+// Full date (2026-05-17), or only month (2026-05) or year (2026) when the day is unknown.
+function checkDate(value: string, field: string, fail: (m: string) => never): string {
+  const ok = /^\d{4}(-\d{2}(-\d{2})?)?$/.test(value) && !Number.isNaN(Date.parse(value));
+  return ok ? value : fail(`"${field}" must look like 2026-05-17 (or 2026-05, or just 2026), got "${value}"`);
 }
 
 function listFiles(dir: string): string[] {
@@ -66,23 +75,31 @@ export function readResult(file: string, root: string): RaceResult {
     if (!FIELDS.includes(key)) fail(`unknown field "${key}". Allowed: ${FIELDS.join(', ')}`);
   }
   const event = optString(d.event, 'event', fail) ?? fail('"event" (the race name) is missing');
-  const date = optString(d.date, 'date', fail) ?? fail('"date" is missing');
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date))) {
-    fail(`"date" must look like 2026-05-17, got "${date}"`);
-  }
+  const type = (optString(d.type, 'type', fail) ?? 'race') as RaceResult['type'];
+  if (!TYPES.includes(type)) fail(`"type" must be one of: ${TYPES.join(', ')}. Got "${type}"`);
+  const status = optString(d.status, 'status', fail) as RaceResult['status'];
+  if (status && !STATUSES.includes(status)) fail(`"status" must be one of: ${STATUSES.join(', ')}. Got "${status}"`);
+  const date = checkDate(optString(d.date, 'date', fail) ?? fail('"date" is missing'), 'date', fail);
+  const endDate = d.end_date === undefined ? undefined : checkDate(optString(d.end_date, 'end_date', fail) ?? '', 'end_date', fail);
+  if (endDate && endDate < date) fail('"end_date" is before "date"');
   const source = optString(d.source, 'source', fail) ?? 'manual';
   if (!(source in SOURCES)) fail(`"source" must be one of: ${Object.keys(SOURCES).join(', ')}. Got "${source}"`);
   const url = optString(d.url, 'url', fail);
   if (url && !/^https?:\/\//.test(url)) fail(`"url" must start with https://, got "${url}"`);
   const position = parseInt(d.position, 'position', fail);
-  const pilots = parseInt(d.pilots, 'pilots', fail);
+  // "1100+" means "more than 1100".
+  const pilotsPlus = typeof d.pilots === 'string' && /^\d+\+$/.test(d.pilots.trim());
+  const pilots = parseInt(pilotsPlus ? Number((d.pilots as string).trim().slice(0, -1)) : d.pilots, 'pilots', fail);
   if (position && pilots && position > pilots) fail(`"position" (${position}) is higher than "pilots" (${pilots})`);
 
   const slug = path.basename(file).replace(/\.ya?ml$/i, '').toLowerCase().replace(/[^a-z0-9-]+/g, '-');
   return {
     slug,
     event,
+    type,
+    status,
     date,
+    endDate,
     year: Number(date.slice(0, 4)),
     source,
     sourceLabel: SOURCES[source],
@@ -93,13 +110,16 @@ export function readResult(file: string, root: string): RaceResult {
     class: optString(d.class, 'class', fail),
     position,
     pilots,
+    pilotsPlus: pilotsPlus || undefined,
     bestLap: parseTime(d.best_lap, 'best_lap', fail),
     best3Laps: parseTime(d.best_3_laps, 'best_3_laps', fail),
     notes: optString(d.notes, 'notes', fail),
   };
 }
 
-export function summarize(results: RaceResult[], year: number | 'all'): YearSummary {
+export function summarize(all: RaceResult[], year: number | 'all'): YearSummary {
+  // Series totals are listed on their own and don't count as races.
+  const results = all.filter(r => r.type === 'race');
   const placed = results.map(r => r.position).filter((p): p is number => p !== undefined);
   return {
     year,
@@ -109,6 +129,9 @@ export function summarize(results: RaceResult[], year: number | 'all'): YearSumm
     bestFinish: placed.length ? Math.min(...placed) : undefined,
     avgPosition: placed.length ? placed.reduce((a, b) => a + b, 0) / placed.length : undefined,
     countries: [...new Set(results.map(r => r.country).filter((c): c is string => !!c))].sort(),
+    series: all
+      .filter(r => r.type === 'series')
+      .map(r => ({slug: r.slug, event: r.event, position: r.position, status: r.status})),
   };
 }
 
@@ -120,7 +143,15 @@ export function loadResults(siteDir: string): ResultsData {
     if (seen.has(r.slug)) throw new Error(`Race results: two files are named "${r.slug}". Give one a different name.`);
     seen.set(r.slug, r.slug);
   }
-  results.sort((a, b) => b.date.localeCompare(a.date) || a.event.localeCompare(b.event));
+  // Newest year first; within a year, series totals go last, then dated races before
+  // ones with only a month or year.
+  results.sort(
+    (a, b) =>
+      b.year - a.year ||
+      Number(a.type === 'series') - Number(b.type === 'series') ||
+      b.date.localeCompare(a.date) ||
+      a.event.localeCompare(b.event),
+  );
   const years = [...new Set(results.map(r => r.year))].sort((a, b) => b - a);
   const summaries = years.map(y => summarize(results.filter(r => r.year === y), y));
   if (years.length > 1) summaries.unshift(summarize(results, 'all'));

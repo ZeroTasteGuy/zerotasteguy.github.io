@@ -1,7 +1,10 @@
 export type RaceResult = {
   slug: string;
   event: string;
-  date: string; // YYYY-MM-DD
+  type: 'race' | 'series'; // series = a season total, not counted as a race
+  status?: 'provisional' | 'self-reported';
+  date: string; // YYYY-MM-DD, YYYY-MM or YYYY
+  endDate?: string;
   year: number;
   source: string;
   sourceLabel: string;
@@ -12,6 +15,7 @@ export type RaceResult = {
   class?: string;
   position?: number;
   pilots?: number;
+  pilotsPlus?: boolean; // "more than `pilots`"
   bestLap?: number; // seconds
   best3Laps?: number; // seconds
   notes?: string;
@@ -25,6 +29,7 @@ export type YearSummary = {
   bestFinish?: number;
   avgPosition?: number;
   countries: string[];
+  series: {slug: string; event: string; position?: number; status?: RaceResult['status']}[];
 };
 
 export type ResultsData = {
