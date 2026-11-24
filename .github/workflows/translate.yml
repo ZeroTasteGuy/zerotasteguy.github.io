@@ -1,9 +1,9 @@
 name: Translate new pages
 
 # After a push to main, translates new or changed docs and Markdown pages into the
-# other language with DeepL (scripts/translate.mjs), commits the result to main and
-# starts the deploy again. Needs the repository secret DEEPL_API_KEY (a free DeepL
-# API key works). Without it this workflow does nothing.
+# other language (scripts/translate.mjs), commits the result to main and starts the
+# deploy again. It uses the open-source Opus-MT models, which run right here on the
+# GitHub runner: no account, key or paid service. The models are cached between runs.
 
 on:
   push:
@@ -14,6 +14,7 @@ on:
       - 'src/pages/**/*.mdx'
       - 'i18n/de/docusaurus-plugin-content-docs/**'
       - 'i18n/de/docusaurus-plugin-content-pages/**'
+      - 'i18n/glossary.json'
   workflow_dispatch:
 
 permissions:
@@ -32,15 +33,29 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Check what needs translating
+        id: check
+        run: |
+          node scripts/translate.mjs --dry-run | tee plan.txt
+          if grep -q '→' plan.txt; then echo "needed=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Install the translator
+        if: steps.check.outputs.needed == 'true'
+        run: npm install --no-save --no-package-lock @huggingface/transformers@4.3.2
+      - name: Cache the translation models
+        if: steps.check.outputs.needed == 'true'
+        uses: actions/cache@v4
+        with:
+          path: .cache/opus-mt
+          key: opus-mt-en-de-de-en-v1
       - name: Translate
-        env:
-          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+        # Also runs when nothing needs translating, to record hand-made fixes.
         run: node scripts/translate.mjs
       - name: Commit and redeploy
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ -z "$(git status --porcelain)" ]; then
+          rm -f plan.txt
+          if [ -z "$(git status --porcelain docs src/pages i18n)" ]; then
             echo "Nothing to commit."
             exit 0
           fi

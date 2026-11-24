@@ -1,0 +1,81 @@
+{
+  "_about": "Terms the translation script (scripts/translate.mjs) never translates, or always translates the same way. Add your own: en is the English word, de the German one. Matching ignores upper/lower case.",
+  "terms": [
+    {
+      "en": "DaVinci Resolve",
+      "de": "DaVinci Resolve"
+    },
+    {
+      "en": "Resolve",
+      "de": "Resolve"
+    },
+    {
+      "en": "Video Lap Tracking Lab",
+      "de": "Video Lap Tracking Lab"
+    },
+    {
+      "en": "lap timer",
+      "de": "Lap Timer"
+    },
+    {
+      "en": "laps",
+      "de": "Runden"
+    },
+    {
+      "en": "Text+",
+      "de": "Text+"
+    },
+    {
+      "en": "Media Pool",
+      "de": "Media Pool"
+    },
+    {
+      "en": "Video 1",
+      "de": "Video 1"
+    },
+    {
+      "en": "Video 2",
+      "de": "Video 2"
+    },
+    {
+      "en": "HDZero",
+      "de": "HDZero"
+    },
+    {
+      "en": "Betaflight",
+      "de": "Betaflight"
+    },
+    {
+      "en": "motors",
+      "de": "Motoren"
+    },
+    {
+      "en": "batteries",
+      "de": "Akkus"
+    },
+    {
+      "en": "maxd.ax",
+      "de": "maxd.ax"
+    },
+    {
+      "en": "consecutive laps",
+      "de": "Runden am Stück"
+    },
+    {
+      "en": "props",
+      "de": "Props"
+    },
+    {
+      "en": "packs",
+      "de": "Akkus"
+    },
+    {
+      "en": "quad",
+      "de": "Quad"
+    },
+    {
+      "en": "gates",
+      "de": "Gates"
+    }
+  ]
+}

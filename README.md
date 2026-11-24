@@ -48,12 +48,21 @@ Write a new page in English or German, and the other language is created for you
 - German: put it in `docs/` with `lang: de` in the front matter (or straight into the German folder).
 
 After you push to `main`, the **Translate new pages** workflow (`.github/workflows/translate.yml`)
-runs `scripts/translate.mjs`. It translates new and changed pages with DeepL, moves German
-originals into the German folder, commits that to `main` and deploys again. Translated pages show
-a small "automatically translated" note. If you change the page you wrote, the translation is
-redone; if you fix the translation by hand, your fix is kept.
+runs `scripts/translate.mjs`. It translates new and changed pages, moves German originals into the
+German folder, commits that to `main` and deploys again. Translated pages show a small
+"automatically translated" note. If you change the page you wrote, the translation is redone; if
+you fix the translation by hand, your fix is kept.
 
-This needs a DeepL API key (the free plan, 500,000 characters a month, is plenty) saved as the
-repository secret `DEEPL_API_KEY` (Settings → Secrets and variables → Actions). You can also run
-it on your computer: `DEEPL_API_KEY=... npm run translate` (add `-- --dry-run` to only see what
-it would do).
+The translation uses [Opus-MT](https://github.com/Helsinki-NLP/Opus-MT), open-source translation
+models from the University of Helsinki, run with
+[transformers.js](https://github.com/huggingface/transformers.js) right on the GitHub runner.
+No account, key or paid service is needed. It is machine translation, so check the result: it
+uses the formal "Sie", and it can get FPV words wrong. Names and terms that must not be translated
+(or always translated the same way) go in `i18n/glossary.json`.
+
+To run it on your computer (downloads about 800 MB of models once, into `.cache/`):
+
+```sh
+npm install --no-save @huggingface/transformers@4.3.2
+npm run translate              # add -- --dry-run to only see what it would do
+```
