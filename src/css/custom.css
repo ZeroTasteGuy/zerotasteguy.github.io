@@ -383,3 +383,32 @@ a.site-card:hover {
   gap: 0 1rem;
   align-items: start;
 }
+
+/* ---- About page ---- */
+.about-intro {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+.about-photo {
+  flex: none;
+  width: 160px;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--site-line);
+}
+@media (max-width: 600px) {
+  .about-intro {
+    flex-direction: column;
+  }
+  .about-photo {
+    width: 130px;
+  }
+}
+.glass-page h2 {
+  color: var(--ifm-color-primary);
+  margin-top: 0;
+}
+.glass-page h2:not(:first-child) {
+  margin-top: 1.5rem;
+}
