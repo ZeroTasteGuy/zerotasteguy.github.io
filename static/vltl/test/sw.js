@@ -1,18 +1,18 @@
 // Service worker for VLTL: makes the page work offline.
 // Own files: network first (so updates show up right away), the cached copy when offline.
-// jsDelivr libraries (mux.js, mediainfo.js and its .wasm): cache first.
-const CACHE = 'vltl-test-v1';
+// Self-hosted libraries in ../lib/ (mux.js, mediainfo.js and its .wasm, Mediabunny): cached on install too.
+const CACHE = 'vltl-test-v2';
 const LIBS = [
-  'https://cdn.jsdelivr.net/npm/mux.js@6.3.0/dist/mux.min.js',
-  'https://cdn.jsdelivr.net/npm/mediainfo.js@0.3.5/dist/umd/index.min.js',
-  'https://cdn.jsdelivr.net/npm/mediainfo.js@0.3.5/dist/MediaInfoModule.wasm'
+  '../lib/mux.js-6.3.0/mux.min.js',
+  '../lib/mediainfo.js-0.3.5/index.min.js',
+  '../lib/mediainfo.js-0.3.5/MediaInfoModule.wasm',
+  '../lib/mediabunny-1.61.6/mediabunny.min.mjs'
 ];
 const OWN = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', '../resolve/', '../resolve/HDZeroOSD.ttf'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.allSettled([
-    ...OWN.map(u => c.add(u)),
-    ...LIBS.map(u => c.add(new Request(u, { mode: 'cors' })))
+    ...OWN.concat(LIBS).map(u => c.add(u))
   ])).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
@@ -25,7 +25,5 @@ self.addEventListener('fetch', e => {
   if (url.origin === location.origin) {
     if (req.headers.has('range')) return; // video files and tests: leave alone
     e.respondWith(fetch(req).then(store).catch(() => caches.match(req).then(r => r || (req.mode === 'navigate' ? caches.match('index.html') : Response.error()))));
-  } else if (url.hostname === 'cdn.jsdelivr.net') {
-    e.respondWith(caches.match(req).then(r => r || fetch(req).then(store)));
   }
 });
