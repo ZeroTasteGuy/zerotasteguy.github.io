@@ -1,84 +1,465 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
-<meta charset="utf-8"><meta name="robots" content="noindex"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0e1116"><meta name="description" content="Time FPV laps from video frame by frame, find your best 3 consecutive laps, and put live lap timers on your footage in DaVinci Resolve.">
-<title>Video Lap Tracking Lab</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1116'/%3E%3Cg font-family='Arial,Helvetica,sans-serif' font-weight='800' font-size='27' fill='%233dd68c' text-anchor='middle'%3E%3Ctext x='16' y='28'%3EV%3C/text%3E%3Ctext x='48' y='28'%3EL%3C/text%3E%3Ctext x='16' y='57'%3ET%3C/text%3E%3Ctext x='48' y='57'%3EL%3C/text%3E%3C/g%3E%3Cg fill='%238b96a5'%3E%3Crect x='27' y='19' width='10' height='3' rx='1.5'/%3E%3Crect x='27' y='48' width='10' height='3' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
+<meta charset="utf-8"><meta name="robots" content="noindex"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#141416"><meta name="description" content="Time FPV laps from video frame by frame, find your best 3 consecutive laps, and put live lap timers on your footage in DaVinci Resolve.">
+<title>Video Lap Tracking Lab</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23141416'/%3E%3Cg font-family='Arial,Helvetica,sans-serif' font-weight='800' font-size='27' fill='%23ef5b5b' text-anchor='middle'%3E%3Ctext x='16' y='28'%3EV%3C/text%3E%3Ctext x='48' y='28'%3EL%3C/text%3E%3Ctext x='16' y='57'%3ET%3C/text%3E%3Ctext x='48' y='57'%3EL%3C/text%3E%3C/g%3E%3Cg fill='%239a9aa3'%3E%3Crect x='27' y='19' width='10' height='3' rx='1.5'/%3E%3Crect x='27' y='48' width='10' height='3' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/mux.js@6.3.0/dist/mux.min.js" integrity="sha384-29f0hrh97Q8CHyA4ZR77MTG4b7N0ko/1NaExi09Qg+uKatLBrjaH9cTAv8WwN7g/" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/mediainfo.js@0.3.5/dist/umd/index.min.js" integrity="sha384-oYGDoM2xupGN3+61W+/b7Pi9HcaIFRlkPokhVG9ajYqLhsKLzRUt6Z+1zu1vky4s" crossorigin="anonymous"></script>
+<script>/* Set the saved theme before the page paints (the same setting as the rest of maxd.ax). */try{var t=localStorage.getItem('theme')||localStorage.getItem('fpvLapTheme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
-:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark;--bg:#0e1116;--panel:#161b22;--panel2:#12161c;--text:#e6edf3;--muted:#8b96a5;--line:#262d38;--button:#1c232d;--accent:#3dd68c;--accentText:#04130b;--blue:#5cc8ff;--best:#3dd68c14;--danger:#ff7b8a;--video:#000}
-:root[data-theme=light]{color-scheme:light;--bg:#f6f7f9;--panel:#fff;--panel2:#f3f5f8;--text:#16202e;--muted:#667085;--line:#e3e7ee;--button:#fff;--accent:#16915f;--accentText:#fff;--blue:#0a74a8;--best:#16915f14;--danger:#d92d4a;--video:#0d1117}
-*{box-sizing:border-box}body{background:var(--bg);color:var(--text);margin:0;min-height:100vh;-webkit-font-smoothing:antialiased}button,select,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}[hidden]{display:none!important}
-.app{max-width:none;margin:auto;padding:22px 3% 40px}
-.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}.logo{display:flex;align-items:center;gap:7px;margin:0;line-height:1;user-select:none}.logo .col{position:relative;font-size:22px;font-weight:800;color:var(--accent)}.logo .rest{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;min-width:26px;padding:8px 6px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 20px #0004;font-size:13px;font-weight:800;line-height:1;color:var(--text);opacity:0;pointer-events:none;transition:opacity .15s;z-index:40}.logo .rest i{font-style:normal}.logo:focus:not(:focus-visible){outline:0}.logo .dash{width:9px;height:2px;border-radius:2px;background:var(--muted);opacity:.6}.logo .name{margin-left:10px;padding-left:12px;border-left:1px solid var(--line);font-size:15px;font-weight:600;letter-spacing:-.01em;color:var(--text)}.topActions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}.sep{width:1px;height:20px;background:var(--line);margin:0 4px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
-.btn{border:1px solid var(--line);background:var(--button);color:var(--text);padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;white-space:nowrap;transition:border-color .12s,color .12s}.btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}.primary{border-color:var(--accent);color:var(--accent)}.btn.on,td button.on{border-color:var(--accent);color:var(--accent);background:var(--best)}.danger{color:var(--danger)}.danger:hover:not(:disabled){border-color:var(--danger)!important;color:var(--danger)!important}
-.primary{display:inline-flex;align-items:center;gap:7px}.tipWrap{position:relative}.tipWrap::after{content:attr(data-tip);position:absolute;top:calc(100% + 8px);right:0;width:280px;background:#0b0f14;color:#e6edf3;padding:10px 12px;border-radius:8px;font:500 12px/1.55 Inter,system-ui,sans-serif;white-space:pre-line;opacity:0;pointer-events:none;transition:opacity .12s;z-index:30;box-shadow:0 12px 28px #0006}.tipWrap:hover::after{opacity:1;transition-delay:.3s}
-.menu{position:relative}.menuItems{position:absolute;right:0;top:calc(100% + 6px);z-index:20;min-width:170px;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 28px #0005;display:flex;flex-direction:column;gap:2px}.menuItems .btn{border:0;background:transparent;text-align:left;width:100%}.menuItems .btn:hover:not(:disabled){background:var(--panel2)}.menuLabel{color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px 3px}
-.fpsControl{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--button);border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:12px}.fpsControl select{background:transparent;color:var(--text);border:0;font-weight:700;outline:0}.fpsControl option{background:var(--panel);color:var(--text)}
-.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(360px,1fr);gap:20px}.left,.right{min-width:0}.right{display:flex;flex-direction:column;gap:14px}
-.videoWrap{position:relative;aspect-ratio:16/9;width:min(100%,max(360px,calc((100vh - 620px)*16/9)));border-radius:12px;overflow:hidden;background:var(--video);border:1px solid var(--line);display:grid;place-items:center}.videoWrap video{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain}.videoTime{position:absolute;right:12px;top:12px;background:#0b0f14cc;color:#fff;border-radius:6px;padding:6px 10px;font:600 13px ui-monospace,monospace;pointer-events:none}.embedPlayer{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+/* ==== VLTL styles ====
+ * Look and colours follow maxd.ax (src/css/custom.css in this repo). Docusaurus bundles that
+ * file under a hashed name, so this page cannot load it: the values below are copied from it.
+ * If you change a colour there, change it here too.
+ * Only use the tokens below in the rules further down, so the light and dark themes keep working. */
+
+/* ---- Tokens: dark ---- */
+:root{
+  color-scheme:dark;
+  --font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --bg:#141416;            /* page */
+  --panel:#1c1c20;         /* cards, menus, dialogs */
+  --panel2:#232327;        /* fields, table heads, the timeline track */
+  --item:rgba(115,115,115,.1);        /* buttons and list items */
+  --item-hover:rgba(115,115,115,.2);
+  --glass:rgba(115,115,115,.1);       /* the navbar pill */
+  --border:rgba(255,255,255,.05);     /* outline of cards */
+  --line:#2a2a30;          /* dividers inside cards */
+  --text:#e7e7ea;
+  --muted:#9a9aa3;
+  --accent:#ef5b5b;        /* --ifm-color-primary on maxd.ax */
+  --accent-hover:#f27676;
+  --accentText:#1a0606;    /* text on an accent background */
+  --accent-tint:rgba(239,91,91,.2);   /* selected / switched on */
+  --best:rgba(115,115,115,.14);       /* best 3 laps, current video (neutral; the accent bar on the left marks them) */
+  --danger:#ff9a52;        /* bad laps, reset (orange, so it does not look like the red accent) */
+  --danger-tint:rgba(255,154,82,.15);
+  --star:#ffcb36;
+  --marker:#e7e7ea;        /* lap marks on the timeline */
+  --tip:#0f0f11;           /* tooltips (dark in both themes) */
+  --video:#232327;         /* video player background (behind and around the picture) */
+  --grip:rgba(255,255,255,.7);
+  --shadow:0 20px 25px -5px rgba(0,0,0,.35),0 8px 10px -6px rgba(0,0,0,.3);
+  --shadow-pop:0 12px 28px rgba(0,0,0,.45);
+  --blur:blur(12px);
+  --radius:16px;           /* cards */
+  --radius-sm:8px;         /* buttons, fields */
+  font-family:var(--font);
+}
+/* ---- Tokens: light (the default: <html data-theme="light">) ---- */
+:root[data-theme=light]{
+  color-scheme:light;
+  --bg:#f5f5f6;
+  --panel:#fff;
+  --panel2:#f0f0f2;
+  --item:rgba(115,115,115,.08);
+  --item-hover:rgba(115,115,115,.16);
+  --glass:rgba(255,255,255,.62);
+  --border:rgba(0,0,0,.06);
+  --line:#e2e2e6;
+  --text:#1c1e21;
+  --muted:#61616b;
+  --accent:#d23c3c;
+  --accent-hover:#c33232;
+  --accentText:#fff;
+  --accent-tint:rgba(210,60,60,.12);
+  --best:rgba(115,115,115,.1);
+  --danger:#c2510c;
+  --danger-tint:rgba(194,81,12,.12);
+  --star:#b7791f;
+  --marker:#1c1e21;
+  --video:#e9e9ec;
+  --grip:rgba(0,0,0,.45);
+  --shadow:0 20px 25px -5px rgba(0,0,0,.08),0 8px 10px -6px rgba(0,0,0,.06);
+  --shadow-pop:0 12px 28px rgba(0,0,0,.14);
+}
+
+/* ---- Base ---- */
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--text);margin:0;min-height:100vh;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.45}
+button,select,input{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.4;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.app{padding:12px 3% 40px}
+.ver{position:fixed;right:8px;bottom:6px;font-size:11px;color:var(--muted);opacity:.7;pointer-events:none;z-index:50}
+
+/* ---- Site navbar (same as maxd.ax: a floating glass pill) ---- */
+.navbar{display:flex;align-items:center;gap:4px;height:56px;padding:0 10px 0 18px;margin-bottom:22px;background:var(--glass);border:1px solid var(--border);border-radius:9999px;box-shadow:var(--shadow);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+.navbar a{color:var(--text);font-weight:600;font-size:15px;padding:6px 10px;border-radius:9999px}
+.navbar a:hover{color:var(--accent);text-decoration:none}
+.navbar .brand{font-weight:800;letter-spacing:-.01em;padding-left:0}
+.navbar .crumb{color:var(--muted);opacity:.6;margin:0 10px 0 2px;font-size:18px}
+.navbar .navSpacer{flex:1}
+.navbar .navLink+.iconBtn{margin-left:6px}
+.iconBtn{display:inline-grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:transparent;color:var(--text)}
+.iconBtn:hover{background:var(--item-hover)}
+.iconBtn svg{width:20px;height:20px}
+
+/* ---- App logo (in the navbar) and toolbar ---- */
+.top{display:flex;align-items:center;gap:12px 20px;margin-bottom:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:7px;margin:0;line-height:1;user-select:none}
+.logo .col{position:relative;font-size:21px;font-weight:900;font-style:italic;color:var(--accent)}
+.logo .rest{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;min-width:26px;padding:8px 6px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-pop);font-size:13px;font-weight:800;line-height:1;color:var(--text);opacity:0;pointer-events:none;transition:opacity .15s;z-index:40}
+.logo .rest i{font-style:normal}
+.logo:focus:not(:focus-visible){outline:0}
+.logo .dash{width:9px;height:2px;border-radius:2px;background:var(--muted);opacity:.6}
+.logo .name{margin-left:10px;padding-left:12px;border-left:1px solid var(--line);font-size:16px;font-weight:700;letter-spacing:-.01em;color:var(--text);white-space:nowrap}
+.topActions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sep{width:1px;height:20px;background:var(--line);margin:0 4px}
+
+/* ---- Cards ---- */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+/* Card title: small muted caps. Red is kept for the main actions, so the page does not get too loud. */
+.statTop,.tableHead>div:first-child{color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+
+/* ---- Buttons ---- */
+.btn{border:1px solid transparent;background:var(--item);color:var(--text);padding:7px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;white-space:nowrap;transition:background .12s,color .12s,border-color .12s}
+.btn:hover:not(:disabled){background:var(--item-hover)}
+.primary{display:inline-flex;align-items:center;gap:7px}
+.primary:hover:not(:disabled){border-color:var(--accent)}
+.btn.on,td button.on{color:var(--text);background:var(--item-hover);border-color:var(--accent)}
+.danger{color:var(--danger)}
+.danger:hover:not(:disabled){background:var(--danger-tint)!important;color:var(--danger)!important}
+/* Big filled buttons: Play and Record lap (like .button--primary on maxd.ax) */
+.play,.record{border:0;border-radius:10px;font-weight:700;padding:9px 20px;transition:background .12s}
+/* Record lap is the one filled red button (like .button--primary on maxd.ax) */
+.record{background:var(--accent);color:var(--accentText)}
+.record:hover:not(:disabled){background:var(--accent-hover)}
+.play{min-width:120px;background:var(--item-hover);color:var(--text)}
+.play:hover:not(:disabled){background:color-mix(in srgb,var(--item-hover) 100%,var(--text) 8%)}
+.linkBtn{background:none;border:0;padding:0;color:var(--accent);font:inherit;font-weight:700;cursor:pointer}
+.linkBtn:hover{text-decoration:underline}
+
+/* ---- Tooltip on the Copy Resolve script button ---- */
+.tipWrap{position:relative}
+.tipWrap::after{content:attr(data-tip);position:absolute;top:calc(100% + 8px);right:0;width:280px;background:var(--tip);color:#e7e7ea;padding:10px 12px;border-radius:10px;font:500 12px/1.55 var(--font);white-space:pre-line;opacity:0;pointer-events:none;transition:opacity .12s;z-index:30;box-shadow:var(--shadow-pop)}
+.tipWrap:hover::after{opacity:1;transition-delay:.3s}
+
+/* ---- Menus and dropdowns ---- */
+.menu{position:relative}
+.menuItems,.ddList{position:absolute;z-index:20;padding:6px;background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-pop);display:flex;flex-direction:column;gap:2px}
+.menuItems{right:0;top:calc(100% + 6px);min-width:190px}
+.menuItems .btn,.ddList .btn{border:0;background:transparent;text-align:left;width:100%}
+.menuItems .btn:hover:not(:disabled),.ddList .btn:hover:not(:disabled),.ddList .btn:focus-visible{background:var(--item-hover)}
+.menuLabel{color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:8px 12px 3px}
+.dd{position:relative;display:inline-block}
+.ddBtn{display:inline-flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:var(--radius-sm);padding:6px 9px;font-size:12px;white-space:nowrap}
+.ddBtn::after{content:"▾";color:var(--muted);font-size:11px}
+.ddBtn:hover:not(:disabled),.dd.open .ddBtn{border-color:var(--accent)}
+.ddList{left:0;top:calc(100% + 6px);z-index:25;min-width:100%;max-height:300px;overflow:auto}
+.ddList.up{top:auto;bottom:calc(100% + 6px)}
+.ddList.right{left:auto;right:0}
+.ddList .btn.sel{color:var(--accent);background:var(--accent-tint)}
+
+/* ---- Fields ---- */
+.fpsControl{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--item);border:1px solid transparent;border-radius:var(--radius-sm);color:var(--muted);font-size:12px}
+.fpsControl select{background:transparent;color:var(--text);border:0;font-weight:700;outline:0}
+.fpsControl option{background:var(--panel);color:var(--text)}
+.fpsControl .ddBtn{background:transparent;border:0;padding:0;font-weight:700}
+.extra select,.extra input,.num,.webInput input{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:var(--radius-sm);padding:6px 9px;font-size:12px;transition:border-color .12s}
+.num:focus,.webInput input:focus{outline:0;border-color:var(--accent)}
+.num{width:80px}
+.extra input{width:80px}
+input[type=checkbox],input[type=range]{accent-color:var(--accent)}
+
+/* ---- Layout ---- */
+.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(360px,1fr);gap:20px}
+.left,.right{min-width:0}
+.right{display:flex;flex-direction:column;gap:14px}
+
+/* ---- Video ---- */
+/* Width follows the window height so the controls stay on screen; the grip (bottom right) overrides it. */
+.videoWrap{position:relative;aspect-ratio:16/9;width:min(100%,max(360px,calc((100vh - 600px)*16/9)));border-radius:var(--radius);overflow:hidden;background:var(--video);border:1px solid var(--border);box-shadow:var(--shadow);display:grid;place-items:center}
+.videoWrap video{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain}
+.videoTime{position:absolute;right:12px;top:12px;background:rgba(15,15,17,.8);color:#fff;border-radius:8px;padding:6px 10px;font:600 13px var(--mono);pointer-events:none}
+.embedPlayer{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--video)}
 #ytPlayer{pointer-events:none}
-.ver{position:fixed;right:8px;bottom:6px;font-size:11px;color:var(--muted);opacity:.7;pointer-events:none;z-index:50}.videoWrap:has(.embedPlayer:not([hidden])) .videoTime{display:none}
-.drop{border:1px dashed var(--line);padding:10px 14px;border-radius:10px;margin-top:12px;display:flex;align-items:center;cursor:pointer}.drop:hover,.drop.drag{border-color:var(--accent);background:var(--best)}.drop strong{font-size:13px}.drop small{display:block;color:var(--muted);font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60vw}
-.webInput{display:flex;gap:8px;margin-top:8px}.webInput input{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);font-size:13px}.webNotice{color:var(--muted);font-size:11px;margin:6px 0 0}.ytBar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0;padding:10px 12px;border:1px solid var(--accent);border-radius:10px;background:var(--panel)}.ytBar[hidden]{display:none}.ytBar b{font-size:13px;margin-right:4px}.ytBar button{min-height:38px;min-width:52px;padding:6px 14px;font-size:15px;border-radius:8px;border:1px solid var(--line);background:var(--button);color:var(--text);cursor:pointer}.ytBar button:hover{border-color:var(--accent)}.ytBar button.on{background:var(--accent);color:var(--accentText);border-color:var(--accent);font-weight:600}.ytBar .ytHint{flex-basis:100%;font-size:12px;color:var(--muted);margin:0}.ytBar summary{cursor:pointer}@media(max-width:560px){.ytBar{padding:8px;gap:6px;margin:6px 0}.ytBar b{font-size:12px;margin:0}.ytBar button{min-height:36px;min-width:40px;padding:4px 10px;font-size:14px}.ytBar .ytStats{margin-left:0;font-size:12px}.ytBar .ytHint{flex:1 1 auto}.ytBar #ytChips{display:contents}}.ytBar .ytStats{margin-left:auto;font-size:13px}
-.timelineCard{margin-top:12px;padding:12px 14px}.timeLabels{display:flex;justify-content:space-between;color:var(--muted);font:12px ui-monospace,monospace;margin-bottom:8px}.timelineWrap{--th:16px;position:relative;background:var(--panel2);height:30px;border-radius:8px;display:flex;align-items:center}.timelineWrap input{-webkit-appearance:none;appearance:none;background:transparent;width:100%;height:100%;margin:0;cursor:pointer;position:relative;z-index:1}#timeline::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:var(--line)}#timeline::-moz-range-track{height:6px;border-radius:3px;background:var(--line)}#timeline::-webkit-slider-thumb{-webkit-appearance:none;width:var(--th);height:var(--th);margin-top:-5px;border:0;border-radius:50%;background:var(--accent)}#timeline::-moz-range-thumb{width:var(--th);height:var(--th);border:0;border-radius:50%;background:var(--accent)}.marker{position:absolute;top:2px;left:calc(var(--th)/2 + (100% - var(--th))*var(--f,0));width:3px;height:26px;border:0;padding:0;background:#ffcb36;transform:translateX(-50%);z-index:2;pointer-events:auto;border-radius:2px}.badSpan{position:absolute;top:2px;height:26px;left:calc(var(--th)/2 + (100% - var(--th))*var(--f1,0));width:calc((100% - var(--th))*(var(--f2,0) - var(--f1,0)));background:#ff5a6e55;border-radius:3px;pointer-events:none}
-.marker::before{content:"";position:absolute;inset:-2px -6px}.marker::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#0b0f14;color:#fff;font:600 11px ui-monospace,monospace;padding:5px 8px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .1s}.marker:hover::after{opacity:1}
-#zoom{padding:0;border:0;background:transparent;accent-color:var(--accent);width:150px}.controls{padding:14px;margin-top:12px}.transport{display:flex;align-items:center;justify-content:space-between;gap:8px}.steps{display:flex;gap:5px}.play,.record{background:var(--accent);color:var(--accentText);border:0;border-radius:9px;font-weight:700;padding:9px 20px}.play{min-width:110px}.play:hover:not(:disabled),.record:hover:not(:disabled){filter:brightness(1.1)}
-.actionRow{display:flex;gap:10px;margin-top:14px}.actionRow .btn{flex:1;height:40px}.actionRow .record{flex:2;height:40px}.controlBottom .btn,.controlBottom .fpsControl{height:32px;display:inline-flex;align-items:center}.controlBottom .fpsControl{padding:0 10px}.controlBottom .fpsControl input[type=number]{width:70px;background:transparent;color:var(--text);border:0;outline:0;font-weight:700;padding:0}.controlBottom .fpsControl input[type=checkbox]{width:auto;margin:0;accent-color:var(--accent)}.controlBottom .fpsControl[hidden]{display:none}.controlBottom{border-top:1px solid var(--line);margin-top:14px;padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.audio{display:flex;align-items:center;gap:8px}.audio input{width:100px;accent-color:var(--accent)}.extra{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.extra select,.extra input,.num{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:7px;padding:6px 8px;font-size:12px}.extra input{width:80px}
-.note{color:var(--muted);font-size:12px}#lapHint{color:var(--muted);font-size:11px;margin:10px 0 0}.hint{color:var(--muted);font-size:11px;margin:12px 2px 0}
-.stats{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.stat{padding:16px}.statTop{display:flex;justify-content:space-between;align-items:center;gap:6px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.05em}.statNumber{font:700 26px ui-monospace,monospace;margin-top:14px}.blue{color:var(--blue)}.statSub{color:var(--muted);font:12px ui-monospace,monospace;margin-top:4px}
-.badge,.pill{font-size:11px;font-weight:600;border-radius:999px;padding:2px 9px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);white-space:nowrap;letter-spacing:0}
-.resolve{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:10px 14px}.resolve label{color:var(--muted);font-size:12px;display:flex;align-items:center;gap:8px}.num{width:80px}
-.tableCard{overflow:hidden}.tableHead{display:flex;justify-content:space-between;align-items:center;padding:14px;gap:8px;font-weight:700;font-size:14px}.tableHead small{font-weight:400;color:var(--muted);font-size:12px}.tableHead strong{color:var(--text)}.tableScroll{overflow:auto;max-height:max(240px,calc(100vh - 480px))}
-table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th{text-align:left;color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.06em;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--panel2);position:sticky;top:0}td{padding:10px 12px;border-top:1px solid var(--line);font-family:ui-monospace,monospace}tr:first-child td{border-top:0}tr.best3 td{background:var(--best)}tr.best3 td:first-child{box-shadow:inset 3px 0 var(--accent)}td:first-child{font-weight:700}td button{background:transparent;color:var(--muted);border:0;border-radius:5px;padding:4px 6px;font-size:12px}td button:hover{background:var(--button);color:var(--text)}.bestLabel{color:var(--accent);font-weight:700}.secondary{color:var(--muted)}#lapRows tr.invalidLap td,#lapRows tr.invalidLap:hover td{background:#ff7b8a24;color:var(--danger)}#lapRows tr.invalidLap:hover td{background:#ff7b8a38}.invalidLap td:first-child{text-decoration:line-through}.invalidLap td .secondary{color:inherit}.marker.bad{background:#ff5a6e}#lapRows tr.nudging td{box-shadow:inset 0 0 0 1px var(--accent)}
-.session{overflow:hidden}.sessionBtns,.headBtns{display:flex;gap:6px;align-items:center}.headBtns{gap:10px}.rk{display:inline-block;min-width:20px;color:var(--muted);font:600 11px ui-monospace,monospace}.sRow .x{background:transparent;border:0;color:var(--muted);font-size:11px;padding:2px 5px;border-radius:5px;opacity:.4}.sRow:hover .x{opacity:1}.sRow .x:hover{background:var(--button);color:var(--danger)}#lapRows tr{cursor:pointer}#lapRows tr:hover td{background:var(--panel2)}.sessionRows{max-height:230px;overflow:auto;border-top:1px solid var(--line)}.sRow{display:grid;grid-template-columns:minmax(0,1fr) 64px 64px 58px 22px;gap:12px;align-items:center;padding:9px 14px;border-top:1px solid var(--line);cursor:pointer;font-size:12px}.sRow:first-child{border-top:0}.sRow:hover{background:var(--panel2)}.sRow.cur{background:var(--best);box-shadow:inset 3px 0 var(--accent)}.sRow .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sRow .t{font:700 12px ui-monospace,monospace}.sRow.top .t{color:var(--accent)}.sRow .r{color:var(--muted);font:11px ui-monospace,monospace;text-align:right}.sRow .t,.sRow .s{text-align:right}.sRow .s{color:var(--muted);font:11px ui-monospace,monospace}.sHead{display:grid;grid-template-columns:minmax(0,1fr) 64px 64px 58px 22px;gap:12px;padding:6px 14px;border-top:1px solid var(--line);color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.06em}.sHead span:nth-child(n+2){text-align:right}.statSub.clip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.modal{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}.modal.hidden{display:none}.modalInner{padding:20px;zoom:var(--mz,1);width:min(calc(100vw / var(--mz,1) - 32px),460px)}.resolveBox{width:min(calc(100vw / var(--mz,1) - 32px),520px);max-height:calc(92vh / var(--mz,1));overflow:auto}.quick{padding:14px 16px 10px}.quick .bindRow{margin:10px 0}.quick .note{margin:0;font-size:12px}.quickNote{margin:6px 0 0;color:var(--muted);font-size:12px}.linkBtn{background:none;border:0;padding:0;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer}.rsBox{width:min(calc(100vw / var(--mz,1) - 32px),1240px);max-height:calc(94vh / var(--mz,1));overflow:auto}.rsGrid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}@media(max-width:860px){.rsGrid{grid-template-columns:minmax(0,1fr)}}#rsCanvas{width:100%;display:block;border-radius:8px;background:#000;cursor:move;touch-action:none}.rsRow{display:grid;grid-template-columns:118px minmax(0,1fr) 74px;gap:8px;align-items:center;margin:6px 0;font-size:13px}.rsRow .num{width:74px}.rsRow input[type=range]{width:100%;accent-color:var(--accent)}.rsRow.wide{grid-template-columns:118px minmax(0,1fr)}.rsRow.wide .num,.rsRow.wide .dd{width:100%}
-.renderBox{width:min(calc(100vw / var(--mz,1) - 32px),640px);max-height:calc(92vh / var(--mz,1));overflow:auto}.renderBar{height:8px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;margin:12px 0 6px}.renderBar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}.testBadge{font-size:10px;padding:2px 6px;border-radius:5px;border:1px solid var(--line);color:var(--muted);vertical-align:middle;font-weight:600;letter-spacing:.06em}
-.setHead{margin:16px 0 4px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.modalInner h2{margin:0;font-size:16px}.bindRow{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
-.dd{position:relative;display:inline-block}.ddBtn{display:inline-flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:7px;padding:6px 8px;font-size:12px;white-space:nowrap}.ddBtn::after{content:"▾";color:var(--muted);font-size:11px}.ddBtn:hover:not(:disabled),.dd.open .ddBtn{border-color:var(--accent)}.fpsControl .ddBtn{background:transparent;border:0;padding:0;font-weight:700}.ddList{position:absolute;left:0;top:calc(100% + 6px);z-index:25;min-width:100%;max-height:300px;overflow:auto;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 28px #0005;display:flex;flex-direction:column;gap:2px}.ddList.up{top:auto;bottom:calc(100% + 6px)}.ddList.right{left:auto;right:0}.ddList .btn{border:0;background:transparent;text-align:left;width:100%}.ddList .btn:hover:not(:disabled),.ddList .btn:focus-visible{background:var(--panel2)}.ddList .btn.sel{color:var(--accent)}
-.dlgBtns{display:flex;justify-content:flex-end;gap:8px}#dlgMsg{margin:10px 0 14px;font-size:13px;color:var(--text);white-space:pre-line}#dlgInput{width:100%;margin-bottom:14px}
-.vGrip{position:absolute;right:0;bottom:0;width:24px;height:24px;cursor:nwse-resize;z-index:5;touch-action:none;opacity:.45;background:linear-gradient(135deg,transparent 0 48%,#fff 48% 56%,transparent 56% 70%,#fff 70% 78%,transparent 78%)}.vGrip:hover{opacity:1}
-.videoWrap.badZone::before{content:"";position:absolute;inset:0;border:4px solid var(--danger);border-radius:12px;pointer-events:none;z-index:3}.videoWrap.badZone::after{content:"BAD LAP";position:absolute;left:12px;top:12px;z-index:3;background:var(--danger);color:#fff;border-radius:6px;padding:5px 10px;font:700 12px ui-monospace,monospace;pointer-events:none}.videoWrap.badPending::before{border-style:dashed}.videoWrap.badPending::after{content:"BAD LAP (PENDING)"}.badSpan.pending{background:repeating-linear-gradient(135deg,#ff5a6e66 0 6px,#ff5a6e22 6px 12px)}#badBtn.on{border-color:var(--danger);color:var(--danger);background:#ff7b8a24}
-.statsBox{width:min(calc(100vw / var(--mz,1) - 32px),980px);min-width:0;max-height:calc(90vh / var(--mz,1));overflow:auto}.sumRow{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}.sumRow div{flex:1 1 110px;padding:10px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px}.sumRow b{display:block;font:700 18px ui-monospace,monospace}.sumRow span{color:var(--muted);font-size:11px}.statsBox h3{margin:18px 0 6px;font-size:13px}.chart{display:block;max-width:none}.chartScroll{overflow-x:auto;max-width:100%}.chart .gl{stroke:var(--line)}.chart .ax{fill:var(--muted);font:11px ui-monospace,monospace}.chart .ax.big{fill:var(--text);font-size:12px}.chart .dot{fill:var(--accent);fill-opacity:.35}.vidPick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.vidPick .btn{padding:4px 10px;font-size:12px}.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;cursor:pointer;color:var(--muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chip.on{color:var(--text);background:var(--panel2)}.chip input{display:none}.chip i{flex:none;width:10px;height:10px;border-radius:50%}.chip:not(.on) i{opacity:.3}.chart .bx{fill:var(--best);stroke:var(--accent)}.chart .md,.chart .wh{stroke:var(--accent);stroke-width:2}.chart .wh{stroke-width:1}.chart .ol{fill:none;stroke:var(--accent)}.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11px;color:var(--muted);margin-top:6px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
-@media(max-width:1100px){.layout{grid-template-columns:1fr}.tableScroll{max-height:460px}}
-@media(max-width:650px){.app{padding:14px 12px}.top{align-items:flex-start;flex-direction:column}.topActions{justify-content:flex-start}.stat{padding:12px}.statNumber{font-size:19px}.transport{flex-wrap:wrap;justify-content:center}.layout{gap:14px}.videoTime{font-size:11px}.webInput{flex-wrap:wrap}.webInput input{flex-basis:100%}}
+.videoWrap:has(.embedPlayer:not([hidden])) .videoTime{display:none}
+.vGrip{position:absolute;right:0;bottom:0;width:24px;height:24px;cursor:nwse-resize;z-index:5;touch-action:none;opacity:.6;background:linear-gradient(135deg,transparent 0 48%,var(--grip) 48% 56%,transparent 56% 70%,var(--grip) 70% 78%,transparent 78%)}
+.vGrip:hover{opacity:1}
+.videoWrap.badZone::before{content:"";position:absolute;inset:0;border:4px solid var(--danger);border-radius:var(--radius);pointer-events:none;z-index:3}
+.videoWrap.badZone::after{content:"BAD LAP";position:absolute;left:12px;top:12px;z-index:3;background:var(--danger);color:#1a0d02;border-radius:8px;padding:5px 10px;font:700 12px var(--mono);pointer-events:none}
+.videoWrap.badPending::before{border-style:dashed}
+.videoWrap.badPending::after{content:"BAD LAP (PENDING)"}
+
+/* ---- Loading videos: drop zone and URL field side by side ---- */
+.source{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:10px;margin-top:12px;align-items:stretch}
+.drop{border:1px dashed var(--line);padding:8px 14px;border-radius:12px;display:flex;align-items:center;cursor:pointer;background:var(--item);transition:border-color .12s,background .12s;min-width:0}
+.drop>div{min-width:0}
+.drop:hover,.drop.drag{border-color:var(--accent);background:var(--best)}
+.drop strong{font-size:13px}
+.drop small{display:block;color:var(--muted);font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.webInput{display:flex;gap:8px;align-items:stretch}
+.webInput input{flex:1;min-width:0;font-size:13px;padding:8px 12px}
+.webNotice{color:var(--muted);font-size:11px;margin:6px 2px 0}
+.ytBar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 0;padding:10px 12px;border:1px solid var(--accent);border-radius:12px;background:var(--panel)}
+.ytBar[hidden]{display:none}
+.ytBar b{font-size:13px;margin-right:4px}
+.ytBar button{min-height:38px;min-width:52px;padding:6px 14px;font-size:15px;border-radius:var(--radius-sm);border:1px solid transparent;background:var(--item);color:var(--text);cursor:pointer}
+.ytBar button:hover{background:var(--item-hover)}
+.ytBar button.on{background:var(--accent);color:var(--accentText);font-weight:600}
+.ytBar .ytStats{margin-left:auto;font-size:13px}
+.ytBar .ytHint{flex-basis:100%;font-size:12px;color:var(--muted);margin:0}
+.ytBar summary{cursor:pointer}
+
+/* ---- Timeline ---- */
+.timelineCard{margin-top:12px;padding:12px 14px}
+.timeLabels{display:flex;justify-content:space-between;color:var(--muted);font:12px var(--mono);margin-bottom:8px}
+.timelineWrap{--th:16px;position:relative;background:var(--panel2);height:30px;border-radius:var(--radius-sm);display:flex;align-items:center}
+.timelineWrap input{-webkit-appearance:none;appearance:none;background:transparent;width:100%;height:100%;margin:0;cursor:pointer;position:relative;z-index:1}
+#timeline::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:var(--line)}
+#timeline::-moz-range-track{height:6px;border-radius:3px;background:var(--line)}
+#timeline::-webkit-slider-thumb{-webkit-appearance:none;width:var(--th);height:var(--th);margin-top:-5px;border:0;border-radius:50%;background:var(--accent)}
+#timeline::-moz-range-thumb{width:var(--th);height:var(--th);border:0;border-radius:50%;background:var(--accent)}
+.marker{position:absolute;top:2px;left:calc(var(--th)/2 + (100% - var(--th))*var(--f,0));width:3px;height:26px;border:0;padding:0;background:var(--marker);opacity:.85;transform:translateX(-50%);z-index:2;pointer-events:auto;border-radius:2px}
+.marker::before{content:"";position:absolute;inset:-2px -6px}
+.marker::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--tip);color:#fff;font:600 11px var(--mono);padding:5px 8px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .1s}
+.marker:hover::after{opacity:1}
+.marker.bad{background:var(--danger);opacity:1}
+.marker.star{top:0;height:30px;width:4px;background:var(--star);opacity:1;box-shadow:0 0 6px var(--star)}
+.badSpan{position:absolute;top:2px;height:26px;left:calc(var(--th)/2 + (100% - var(--th))*var(--f1,0));width:calc((100% - var(--th))*(var(--f2,0) - var(--f1,0)));background:color-mix(in srgb,var(--danger) 35%,transparent);border-radius:3px;pointer-events:none}
+.badSpan.pending{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--danger) 40%,transparent) 0 6px,color-mix(in srgb,var(--danger) 13%,transparent) 6px 12px)}
+
+/* ---- Player controls ---- */
+.controls{padding:14px;margin-top:12px}
+.transport{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.steps{display:flex;gap:5px}
+.steps .btn{min-width:48px;font-family:var(--mono)}
+.actionRow{display:flex;gap:10px;margin-top:14px}
+.actionRow .btn{flex:1;height:42px}
+.actionRow .record{flex:2;height:42px;font-size:15px}
+#badBtn{color:var(--danger)}
+#badBtn:hover:not(:disabled){background:var(--danger-tint)}
+#badBtn.on{border-color:var(--danger);color:var(--danger);background:var(--danger-tint)}
+.controlBottom{border-top:1px solid var(--line);margin-top:14px;padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.controlBottom .btn,.controlBottom .fpsControl{height:32px;display:inline-flex;align-items:center}
+.controlBottom .fpsControl{padding:0 10px}
+.controlBottom .fpsControl input[type=number]{width:70px;background:transparent;color:var(--text);border:0;outline:0;font-weight:700;padding:0}
+.controlBottom .fpsControl input[type=checkbox]{width:auto;margin:0}
+.controlBottom .fpsControl[hidden]{display:none}
+.audio{display:flex;align-items:center;gap:8px}
+.audio input{width:100px}
+.extra{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#zoom{padding:0;border:0;background:transparent;width:150px}
+.note{color:var(--muted);font-size:12px}
+#lapHint{color:var(--muted);font-size:12px;margin:10px 0 0}
+.hint{color:var(--muted);font-size:11px;margin:12px 2px 0;line-height:1.6}
+
+/* ---- Stat cards ---- */
+.stats{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.stat{padding:16px 18px}
+.statTop{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.statNumber{font:700 28px var(--mono);margin-top:12px;letter-spacing:-.02em}
+.statSub{color:var(--muted);font:12px var(--mono);margin-top:4px}
+.statSub.clip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge,.pill{font-size:11px;font-weight:600;border-radius:999px;padding:2px 9px;background:var(--item);color:var(--muted);white-space:nowrap;letter-spacing:0;text-transform:none}
+
+/* ---- Resolve timer card ---- */
+.quick{padding:16px 18px 12px}
+.quick .bindRow{margin:10px 0}
+.quick .note{margin:0;font-size:12px}
+.quickNote{margin:6px 0 0;color:var(--muted);font-size:12px}
+.bindRow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0;font-size:13px}
+
+/* ---- Video list ---- */
+.session{overflow:hidden}
+.sessionBtns,.headBtns{display:flex;gap:6px;align-items:center}
+.headBtns{gap:8px}
+.sessionRows{max-height:230px;overflow:auto;border-top:1px solid var(--line)}
+.sHead,.sRow{display:grid;grid-template-columns:minmax(0,1fr) 64px 64px 58px 22px;gap:12px;align-items:center}
+.sHead{padding:6px 16px;border-top:1px solid var(--line);color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.07em;background:var(--panel2)}
+.sHead span:nth-child(n+2){text-align:right}
+.sRow{padding:9px 16px;border-top:1px solid var(--line);cursor:pointer;font-size:12px}
+.sRow:first-child{border-top:0}
+.sRow:hover{background:var(--item)}
+.sRow.cur{background:var(--best);box-shadow:inset 3px 0 var(--accent)}
+.sRow .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sRow .t{font:700 12px var(--mono)}
+.sRow.top .t{color:var(--text)}
+.sRow .r{color:var(--muted);font:11px var(--mono);text-align:right}
+.sRow .t,.sRow .s{text-align:right}
+.sRow .s{color:var(--muted);font:11px var(--mono)}
+.sRow .x{background:transparent;border:0;color:var(--muted);font-size:11px;padding:2px 5px;border-radius:5px;opacity:.4}
+.sRow:hover .x{opacity:1}
+.sRow .x:hover{background:var(--item-hover);color:var(--danger)}
+.rk{display:inline-block;min-width:20px;color:var(--muted);font:600 11px var(--mono)}
+
+/* ---- Lap table ---- */
+.tableCard{overflow:hidden}
+.tableHead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:12px 16px;gap:8px;min-height:54px}
+.tableHead>div:first-child{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.tableHead small{font-weight:400;color:var(--muted);font-size:12px}
+.tableHead strong{color:var(--text)}
+.tableScroll{overflow:auto;max-height:max(240px,calc(100vh - 480px))}
+table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}
+th{text-align:left;color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.07em;padding:8px 12px;border-bottom:1px solid var(--line);border-top:1px solid var(--line);background:var(--panel2);position:sticky;top:0}
+th:first-child,td:first-child{padding-left:16px}
+td{padding:10px 12px;border-top:1px solid var(--line);font-family:var(--mono)}
+tr:first-child td{border-top:0}
+td:first-child{font-weight:700}
+td button{background:transparent;color:var(--muted);border:0;border-radius:6px;padding:4px 6px;font-size:12px}
+td button:hover{background:var(--item-hover);color:var(--text)}
+#lapRows tr{cursor:pointer}
+#lapRows tr:hover td{background:var(--item)}
+tr.best3 td{background:var(--best)}
+tr.best3 td:first-child{box-shadow:inset 3px 0 var(--accent)}
+.bestLabel{color:var(--accent);font-weight:700}
+.secondary{color:var(--muted)}
+#lapRows tr.invalidLap td,#lapRows tr.invalidLap:hover td{background:var(--danger-tint);color:var(--danger)}
+#lapRows tr.invalidLap:hover td{background:color-mix(in srgb,var(--danger) 24%,transparent)}
+.invalidLap td:first-child{text-decoration:line-through}
+.invalidLap td .secondary{color:inherit}
+td button.star{font-size:13px}
+td button.star.starred,.starTag{color:var(--star)}
+.starTag{margin-left:6px}
+tr.starLap td:first-child{box-shadow:inset 3px 0 0 var(--star)}
+#lapRows tr.nudging td{box-shadow:inset 0 0 0 1px var(--accent)}
+
+/* ---- Dialogs ---- */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.modal.hidden{display:none}
+.modalInner{padding:22px 24px;zoom:var(--mz,1);width:min(calc(100vw / var(--mz,1) - 32px),460px);box-shadow:var(--shadow-pop)}
+.modalHead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.modalInner h2{margin:0;font-size:17px;color:var(--text)}
+.closeBtn{width:32px;height:32px;padding:0;display:inline-grid;place-items:center;border-radius:50%}
+.resolveBox{width:min(calc(100vw / var(--mz,1) - 32px),540px);max-height:calc(92vh / var(--mz,1));overflow:auto}
+/* ---- Timer overlay window (Text / Render / Resolve tabs) ---- */
+.ovBox{width:min(calc(100vw / var(--mz,1) - 32px),1180px);max-height:calc(94vh / var(--mz,1));overflow:auto}
+.ovTabs{display:flex;gap:2px;margin-right:auto;margin-left:14px;padding:3px;background:var(--panel2);border-radius:9999px}
+.ovTab{border:0;background:transparent;color:var(--muted);padding:6px 14px;border-radius:9999px;font-size:13px;font-weight:600}
+.ovTab:hover{color:var(--text)}
+.ovTab.on{background:var(--panel);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.ovGrid{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:22px;margin-top:16px;align-items:start}
+@media (max-width:900px){.ovGrid{grid-template-columns:minmax(0,1fr)}}
+#ovCanvas{width:100%;display:block;border-radius:var(--radius-sm);background:var(--video);cursor:move;touch-action:none}
+.ovFrameRow{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:13px}
+.ovFrameRow input{flex:1}
+.ovRight .setHead:first-child{margin-top:0;padding-top:0;border-top:0}
+#resolveModal input[type=range]{accent-color:var(--accent)}
+.slRow > span:first-child{min-width:96px}
+.slRow input[type=range]{flex:1;min-width:70px}
+.ovBtns{display:flex;gap:8px;flex-wrap:wrap}
+.ovBtns .btn{flex:1}
+.renderBar{height:8px;border-radius:4px;background:var(--panel2);overflow:hidden;margin:12px 0 6px}
+.renderBar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.testBadge{font-size:10px;padding:2px 6px;border-radius:5px;background:var(--item);color:var(--muted);font-weight:700;letter-spacing:.06em;vertical-align:middle}
+.setHead{margin:18px 0 4px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.dlgBtns{display:flex;justify-content:flex-end;gap:8px}
+.dlgBtns .primary{background:var(--accent);color:var(--accentText)}
+.dlgBtns .primary:hover:not(:disabled){background:var(--accent-hover);border-color:transparent}
+#dlgMsg{margin:10px 0 16px;font-size:13px;color:var(--text);white-space:pre-line}
+#dlgInput{width:100%;margin-bottom:14px}
+
+/* ---- Stats window ---- */
+.statsBox{width:min(calc(100vw / var(--mz,1) - 32px),980px);min-width:0;max-height:calc(90vh / var(--mz,1));overflow:auto}
+.statsBox h3{margin:20px 0 6px;font-size:13px}
+.sumRow{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.sumRow div{flex:1 1 110px;padding:10px 12px;background:var(--item);border-radius:12px}
+.sumRow b{display:block;font:700 18px var(--mono)}
+.sumRow span{color:var(--muted);font-size:11px}
+.chart{display:block;max-width:none}
+.chartScroll{overflow-x:auto;max-width:100%}
+.chart .gl{stroke:var(--line)}
+.chart .ax{fill:var(--muted);font:11px var(--mono)}
+.chart .ax.big{fill:var(--text);font-size:12px}
+.chart .dot{fill:var(--accent);fill-opacity:.35}
+.chart .bx{fill:var(--best);stroke:var(--accent)}
+.chart .md,.chart .wh{stroke:var(--accent);stroke-width:2}
+.chart .wh{stroke-width:1}
+.chart .ol{fill:none;stroke:var(--accent)}
+.vidPick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.vidPick .btn{padding:4px 10px;font-size:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;cursor:pointer;color:var(--muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip.on{color:var(--text);background:var(--item)}
+.chip input{display:none}
+.chip i{flex:none;width:10px;height:10px;border-radius:50%}
+.chip:not(.on) i{opacity:.3}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+
+/* ---- Narrow screens ---- */
+@media(max-width:1100px){
+  .layout{grid-template-columns:1fr}
+  .tableScroll{max-height:460px}
+}
+@media(max-width:1000px){
+  .navbar .navLink{display:none}
+}
+@media(max-width:760px){
+  .source{grid-template-columns:1fr}
+}
+@media(max-width:650px){
+  .app{padding:10px 12px 40px}
+  .navbar{margin-bottom:16px;height:52px}
+  .navbar{padding-left:16px}
+  .topActions .sep{display:none}
+  .logo .name{display:none}
+  .stat{padding:12px 14px}
+  .statNumber{font-size:20px}
+  .transport{flex-wrap:wrap;justify-content:center}
+  .layout{gap:14px}
+  .videoTime{font-size:11px}
+}
+@media(max-width:560px){
+  .ytBar{padding:8px;gap:6px;margin:6px 0}
+  .ytBar b{font-size:12px;margin:0}
+  .ytBar button{min-height:36px;min-width:40px;padding:4px 10px;font-size:14px}
+  .ytBar .ytStats{margin-left:0;font-size:12px}
+  .ytBar .ytHint{flex:1 1 auto}
+  .ytBar #ytChips{display:contents}
+}
 </style></head><body><div class="app">
-<div class="ver" id="ver">build 2026-11-19.1 test</div><header class="top"><h1 class="logo" tabindex="0" aria-label="Video Lap Tracking Lab"><span class="col" aria-hidden="true">V<span class="rest"><i>i</i><i>d</i><i>e</i><i>o</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>p</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">T<span class="rest"><i>r</i><i>a</i><i>c</i><i>k</i><i>i</i><i>n</i><i>g</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>b</i></span></span><span class="name" aria-hidden="true">Video Lap Tracking Lab</span></h1><div class="topActions"><label class="fpsControl">Video FPS <select id="fpsPreset"><option>23.976</option><option>24</option><option>25</option><option>29.97</option><option>30</option><option>50</option><option selected>60</option><option>90</option><option>120</option><option>240</option><option value="custom">Custom</option></select></label><span class="sep"></span><span class="tipWrap" data-tip="DaVinci Resolve (free or Studio)&#10;1. Put your video on Video 1.&#10;2. Click here to copy the script.&#10;3. In Resolve press F6 (Workspace &gt; Console).&#10;4. Paste and press Enter.&#10;The timer title is added on Video 2, sized to your clip, with the font and layout set. The first run also adds the Text+ template to your Media Pool.&#10;Guide: see the link in the Resolve panel."><button id="resolveScriptBtn" class="btn primary" disabled><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="4.2" r="3.2" fill="#ee5a5a" fill-opacity=".9"/><circle cx="4.4" cy="10.4" r="3.2" fill="#4fc3f7" fill-opacity=".9"/><circle cx="11.6" cy="10.4" r="3.2" fill="#66d17a" fill-opacity=".9"/></svg>Copy Resolve script</button></span><button id="resolveBtn" class="btn" title="Font, size, position and outline of the Resolve timer">Resolve settings</button><input id="sessionTitle" class="num" style="width:150px" placeholder="Session title" maxlength="60" title="Used in the names of exported and saved files" aria-label="Session title"><div class="menu"><button id="exportMenuBtn" class="btn" aria-haspopup="true" aria-expanded="false">File ▾</button><div id="exportMenu" class="menuItems" hidden><div class="menuLabel">Export this video</div><button id="csvBtn" class="btn">CSV</button><div class="menuLabel">Export all videos</div><button id="allCsvBtn" class="btn allExp" disabled>CSV</button><div class="menuLabel">Save and restore</div><button id="saveLaps" class="btn allExp" disabled title="Save the laps of every video in the list">Save laps (JSON)</button><button id="loadLaps" class="btn" title="Restore laps saved earlier (matched by file name and size)">Load laps (JSON)…</button><input id="lapsInput" type="file" accept=".json,application/json" hidden><div class="menuLabel">Settings</div><button id="exportSettings" class="btn" title="Save your keys and Resolve settings to a file">Export settings (JSON)</button><button id="importSettings" class="btn" title="Load keys and Resolve settings from a file">Import settings…</button><input id="settingsInput" type="file" accept=".json,application/json" hidden></div></div><span class="sep"></span><button id="undoBtn" class="btn" disabled title="Undo last lap change (Ctrl+Z)">Undo</button><button id="reset" class="btn danger" title="Erase all lap marks from the video that is open now. Laps on your other videos are not touched (R)">Reset this video's laps</button><button id="statsBtn" class="btn" title="Overall stats, box plots and lap-by-lap lines for all videos">Stats</button><button id="settingsBtn" class="btn">Keys</button><button id="themeBtn" class="btn">Light mode</button></div></header>
+<div class="ver" id="ver">build 2026-11-25.4 test</div><nav class="navbar" aria-label="maxd.ax"><a class="brand" href="/">maxd.ax</a><span class="crumb" aria-hidden="true">/</span><h1 class="logo" tabindex="0" aria-label="Video Lap Tracking Lab"><span class="col" aria-hidden="true">V<span class="rest"><i>i</i><i>d</i><i>e</i><i>o</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>p</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">T<span class="rest"><i>r</i><i>a</i><i>c</i><i>k</i><i>i</i><i>n</i><i>g</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>b</i></span></span><span class="name" aria-hidden="true">Video Lap Tracking Lab</span></h1><span class="navSpacer"></span><a class="navLink" href="/tools/">Tools</a><a class="navLink" href="/docs/vltl/">Docs</a><a class="navLink" href="/results/">Race results</a><a class="navLink" href="/about/">About me</a><button id="themeBtn" class="iconBtn" type="button"></button></nav>
+<header class="top"><div class="topActions"><label class="fpsControl">Video FPS <select id="fpsPreset"><option>23.976</option><option>24</option><option>25</option><option>29.97</option><option>30</option><option>50</option><option selected>60</option><option>90</option><option>120</option><option>240</option><option value="custom">Custom</option></select></label><span class="sep"></span><span class="tipWrap" data-tip="DaVinci Resolve (free or Studio)&#10;1. Put your video on Video 1.&#10;2. Click here to copy the script.&#10;3. In Resolve press F6 (Workspace &gt; Console).&#10;4. Paste and press Enter.&#10;The timer title is added on Video 2, sized to your clip, with the font and layout set. The first run also adds the Text+ template to your Media Pool.&#10;Settings and guide: Timer overlay &gt; Resolve."><button id="resolveScriptBtn" class="btn primary" disabled><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="4.2" r="3.2" fill="#ee5a5a" fill-opacity=".9"/><circle cx="4.4" cy="10.4" r="3.2" fill="#4fc3f7" fill-opacity=".9"/><circle cx="11.6" cy="10.4" r="3.2" fill="#66d17a" fill-opacity=".9"/></svg>Copy Resolve script</button></span><input id="sessionTitle" class="num" style="width:150px" placeholder="Session title" maxlength="60" title="Used in the names of exported and saved files" aria-label="Session title"><div class="menu"><button id="exportMenuBtn" class="btn" aria-haspopup="true" aria-expanded="false">File ▾</button><div id="exportMenu" class="menuItems" hidden><div class="menuLabel">Export this video</div><button id="csvBtn" class="btn">CSV</button><div class="menuLabel">Export all videos</div><button id="allCsvBtn" class="btn allExp" disabled>CSV</button><div class="menuLabel">Save and restore</div><button id="saveLaps" class="btn allExp" disabled title="Save the laps of every video in the list">Save laps (JSON)</button><button id="loadLaps" class="btn" title="Restore laps saved earlier (matched by file name and size)">Load laps (JSON)…</button><input id="lapsInput" type="file" accept=".json,application/json" hidden><div class="menuLabel">Settings</div><button id="exportSettings" class="btn" title="Save your keys and Resolve settings to a file">Export settings (JSON)</button><button id="importSettings" class="btn" title="Load keys and Resolve settings from a file">Import settings…</button><input id="settingsInput" type="file" accept=".json,application/json" hidden></div></div><span class="sep"></span><button id="undoBtn" class="btn" disabled title="Undo last lap change (Ctrl+Z)">Undo</button><button id="reset" class="btn danger" title="Erase all lap marks from the video that is open now. Laps on your other videos are not touched (R)">Reset this video's laps</button><button id="statsBtn" class="btn" title="Overall stats, box plots and lap-by-lap lines for all videos">Stats</button><button id="settingsBtn" class="btn">Keys</button></div></header>
 <div class="layout"><main class="left"><div class="videoWrap"><video id="video" playsinline></video><div id="ytPlayer" class="embedPlayer" hidden></div><iframe id="drivePlayer" class="embedPlayer" hidden allow="autoplay; fullscreen" referrerpolicy="strict-origin-when-cross-origin" title="Google Drive video preview"></iframe><div class="videoTime" id="videoTime">00:00.000</div><div id="vGrip" class="vGrip" title="Drag to make the video smaller or larger (double-click to fit the screen)"></div></div>
-<div id="dropZone" class="drop"><input id="fileInput" type="file" accept="video/*,.ts,.m2ts" multiple hidden><div><strong>Drop videos here or click to browse</strong><small id="fileStatus">MP4, WebM, MOV, MPEG-TS · No video loaded</small></div></div>
-<div class="webInput"><input id="webUrl" type="url" placeholder="Paste direct video, YouTube or Google Drive link" aria-label="Video URL"><button id="loadUrl" class="btn">Load URL</button></div><div id="ytBar" class="ytBar" hidden><b>FPS</b><span id="ytChips"></span><button type="button" id="ytStats" class="ytStats">Check on YouTube</button><details class="ytHint"><summary>Not sure of the FPS?</summary>Click <em>Check on YouTube</em>, right-click the video there and choose <em>Stats for nerds</em>. The number after the @ in <em>Optimal Res</em> is the FPS (1920x1080@60 = 60). Then click it here.</details></div><p id="webNotice" class="webNotice">Direct video: full controls · YouTube: approximate frame steps · Drive: preview only</p>
+<div class="source"><div id="dropZone" class="drop"><input id="fileInput" type="file" accept="video/*,.ts,.m2ts" multiple hidden><div><strong>Drop videos here or click to browse</strong><small id="fileStatus">MP4, WebM, MOV, MPEG-TS · No video loaded</small></div></div>
+<div class="webInput"><input id="webUrl" type="url" placeholder="Paste direct video, YouTube or Google Drive link" aria-label="Video URL"><button id="loadUrl" class="btn">Load URL</button></div></div><div id="ytBar" class="ytBar" hidden><b>FPS</b><span id="ytChips"></span><button type="button" id="ytStats" class="ytStats">Check on YouTube</button><details class="ytHint"><summary>Not sure of the FPS?</summary>Click <em>Check on YouTube</em>, right-click the video there and choose <em>Stats for nerds</em>. The number after the @ in <em>Optimal Res</em> is the FPS (1920x1080@60 = 60). Then click it here.</details></div><p id="webNotice" class="webNotice">Direct video: full controls · YouTube: approximate frame steps · Drive: preview only</p>
 <div class="panel timelineCard"><div class="timeLabels"><span id="timeDisplay">00:00:00:00</span><span id="frameDisplay">Frame 0</span><span id="durationDisplay">00:00:00:00</span></div><div class="timelineWrap"><input id="timeline" aria-label="Video position" type="range" min="0" max="1000000" step="any" value="0"><div id="markers" style="position:absolute;inset:0;pointer-events:none"></div></div></div>
 <div class="panel controls"><div class="transport"><div class="steps"><button class="btn step videoControl" data-step="-10" disabled>-10f</button><button class="btn step videoControl" data-step="-1" disabled>-1f</button></div><button id="playBtn" class="play videoControl" disabled>▶ Play</button><div class="steps"><button class="btn step videoControl" data-step="1" disabled>+1f</button><button class="btn step videoControl" data-step="10" disabled>+10f</button></div></div><div class="actionRow"><button id="badBtn" class="btn" disabled title="Mark the lap you are in as bad. It is flagged invalid when you record the next gate pass">Mark lap bad</button><button id="addLap" class="record" disabled>Record lap</button></div><div class="controlBottom"><div class="audio"><button id="muteBtn" class="btn videoControl" disabled title="Mute">🔊</button><input id="volume" aria-label="Volume" class="videoControl" type="range" min="0" max="1" step=".05" value=".5" disabled></div><div class="extra"><label class="fpsControl">Speed <select id="speed" class="videoControl" disabled><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option><option value="3">3×</option><option value="4">4×</option><option value="6">6×</option><option value="8">8×</option></select></label><div class="menu zoomMenu"><button id="zoomBtn" class="btn" aria-haspopup="true" title="Crop the picture in or out">Zoom 100%</button><div id="zoomPop" class="menuItems" hidden style="top:auto;bottom:calc(100% + 6px);right:auto;left:0;padding:10px 12px;gap:8px"><input id="zoom" type="range" min=".5" max="1.5" step=".01" value="1" title="Double-click to reset"><button id="zoomReset" class="btn" style="text-align:center">Reset to 100%</button></div></div><label class="fpsControl">Time <select id="timeMode" aria-label="Time format"><option value="tc">HH:MM:SS:FF</option><option value="sec">SS.ms</option></select></label><label id="customFpsLabel" class="fpsControl" hidden>FPS <input id="customFps" type="number" min="1" max="1000" step=".001" disabled placeholder="Custom"></label><label class="fpsControl" title="When a video ends, open and play the next one in the list"><input id="autoNext" type="checkbox"> Autoplay next</label></div></div><p id="lapHint">Load a video to begin.</p></div>
 <p id="keyHint" class="hint"></p></main>
-<aside class="right"><div class="stats"><div class="panel stat"><div class="statTop"><span>BEST SINGLE LAP</span><span id="singleBadge" class="badge">NO LAPS</span></div><div id="singleBest" class="statNumber">—</div><div id="allSingle" class="statSub clip"></div></div><div class="panel stat"><div class="statTop"><span>3-CONSECUTIVE LAPS</span><span id="bestRange" class="badge">—</span></div><div id="bestTotal" class="statNumber blue">—</div><div id="bestAvg" class="statSub">Avg: —</div><div id="allBest" class="statSub clip"></div></div></div><div id="resolvePanel" class="panel quick"><div class="statTop"><span>RESOLVE TIMER</span></div>
+<aside class="right"><div class="stats"><div class="panel stat"><div class="statTop"><span>BEST SINGLE LAP</span><span id="singleBadge" class="badge">NO LAPS</span></div><div id="singleBest" class="statNumber">—</div><div id="allSingle" class="statSub clip"></div></div><div class="panel stat"><div class="statTop"><span>3-CONSECUTIVE LAPS</span><span id="bestRange" class="badge">—</span></div><div id="bestTotal" class="statNumber blue">—</div><div id="bestAvg" class="statSub">Avg: —</div><div id="allBest" class="statSub clip"></div></div></div><div id="resolvePanel" class="panel quick"><div class="statTop"><span>TIMER OVERLAY</span></div><p class="quickNote" style="margin:0 0 10px">Lap timers on your video: render them right here, or put them on in DaVinci Resolve. Both use the same text settings.</p><div class="ovBtns"><button id="ovText" class="btn" type="button" title="Font, size, position and the other text settings, on a frame of your video">Text</button><button id="renderOpen" class="btn" type="button" title="Make an MP4 of this video with the timer drawn in (TEST)">Render video</button><button id="resolveBtn" class="btn" type="button" title="Resolve script options and copy expression">Resolve</button></div></div><div id="sessionPanel" class="panel session" hidden><div class="tableHead"><div>VIDEOS <span id="sessionCount" class="pill">0</span></div><div class="sessionBtns"><button id="prevVid" class="btn" title="Previous video (PageUp)">‹</button><button id="nextVid" class="btn" title="Next video (PageDown)">›</button><select id="sortSel" title="How the video list is ordered"><option value="queue">Sort: Queue</option><option value="name">Sort: Name A–Z</option><option value="fast">Sort: Fastest</option><option value="old">Sort: Oldest first</option><option value="new">Sort: Newest first</option><option value="big">Sort: Largest</option><option value="small">Sort: Smallest</option></select></div></div><div class="sHead"><span>VIDEO</span><span>BEST 3</span><span>BEST LAP</span><span></span><span></span></div><div id="sessionRows" class="sessionRows"></div></div>
+<div class="panel tableCard"><div class="tableHead"><div>LAP TIMES <span id="lapCount" class="pill">0 Laps</span></div><div class="headBtns"><small>Start: <strong id="startDisplay">—</strong></small><button id="goBest" class="btn" disabled title="Jump to the start of your fastest 3 laps">Go to best 3</button><button id="loopBest" class="btn" disabled title="Repeat your fastest 3 laps until you switch it off">Loop best 3</button></div></div><div class="tableScroll"><table><thead><tr><th>LAP</th><th>END TIME</th><th>LAP TIME</th><th>DELTA</th><th>ACTION</th></tr></thead><tbody id="lapRows"></tbody></table></div></div></aside></div></div>
+<div id="modal" class="modal hidden"><div class="panel modalInner"><div class="modalHead"><h2>Keyboard shortcuts</h2><button id="closeModal" class="btn closeBtn" aria-label="Close">✕</button></div><p class="note" style="margin:8px 0 12px">Click a binding, then press a key. Shift multiplies frame steps by 10.</p><div id="bindingList"></div><button id="defaults" class="btn">Restore defaults</button></div></div>
+<div id="resolveModal" class="modal hidden"><div class="panel modalInner resolveBox ovBox"><div class="modalHead"><h2>Timer overlay</h2><div class="ovTabs" role="tablist"><button class="ovTab on" data-tab="text" role="tab" type="button">Text</button><button class="ovTab" data-tab="render" role="tab" type="button">Render</button><button class="ovTab" data-tab="resolve" role="tab" type="button">Resolve</button></div><button id="closeResolve" class="btn closeBtn" aria-label="Close">✕</button></div><div class="ovGrid"><div class="ovLeft"><canvas id="ovCanvas" width="1280" height="720"></canvas><div class="ovFrameRow" title="Pick the frame shown here (moves the video cursor)"><span>Frame</span><input id="ovFrame" type="range" min="0" max="1" step="any" value="0"><span id="ovFrameT" class="note"></span></div><p id="ovNote" class="note" style="margin:6px 0 0"></p></div><div class="ovRight">
+<div class="ovPane" data-pane="text">
 <div class="bindRow" title="The font of the timer in Resolve. It has to be installed on the computer that runs Resolve. Pick one, choose Other... to type a name, or press Load my fonts to list the fonts installed on this computer."><span>Font</span><select id="fontInput" class="num" style="width:auto;min-width:160px"></select></div>
 <div class="bindRow"><span id="fontNote" class="note"></span><button id="fontLoad" class="btn" title="List the fonts installed on this computer (Chrome and Edge ask once for permission)">Load my fonts</button></div>
-<div class="bindRow" title="One clip: a single title over the whole video (lightest for slow computers). Head, laps and tail: three clips one after the other on Video 2, so you can see the head and tail on the timeline and drag their edges to change them"><span>Clips on Video 2</span><select id="optMode" class="num" style="width:auto"><option value="single">One clip over the video</option><option value="pieces">Head, laps and tail clips</option></select></div>
-<p class="quickNote">More options (size, position, head and tail, title, labels, copy expression) are in <button id="openResolve" class="linkBtn" type="button">Resolve settings</button>.</p></div><div id="renderPanel" class="panel quick"><div class="statTop"><span>RENDER VIDEO WITH TIMER</span><span class="testBadge">TEST</span></div><p class="quickNote" style="margin:0 0 8px">Puts the lap timer into a copy of the open video, right here in the browser. No Resolve needed. Uses the same timer settings as Resolve.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="renderOpen" class="btn primary" type="button">Render video...</button><button id="renderSettingsHome" class="btn" type="button" title="Size, font, position, spacing and the other timer settings, on a frame of your video">Render settings...</button></div></div><div id="sessionPanel" class="panel session" hidden><div class="tableHead"><div>VIDEOS <span id="sessionCount" class="pill">0</span></div><div class="sessionBtns"><button id="prevVid" class="btn" title="Previous video (PageUp)">‹</button><button id="nextVid" class="btn" title="Next video (PageDown)">›</button><select id="sortSel" title="How the video list is ordered"><option value="queue">Sort: Queue</option><option value="name">Sort: Name A–Z</option><option value="fast">Sort: Fastest</option><option value="old">Sort: Oldest first</option><option value="new">Sort: Newest first</option><option value="big">Sort: Largest</option><option value="small">Sort: Smallest</option></select></div></div><div class="sHead"><span>VIDEO</span><span>BEST 3</span><span>BEST LAP</span><span></span><span></span></div><div id="sessionRows" class="sessionRows"></div></div>
-<div class="panel tableCard"><div class="tableHead"><div>LAP TIMES <span id="lapCount" class="pill">0 Laps</span></div><div class="headBtns"><small>Start: <strong id="startDisplay">—</strong></small><button id="goBest" class="btn" disabled title="Jump to the start of your fastest 3 laps">Go to best 3</button><button id="loopBest" class="btn" disabled title="Repeat your fastest 3 laps until you switch it off">Loop best 3</button></div></div><div class="tableScroll"><table><thead><tr><th>LAP</th><th>END TIME</th><th>LAP TIME</th><th>DELTA</th><th>ACTION</th></tr></thead><tbody id="lapRows"></tbody></table></div></div></aside></div></div>
-<div id="modal" class="modal hidden"><div class="panel modalInner"><div style="display:flex;justify-content:space-between;align-items:center"><h2>Keyboard shortcuts</h2><button id="closeModal" class="btn">✕</button></div><p class="note" style="margin:8px 0 12px">Click a binding, then press a key. Shift multiplies frame steps by 10.</p><div id="bindingList"></div><button id="defaults" class="btn">Restore defaults</button></div></div>
-<div id="resolveModal" class="modal hidden"><div class="panel modalInner resolveBox"><div style="display:flex;justify-content:space-between;align-items:center"><h2>Resolve script settings</h2><button id="closeResolve" class="btn">✕</button></div><p class="note" style="margin:8px 0 12px">Used by Copy Resolve script. Saved in this browser. The font and the one-clip / three-clip choice are on the main page.</p>
-<div class="bindRow" title="Length of the dashed line under the total, as dashes per character of the time. About 1 fits the HDZero OSD font, about 1.5 normal fonts."><span>Dashes per character</span><input id="dashRatio" class="num" type="number" min="0" max="5" step=".1" value="1"></div>
 <div class="bindRow" title="Text size in Resolve (Text+ Size)"><span>Text size</span><input id="lookSize" class="num" type="number" min=".005" max=".2" step=".001"></div>
-<div class="bindRow" title="Text+ Center X: 0 is the left edge, 1 the right edge"><span>Position X (0 left, 1 right)</span><input id="lookX" class="num" type="number" min="0" max="1" step=".01"></div>
-<div class="bindRow" title="Text+ Center Y: 0 is the bottom edge, 1 the top edge. The text grows downward from here"><span>Position Y (0 bottom, 1 top)</span><input id="lookY" class="num" type="number" min="0" max="1" step=".001"></div>
-<div class="bindRow" title="Thickness of the black outline (0 = none)"><span>Outline thickness</span><input id="lookOutline" class="num" type="number" min="0" max=".5" step=".01"></div>
+<div class="bindRow" title="Text+ Center X: 0 is the left edge, 1 the right edge"><span>Position X</span><input id="lookX" class="num" type="number" min="0" max="1" step=".01"></div>
+<div class="bindRow" title="Text+ Center Y: 0 is the bottom edge, 1 the top edge. The text grows downward from here"><span>Position Y</span><input id="lookY" class="num" type="number" min="0" max="1" step=".001"></div>
+<div class="bindRow" title="Thickness of the black outline (0 = none)"><span>Outline</span><input id="lookOutline" class="num" type="number" min="0" max=".5" step=".01"></div>
 <div class="bindRow" title="Space between the lines (Text+ Line Spacing, 1 = normal)"><span>Line spacing</span><input id="optLineSpacing" class="num" type="number" min=".5" max="3" step=".05"></div>
-<h3 class="setHead">Head and tail</h3>
-<div class="bindRow" title="How long the timer is on screen before the first lap starts (it shows zeros). 0 = it appears when the first lap starts"><span>Head (seconds before the laps)</span><input id="optHead" class="num" type="number" min="0" max="600" step=".1"></div>
-<div class="bindRow" title="How long the timer stays on screen after the last lap. Empty = until the video ends"><span>Tail (seconds after, empty = to the end)</span><input id="optTail" class="num" type="number" min="0" max="600" step=".1" placeholder="to end"></div>
-<h3 class="setHead">Text</h3>
+<div class="bindRow" title="Length of the dashed line under the total, as dashes per character of the time. About 1 fits the HDZero OSD font, about 1.5 normal fonts."><span>Dashes per character</span><input id="dashRatio" class="num" type="number" min="0" max="5" step=".1" value="1"></div>
+<h3 class="setHead">Lines</h3>
 <div class="bindRow" title="An optional first line above the times, for example your name or the track"><span>Title line</span><input id="optTitle" class="num" type="text" maxlength="40" placeholder="none" style="width:160px"></div>
 <div class="bindRow" title="The line between the total and the laps"><span>Divider</span><select id="optDivider" class="num" style="width:auto"><option value="dashes">Dashed line</option><option value="blank">Empty line</option><option value="none">None</option></select></div>
 <div class="bindRow" title="Write L1, L2, L3 in front of the lap times"><span>Lap labels (L1 L2 L3)</span><input id="optLabels" type="checkbox"></div>
-<h3 class="setHead">Copy</h3>
-<div class="bindRow" title="Copies the live-timer expression for a Text+ Styled Text field (right-click the field > Expression, paste). Put the Text+ clip at the start of the video, same length. Frames are counted at this timeline frame rate"><span>Timeline FPS</span><span><input id="exprFps" class="num" type="number" min="1" max="240" step="any" value="60" style="width:80px"> <button id="copyExpr" class="btn" title="Copy the expression (uses the head, tail, title, divider and label settings above)">Copy expression</button> <button id="copyScript" class="btn" title="Copy the Resolve script (same as the header button) to paste into Workspace > Console"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="4.2" r="3.2" fill="#ee5a5a" fill-opacity=".9"/><circle cx="4.4" cy="10.4" r="3.2" fill="#4fc3f7" fill-opacity=".9"/><circle cx="11.6" cy="10.4" r="3.2" fill="#66d17a" fill-opacity=".9"/></svg>Copy script</button></span></div>
+<h3 class="setHead">When it shows</h3>
+<div class="bindRow" title="How long the timer is on screen before the first lap starts (it shows zeros). 0 = it appears when the first lap starts"><span>Head (seconds before)</span><input id="optHead" class="num" type="number" min="0" max="600" step=".1"></div>
+<div class="bindRow" title="How long the timer stays on screen after the last lap. Empty = until the video ends"><span>Tail (seconds after)</span><input id="optTail" class="num" type="number" min="0" max="600" step=".1" placeholder="to end"></div>
+<div class="dlgBtns" style="margin-top:14px"><button id="lookReset" class="btn" title="Put all the settings in this window back to the defaults (the font stays)">Reset</button></div></div>
+<div class="ovPane" data-pane="render" hidden><p class="note" style="margin:0 0 6px">Makes an MP4 copy of the open video with the timer drawn in, on this computer's video hardware. Nothing is uploaded. <span class="testBadge">TEST</span></p>
+<div class="bindRow" title="Whole video: the full clip. Head to tail: only the part where the timer is on screen"><span>Part</span><select id="renderPart" class="num" style="width:auto"><option value="all">Whole video</option><option value="laps">Head to tail only</option></select></div>
+<div class="bindRow" title="Upscaling to 1440p or 4K makes YouTube use its better codec and much more bitrate, so the video looks better even when watched at 1080p. The timer is drawn at the full output size, so it stays sharp. Takes about twice (1440p) or four times (4K) as long"><span>Resolution</span><select id="renderRes" class="num" style="width:auto"><option value="orig">Original</option><option value="1440" selected>1440p (best for YouTube)</option><option value="2160">4K (2160p)</option></select></div>
+<div class="bindRow" title="Very high keeps the look of the original. Maximum uses more bitrate (bigger file)"><span>Quality</span><select id="renderQ" class="num" style="width:auto"><option value="high">High (smaller file)</option><option value="very-high" selected>Very high</option><option value="max">Maximum</option></select></div>
+<div class="bindRow" title="H.264 plays everywhere. HEVC makes smaller files but older players cannot open it"><span>Format</span><select id="renderCodec" class="num" style="width:auto"><option value="avc">MP4, H.264 (plays everywhere)</option><option value="hevc">MP4, HEVC (smaller file)</option></select></div>
+<div id="renderProg" hidden><div class="renderBar"><i id="renderBarFill"></i></div></div><p id="renderStatus" class="note" style="margin:8px 0 0"></p>
+<div class="dlgBtns" style="align-items:center;margin-top:14px;flex-wrap:wrap"><a id="renderSave" class="btn" hidden>Save video</a><button id="renderRepick" class="btn" hidden title="Pick the same video again from its folder, then the render starts again">Choose the video file again</button><input id="renderRepickFile" type="file" accept="video/*,.ts,.m2ts,.mkv,.mov" hidden><button id="renderCancel" class="btn" hidden>Cancel</button><button id="renderGo" class="btn primary">Render</button></div></div>
+<div class="ovPane" data-pane="resolve" hidden><p class="note" style="margin:0 0 6px">Copy Resolve script (top bar) puts the timer on Video 2 with the Text settings. Paste it into Workspace &gt; Console.</p>
+<div class="bindRow" title="One clip: a single title over the whole video (lightest for slow computers). Head, laps and tail: three clips one after the other on Video 2, so you can see the head and tail on the timeline and drag their edges to change them"><span>Clips on Video 2</span><select id="optMode" class="num" style="width:auto"><option value="single">One clip over the video</option><option value="pieces">Head, laps and tail clips</option></select></div>
+<div class="bindRow"><span>Script</span><button id="copyScript" class="btn" title="Copy the Resolve script (same as the header button) to paste into Workspace > Console"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="4.2" r="3.2" fill="#ee5a5a" fill-opacity=".9"/><circle cx="4.4" cy="10.4" r="3.2" fill="#4fc3f7" fill-opacity=".9"/><circle cx="11.6" cy="10.4" r="3.2" fill="#66d17a" fill-opacity=".9"/></svg>Copy script</button></div>
+<h3 class="setHead">Without the script</h3>
+<div class="bindRow" title="Copies the live-timer expression for a Text+ Styled Text field (right-click the field > Expression, paste). Put the Text+ clip at the start of the video, same length. Frames are counted at this timeline frame rate"><span>Timeline FPS</span><span><input id="exprFps" class="num" type="number" min="1" max="240" step="any" value="60" style="width:80px"> <button id="copyExpr" class="btn" title="Copy the expression (uses the head, tail, title, divider and label settings above)">Copy expression</button></span></div>
 <p class="note" style="margin:10px 0 0">Fades: drag the fade handles on the clips in Resolve.</p>
-<div class="dlgBtns" style="align-items:center;margin-top:14px"><a class="note" style="color:var(--accent);margin-right:auto" href="resolve/" title="Step-by-step guide and the OSD font downloads (HDZero and Betaflight analog)">Resolve guide &amp; OSD fonts →</a><button id="lookReset" class="btn" title="Put all the settings in this window back to the defaults (the font stays)">Reset</button></div></div></div>
-<div id="renderModal" class="modal hidden"><div class="panel modalInner renderBox"><div style="display:flex;justify-content:space-between;align-items:center"><h2>Render video with timer <span class="testBadge">TEST</span></h2><button id="closeRender" class="btn">✕</button></div><p class="note" style="margin:8px 0 10px">Makes an MP4 copy of the open video with the lap timer drawn in. It runs in this browser on the computer's video hardware; nothing is uploaded. The timer uses your Resolve timer settings (font, size, position, outline, head, tail, title, divider, labels, line spacing): change them in <button id="renderToResolve" class="linkBtn" type="button">Resolve settings</button> or here:</p><button id="renderSettings" class="btn primary" type="button" style="margin:0 0 10px">Render settings...</button><canvas id="renderPrev" width="16" height="9" style="width:100%;border-radius:8px;background:#000;display:block"></canvas><p id="renderPrevNote" class="note" style="margin:6px 0 0"></p><div class="bindRow" title="Whole video: the full clip. Head to tail: only the part where the timer is on screen"><span>Part</span><select id="renderPart" class="num" style="width:auto"><option value="all">Whole video</option><option value="laps">Only where the timer shows (head to tail)</option></select></div><div class="bindRow" title="Very high keeps the look of the original. Maximum uses about the bitrate of the original (bigger file)"><span>Quality</span><select id="renderQ" class="num" style="width:auto"><option value="high">High (smaller file)</option><option value="very-high" selected>Very high</option><option value="max">Maximum (like the original)</option></select></div><div class="bindRow" title="H.264 plays everywhere (YouTube, phones, editors). HEVC makes smaller files but older players cannot open it"><span>Format</span><select id="renderCodec" class="num" style="width:auto"><option value="avc">MP4, H.264 (plays everywhere)</option><option value="hevc">MP4, HEVC (smaller file)</option></select></div><div id="renderProg" hidden><div class="renderBar"><i id="renderBarFill"></i></div></div><p id="renderStatus" class="note" style="margin:8px 0 0"></p><div class="dlgBtns" style="align-items:center;margin-top:14px"><a id="renderSave" class="btn primary" hidden>Save video</a><button id="renderRepick" class="btn" hidden title="Pick the same video again from its folder, then the render starts again">Choose the video file again</button><input id="renderRepickFile" type="file" accept="video/*,.ts,.m2ts,.mkv,.mov" hidden><button id="renderCancel" class="btn" hidden>Cancel</button><button id="renderGo" class="btn primary">Render</button></div></div></div>
-<div id="rsModal" class="modal hidden"><div class="panel modalInner rsBox"><div style="display:flex;justify-content:space-between;align-items:center"><h2>Render settings</h2><button id="closeRs" class="btn">✕</button></div><p class="note" style="margin:6px 0 12px">A test timer with three made-up laps on the frame at the video cursor. Drag the timer on the picture to move it. These are the same settings the Resolve script uses, saved at once.</p><div class="rsGrid"><div><canvas id="rsCanvas" width="1280" height="720"></canvas><div class="rsRow" style="grid-template-columns:118px minmax(0,1fr) 74px;margin-top:10px" title="Pick the frame shown behind the test timer (moves the video cursor)"><span>Frame</span><input id="rsFrame" type="range" min="0" max="1" step="any" value="0"><span id="rsFrameT" class="note"></span></div></div><div id="rsControls"></div></div><div class="dlgBtns" style="margin-top:14px"><button id="rsReset" class="btn" title="Put the size, position, outline, spacing, head, tail and text options back to the defaults (the font stays)">Reset</button><button id="rsDone" class="btn">Done</button><button id="rsRender" class="btn primary" title="Close this window and open Render video">Render video...</button></div></div></div>
-<div id="statsModal" class="modal hidden"><div class="panel modalInner statsBox"><div style="display:flex;justify-content:space-between;align-items:center"><h2>Session stats</h2><button id="closeStats" class="btn">✕</button></div><div id="statsBody"></div></div></div>
+<div class="dlgBtns" style="align-items:center;margin-top:14px"><a class="note" style="color:var(--accent);margin-right:auto" href="/docs/vltl/resolve-guide/" title="Step-by-step guide and the OSD font downloads (HDZero and Betaflight analog)">Resolve guide &amp; OSD fonts →</a></div></div>
+</div></div></div></div>
+<div id="statsModal" class="modal hidden"><div class="panel modalInner statsBox"><div class="modalHead"><h2>Session stats</h2><button id="closeStats" class="btn closeBtn" aria-label="Close">✕</button></div><div id="statsBody"></div></div></div>
 <div id="dlg" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="dlgTitle"><div class="panel modalInner"><h2 id="dlgTitle"></h2><p id="dlgMsg"></p><input id="dlgInput" class="num" hidden><div class="dlgBtns"><button id="dlgCancel" class="btn">Cancel</button><button id="dlgOk" class="btn primary">OK</button></div></div></div>
 <script>
 
@@ -201,7 +582,7 @@ for(const s of vs)for(const n of s.nals){dv.setUint32(o,n.length);o+=4;out.set(n
 for(const s of as){out.set(s.data,o);o+=s.data.length}
 return out}
 let loadTok=0;
-let srcFile=null,srcBlob=null; // srcBlob: in-memory MP4 converted from srcFile (.ts only)
+let srcFile=null,srcBlob=null; // srcBlob: in-memory MP4 converted from srcFile (.ts only); the render reads it instead of the file on disk
 async function loadFile(file){if(!file)return;stopWeb();const tok=++loadTok;srcFile=file;srcBlob=null;lastInfo=null;mode='native';$('#webNotice').textContent='Local video: full timing controls.';$('#fileStatus').textContent='Loading '+file.name+'…';try{if(/\.(ts|m2ts)$/i.test(file.name)){const raw=new Uint8Array(await file.arrayBuffer());if(tok!==loadTok)return;if(tsStreams(raw)[0x24]!=null){srcBlob=new Blob([hevcTsToMp4(raw)],{type:'video/mp4'});sourceUrl=URL.createObjectURL(srcBlob);video.src=sourceUrl;video.load()}else{if(!window.muxjs)throw new Error('mux.js failed to load');const tx=new muxjs.mp4.Transmuxer({keepOriginalTimestamps:false});const segments=[];tx.on('data',s=>segments.push(s.initSegment,s.data));tx.on('done',()=>{if(tok!==loadTok)return;srcBlob=new Blob(segments,{type:'video/mp4'});sourceUrl=URL.createObjectURL(srcBlob);video.src=sourceUrl;video.load()});fixAvcPps(raw);tx.push(raw);tx.flush()}}else{sourceUrl=URL.createObjectURL(file);video.src=sourceUrl;video.load()}const status=await detectFPS(file);$('#fileStatus').textContent=`${file.name} • ${status}`}catch(e){$('#fileStatus').textContent='Could not load: '+e.message}}
 function step(n){if(!loaded)return;pauseMedia();seek(Math.max(0,Math.min(length()||Infinity,now()+n/fps)))}
 function commit(edit){snapshotLaps();edit();marks.sort((a,b)=>a.frame-b.frame);renderAll()}
@@ -224,17 +605,18 @@ function nudgeStart(i){snapshotLaps();nudgeMark=marks[i];nudgeFrame=nudgeMark.fr
 function nudgeEnd(cancel){if(!nudgeOn()){nudgeMark=null;return}if(cancel){nudgeMark.frame=nudgeFrame;marks.sort((a,b)=>a.frame-b.frame);undoStack.pop()}else if(nudgeMark.frame===nudgeFrame)undoStack.pop();$('#undoBtn').disabled=!undoStack.length;nudgeMark=null;renderAll()}
 function nudgeMove(n){const f=Math.max(0,nudgeMark.frame+n);if(f===nudgeMark.frame||marks.some(m=>m!==nudgeMark&&m.frame===f))return;nudgeMark.frame=f;marks.sort((a,b)=>a.frame-b.frame);seek(f/fps);renderAll()}
 function addMark(){if(!loaded)return;const frame=currentFrame();if(!marks.some(m=>m.frame===frame)){const j=marks.findIndex(m=>m.frame>frame),split=j>0&&marks[j].valid===false,armed=badOn()&&frame>marks[0].frame,bad=split||armed;if(armed&&!split)badArmed=false;commit(()=>marks.push(bad?{frame,valid:false}:{frame}))}} // a mark inside a bad lap splits it into two bad laps
-function lapList(m,rate){return m.slice(1).map((x,i)=>({index:i+1,start:m[i].frame,end:x.frame,duration:(x.frame-m[i].frame)/rate,split:(x.frame-m[0].frame)/rate,valid:x.valid!==false}))}
+function lapList(m,rate){return m.slice(1).map((x,i)=>({index:i+1,start:m[i].frame,end:x.frame,duration:(x.frame-m[i].frame)/rate,split:(x.frame-m[0].frame)/rate,valid:x.valid!==false,star:x.star===true}))}
 function laps(){return lapList(marks,fps)}
 function calcBest(ls){let best=null;for(let i=0;i<=ls.length-3;i++){const w=ls.slice(i,i+3);if(w.some(l=>!l.valid))continue;const total=w.reduce((s,l)=>s+l.duration,0);if(!best||total<best.total)best={start:i,total}}return best}
 function renderMarkers(){const box=$('#markers'),L=length();box.innerHTML='';if(!L)return;const fr=m=>Math.min(1,m.frame/fps/L); // same scale as the slider thumb, so a mark sits under the cursor on its frame
 marks.forEach((m,i)=>{if(i&&m.valid===false){const sp=document.createElement('div');sp.className='badSpan';sp.style.setProperty('--f1',fr(marks[i-1]));sp.style.setProperty('--f2',fr(m));box.appendChild(sp)}});
-marks.forEach((m,i)=>{const el=document.createElement('button');el.className='marker'+(m.valid===false?' bad':'');el.style.setProperty('--f',fr(m));el.dataset.tip=i?`Lap ${i} · ${fmt((m.frame-marks[i-1].frame)/fps,'sec')}${m.valid===false?' (invalid)':''}`:'Start · '+fmt(m.frame/fps);el.onclick=()=>seek(m.frame/fps);box.appendChild(el)});updatePending(loaded&&cursorMark()<0&&badOn())}
-function renderAll(){const ls=laps(), validLaps=ls.filter(l=>l.valid), bestLap=validLaps.length?Math.min(...validLaps.map(l=>l.duration)):0, best=calcBest(ls);if(loopSpec!==null){loopR=loopRange(ls,best);if(!loopR)loopSpec=null}else loopR=null;const startRow=marks.length?`<tr class="${marks[0]===nudgeMark?'nudging':''}" data-start="${marks[0].frame}"><td>Start</td><td class="secondary">${fmt(marks[0].frame/fps,'sec')}</td><td class="secondary">—</td><td class="secondary">—</td><td><button class="sync" data-i="0" title="Sync mark to cursor">◎</button><button class="edit${marks[0]===nudgeMark?' on':''}" data-i="0" title="Adjust this mark with D / F (Shift = 10 frames)">✎</button><button class="del" data-i="0" title="Delete mark">✕</button></td></tr>`:'';$('#lapRows').innerHTML=startRow+ls.map((l,i)=>`<tr data-start="${l.start}" class="${best&&i>=best.start&&i<best.start+3?'best3':''} ${!l.valid?'invalidLap':''} ${marks[i+1]===nudgeMark?'nudging':''}"><td>#${l.index}</td><td class="secondary">${fmt(l.end/fps,'sec')}</td><td><strong>${fmt(l.duration,'sec')}</strong></td><td class="${l.valid&&l.duration===bestLap?'bestLabel':'secondary'}">${!l.valid?'INVALID':l.duration===bestLap?'BEST':'+'+(l.duration-bestLap).toFixed(3)+'s'}</td><td><button class="loop${loopSpec===l.index?' on':''}" data-i="${l.index}" title="Loop this lap (click again to stop)">↻</button><button class="valid" data-i="${i+1}" title="Toggle valid / invalid">${l.valid?'✓':'⦸'}</button><button class="sync" data-i="${i+1}" title="Sync mark to cursor">◎</button><button class="edit${marks[i+1]===nudgeMark?' on':''}" data-i="${i+1}" title="Adjust this mark with D / F (Shift = 10 frames)">✎</button><button class="del" data-i="${i+1}" title="Delete mark">✕</button></td></tr>`).join('');
-$('#singleBest').textContent=validLaps.length?fmt(bestLap,'sec'):'—';$('#singleBadge').textContent=validLaps.length?'LAP '+validLaps.find(l=>l.duration===bestLap).index:'NO VALID LAPS';$('#lapCount').textContent=ls.length+' Laps';$('#startDisplay').textContent=marks.length?fmt(marks[0].frame/fps,'sec'):'—';$('#bestTotal').textContent=best?fmt(best.total,'sec'):'—';$('#bestRange').textContent=best?`LAPS ${best.start+1}–${best.start+3}`:'—';$('#resolveScriptBtn').disabled=!best;updateBadBtn();$('#lapHint').textContent=nudgeOn()?'Adjusting a mark: D/F move it 1 frame (Shift = 10), Enter or ✎ to finish, Esc to cancel.':loaded?'First mark sets the start; each next mark completes a lap.':'Load a video to begin.';$('#goBest').disabled=!best;$('#loopBest').disabled=!best;$('#loopBest').classList.toggle('on',loopSpec==='best');$('#bestAvg').textContent=best?'Avg: '+fmt(best.total/3,'sec'):'Avg: —';syncSession();renderMarkers()}
+marks.forEach((m,i)=>{const el=document.createElement('button');el.className='marker'+(m.valid===false?' bad':'')+(i&&m.star?' star':'');el.style.setProperty('--f',fr(m));el.dataset.tip=i?`Lap ${i} · ${fmt((m.frame-marks[i-1].frame)/fps,'sec')}${m.valid===false?' (invalid)':''}${m.star?' ★':''}`:'Start · '+fmt(m.frame/fps);el.onclick=()=>seek(m.frame/fps);box.appendChild(el)});updatePending(loaded&&cursorMark()<0&&badOn())}
+function renderAll(){const ls=laps(), validLaps=ls.filter(l=>l.valid), bestLap=validLaps.length?Math.min(...validLaps.map(l=>l.duration)):0, best=calcBest(ls);if(loopSpec!==null){loopR=loopRange(ls,best);if(!loopR)loopSpec=null}else loopR=null;const startRow=marks.length?`<tr class="${marks[0]===nudgeMark?'nudging':''}" data-start="${marks[0].frame}"><td>Start</td><td class="secondary">${fmt(marks[0].frame/fps,'sec')}</td><td class="secondary">—</td><td class="secondary">—</td><td><button class="sync" data-i="0" title="Sync mark to cursor">◎</button><button class="edit${marks[0]===nudgeMark?' on':''}" data-i="0" title="Adjust this mark with D / F (Shift = 10 frames)">✎</button><button class="del" data-i="0" title="Delete mark">✕</button></td></tr>`:'';$('#lapRows').innerHTML=startRow+ls.map((l,i)=>`<tr data-start="${l.start}" class="${best&&i>=best.start&&i<best.start+3?'best3':''} ${!l.valid?'invalidLap':''} ${l.star?'starLap':''} ${marks[i+1]===nudgeMark?'nudging':''}"><td>#${l.index}${l.star?'<span class="starTag" aria-label="starred">★</span>':''}</td><td class="secondary">${fmt(l.end/fps,'sec')}</td><td><strong>${fmt(l.duration,'sec')}</strong></td><td class="${l.valid&&l.duration===bestLap?'bestLabel':'secondary'}">${!l.valid?'INVALID':l.duration===bestLap?'BEST':'+'+(l.duration-bestLap).toFixed(3)+'s'}</td><td><button class="star${l.star?' starred':''}" data-i="${i+1}" title="${l.star?'Unstar this lap':'Star this lap'}" aria-pressed="${l.star}">${l.star?'★':'☆'}</button><button class="loop${loopSpec===l.index?' on':''}" data-i="${l.index}" title="Loop this lap (click again to stop)">↻</button><button class="valid" data-i="${i+1}" title="Toggle valid / invalid">${l.valid?'✓':'⦸'}</button><button class="sync" data-i="${i+1}" title="Sync mark to cursor">◎</button><button class="edit${marks[i+1]===nudgeMark?' on':''}" data-i="${i+1}" title="Adjust this mark with D / F (Shift = 10 frames)">✎</button><button class="del" data-i="${i+1}" title="Delete mark">✕</button></td></tr>`).join('');
+$('#singleBest').textContent=validLaps.length?fmt(bestLap,'sec'):'—';$('#singleBadge').textContent=validLaps.length?'LAP '+validLaps.find(l=>l.duration===bestLap).index:'NO VALID LAPS';const nStar=ls.filter(l=>l.star).length;$('#lapCount').textContent=ls.length+' Laps'+(nStar?' · '+nStar+' ★':'');$('#startDisplay').textContent=marks.length?fmt(marks[0].frame/fps,'sec'):'—';$('#bestTotal').textContent=best?fmt(best.total,'sec'):'—';$('#bestRange').textContent=best?`LAPS ${best.start+1}–${best.start+3}`:'—';$('#resolveScriptBtn').disabled=!best;updateBadBtn();$('#lapHint').textContent=nudgeOn()?'Adjusting a mark: D/F move it 1 frame (Shift = 10), Enter or ✎ to finish, Esc to cancel.':loaded?'First mark sets the start; each next mark completes a lap.':'Load a video to begin.';$('#goBest').disabled=!best;$('#loopBest').disabled=!best;$('#loopBest').classList.toggle('on',loopSpec==='best');$('#bestAvg').textContent=best?'Avg: '+fmt(best.total/3,'sec'):'Avg: —';syncSession();renderMarkers()}
 // Lap table buttons (one delegated handler); data-i is the mark index, 0 = the start mark.
 const lapActions={
   loop:i=>toggleLoop(i),
+  star:i=>commit(()=>{if(marks[i].star)delete marks[i].star;else marks[i].star=true}),
   valid:i=>commit(()=>{marks[i].valid=marks[i].valid===false}),
   sync:i=>{const f=currentFrame();if(!marks.some(m=>m.frame===f))commit(()=>{marks[i].frame=f})},
   edit:i=>{if(nudgeOn()&&nudgeMark===marks[i])nudgeEnd(false);else{if(nudgeOn())nudgeEnd(false);nudgeStart(i)}},
@@ -274,10 +656,10 @@ try{optSet(JSON.parse(store.get('fpvLapOut')))}catch(e){optSet(null)}
 Object.values(lookEl).forEach(e=>e.addEventListener('change',lookSave));$('#lookReset').onclick=()=>{lookSet(LOOK0);lookSave();optSet(OUT0);optSave()};
 $('#exprFps').value=store.get('fpvLapExprFps')||$('#exprFps').value;$('#exprFps').addEventListener('change',()=>store.set('fpvLapExprFps',$('#exprFps').value));
 $('#copyExpr').onclick=()=>{const ls=laps(),best=calcBest(ls);if(!best){uiAlert('Record three consecutive valid laps first.');return}const r=Number($('#exprFps').value),d=Number($('#dashRatio').value);if(!(r>0&&r<=240)){uiAlert('Timeline FPS must be between 1 and 240.');return}if(!Number.isFinite(d)||d<0||d>5){uiAlert('Dashes per character must be between 0 and 5.');return}copyButton($('#copyExpr'),'Copy expression',generateDaVinciExpression(ls.slice(best.start,best.start+3),r,0,d,false,optGet()))};
-$('#openResolve').onclick=()=>$('#resolveBtn').click();
-$('#resolveBtn').onclick=()=>$('#resolveModal').classList.remove('hidden');$('#closeResolve').onclick=()=>$('#resolveModal').classList.add('hidden');
+
+
 // Font of the Resolve timer: a dropdown. HDZero OSD is the default; the list can be filled with the system fonts (Chrome/Edge only) or a name can be typed (Other...).
-const HDZ='HDZero OSD',BFO='Betaflight OSD',OWN=[HDZ,BFO],OWN_LINK={[HDZ]:'resolve/#font',[BFO]:'resolve/#analogfont'},commonFonts=['Open Sans','Arial','Arial Black','Calibri','Cambria','Century Gothic','Consolas','Courier New','Impact','Lucida Console','Segoe UI','Tahoma','Trebuchet MS','Verdana','Roboto','Montserrat','Helvetica'];
+const HDZ='HDZero OSD',BFO='Betaflight OSD',OWN=[HDZ,BFO],OWN_LINK={[HDZ]:'/docs/vltl/resolve-guide/#font',[BFO]:'/docs/vltl/resolve-guide/#analogfont'},commonFonts=['Open Sans','Arial','Arial Black','Calibri','Cambria','Century Gothic','Consolas','Courier New','Impact','Lucida Console','Segoe UI','Tahoma','Trebuchet MS','Verdana','Roboto','Montserrat','Helvetica'];
 function fontInstalled(name){const c=document.createElement('canvas').getContext('2d'),t='mmmmmmmmmmlli 0123456789WWW';return['monospace','serif','sans-serif'].some(b=>{c.font='72px '+b;const w=c.measureText(t).width;c.font='72px "'+name+'",'+b;return c.measureText(t).width!==w})}
 const ownState={};OWN.forEach(n=>ownState[n]=fontInstalled(n)?'yes':'unknown'); // per own font: 'yes' = seen here, 'no' = the full font list says it is missing, 'unknown' = the browser may be hiding fonts
 const fontSel=$('#fontInput');
@@ -661,7 +1043,7 @@ const good=d.videos.filter(v=>v&&typeof v.name==='string'&&v.fps>0&&Array.isArra
 const find=v=>session.findIndex(e=>e.name===v.name&&e.file.size===v.size);
 if(good.some(v=>find(v)>=0&&session[find(v)].marks.length)&&!await uiConfirm('Replace the laps already in the list with the ones from this file?','Replace'))return;
 if(typeof d.title==='string'&&d.title.trim()){sTitle.value=d.title.trim();titleEdited=true}
-let applied=0,waiting=0;good.forEach(v=>{const rec={fps:v.fps,marks:v.marks.map(m=>m.valid===false?{frame:m.frame,valid:false}:{frame:m.frame}).sort((a,b)=>a.frame-b.frame)},i=find(v);if(i<0){savedLaps.set(lapKey(v.name,v.size),rec);waiting++;return}session[i].marks=rec.marks;session[i].fps=rec.fps;applied++;if(i===cur){marks=rec.marks.map(m=>({...m}));clearUndo();setFPS(rec.fps)}});
+let applied=0,waiting=0;good.forEach(v=>{const rec={fps:v.fps,marks:v.marks.map(m=>({frame:m.frame,...(m.valid===false?{valid:false}:{}),...(m.star===true?{star:true}:{})})).sort((a,b)=>a.frame-b.frame)},i=find(v);if(i<0){savedLaps.set(lapKey(v.name,v.size),rec);waiting++;return}session[i].marks=rec.marks;session[i].fps=rec.fps;applied++;if(i===cur){marks=rec.marks.map(m=>({...m}));clearUndo();setFPS(rec.fps)}});
 renderSession();uiAlert(`Laps restored for ${applied} video${applied===1?'':'s'}.`+(waiting?` ${waiting} more will be applied when you add those videos.`:'')+(good.length<d.videos.length?` ${d.videos.length-good.length} entries were skipped (invalid).`:''))}
 function addFiles(list){const files=[...list].filter(f=>f&&(f.type.startsWith('video/')||/\.(ts|m2ts|mkv|mov|mp4|webm|m4v)$/i.test(f.name)));if(!files.length)return;if(!session.length&&!titleEdited)sTitle.value=files[0].name.replace(/\.[^.]+$/,'');const same=(e,f)=>e.file.name===f.name&&e.file.size===f.size;files.forEach(f=>{if(!session.some(e=>same(e,f))){const k=lapKey(f.name,f.size),r=savedLaps.get(k);savedLaps.delete(k);session.push({name:f.name,file:f,marks:r?r.marks:[],fps:r?r.fps:fps})}});openEntry(session.findIndex(e=>same(e,files[0])))}
 $('#sessionRows').onclick=e=>{const r=e.target.closest('[data-i]');if(!r)return;if(e.target.closest('.x'))removeEntry(+r.dataset.i);else openEntry(+r.dataset.i)};$('#prevVid').onclick=()=>stepVid(-1);$('#nextVid').onclick=()=>stepVid(1);
@@ -684,8 +1066,10 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('in
 renderAll();
 
 // Theme preference persists between visits.
-function applyTheme(theme){document.documentElement.dataset.theme=theme;$('#themeBtn').textContent=theme==='dark'?'Light mode':'Dark mode';store.set('fpvLapTheme',theme)}
-applyTheme(store.get('fpvLapTheme')||'dark');$('#themeBtn').onclick=()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+const THEME_ICONS={light:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg>',dark:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg>'};
+// The theme is shared with the rest of maxd.ax: Docusaurus keeps it in localStorage "theme".
+function applyTheme(theme){document.documentElement.dataset.theme=theme;const b=$('#themeBtn'),label=theme==='dark'?'Switch to light mode':'Switch to dark mode';b.innerHTML=THEME_ICONS[theme];b.title=label;b.setAttribute('aria-label',label);store.set('fpvLapTheme',theme);store.set('theme',theme)}
+applyTheme([store.get('theme'),store.get('fpvLapTheme')].find(t=>t==='dark'||t==='light')||'light');$('#themeBtn').onclick=()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
 
 // In-page dialogs that replace the browser's alert / confirm / prompt. Each returns a promise.
 function dlgOpen({title,msg='',input,ok='OK',cancel='Cancel',danger=false}){return new Promise(res=>{const box=$('#dlg'),inp=$('#dlgInput'),okB=$('#dlgOk'),noB=$('#dlgCancel'),isPrompt=input!==undefined;
@@ -715,6 +1099,7 @@ for(const p of ['value','selectedIndex']){const d=Object.getOwnPropertyDescripto
 new MutationObserver(refresh).observe(sel,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['disabled']});
 ddClosers.add(close);refresh()}
 document.addEventListener('pointerdown',e=>{if(!e.target.closest('.dd'))closeDds()});
+// ==== Timer overlay: the in-browser render (TEST) and the Timer overlay window (Text / Render / Resolve tabs) ====
 // Render the open video with the lap timer drawn in (TEST). WebCodecs (hardware decode + encode) through Mediabunny, loaded on first use.
 // The timer copies the Resolve Text+ look: Text+ positions are fractions of a 16:9 timeline that holds the video (4:3 clips are pillarboxed).
 const MB_URL='https://cdn.jsdelivr.net/npm/mediabunny@1.61.6/dist/bundles/mediabunny.min.mjs';let mbP=null;const mbLoad=()=>mbP||(mbP=import(MB_URL).catch(e=>{mbP=null;throw e}));
@@ -733,71 +1118,73 @@ const x=look.x*rW-(rW-W)/2,y0=(1-look.y)*rH-(rH-H)/2+asc,pitch=(asc+desc)*ls;ctx
 if(look.outline>0){ctx.strokeStyle='#000';ctx.lineWidth=2.3*look.outline*em;lines.forEach((l,i)=>ctx.strokeText(l,x,y0+i*pitch))}ctx.fillStyle='#fff';lines.forEach((l,i)=>ctx.fillText(l,x,y0+i*pitch));ctx.restore()}
 function renderSetup(){const e=session[cur],ls=laps(),best=calcBest(ls);if(mode!=='native'||!e||!e.file)return{err:'Open a video file from this computer first (YouTube, Drive and web links cannot be rendered).'};if(!best)return{err:'Record three consecutive valid laps first.'};
 return{e,three:ls.slice(best.start,best.start+3),o:optGet(),look:lookGet(),dashes:Math.min(5,Math.max(0,+$('#dashRatio').value||0)),rate:fps}}
-let renderBusy=null,renderUrl=null,renderUserCancel=false;
-async function renderPreview(){const c=$('#renderPrev'),note=$('#renderPrevNote');if($('#renderModal').classList.contains('hidden'))return;const r=renderSetup();if(r.err){note.textContent=r.err;c.hidden=true;return}
-const W=video.videoWidth,H=video.videoHeight;if(!W||!H){c.hidden=true;note.textContent='The video is still loading.';return}c.hidden=false;if(c.width!==W||c.height!==H){c.width=W;c.height=H}
-const font=await timerFont().catch(()=>({fam:'sans-serif',asc:0,desc:0})),ctx=c.getContext('2d'),t=video.currentTime,lines=timerLines(t,r.three,r.dashes,r.o,r.rate);ctx.drawImage(video,0,0,W,H);drawTimer(ctx,W,H,lines,r.look,font,r.o.lineSpacing);
-note.textContent='Preview at '+t.toFixed(2)+' s'+(lines?'':' (the timer is not on screen here)')+'. Move the video cursor to check other moments.'}
-['seeked','timeupdate'].forEach(ev=>video.addEventListener(ev,()=>{if(!renderBusy)renderPreview()}));
+let renderBusy=null,renderUrl=null,renderUserCancel=false,ovTab='text',ovGeo=null,ovTok=0;
+// Output size: Original, or scaled up to 1440 / 2160 lines (never down), even width and height.
+function outDims(W,H,res){const t=+res;if(!(t>H))return[W,H];return[Math.round(W*t/H/2)*2,t]}
+const RS_THREE=[{start:0,end:4989,duration:4.989},{start:4989,end:10067,duration:5.078},{start:10067,end:14956,duration:4.889}]; // test timer: 14.956 = 4.989 + 5.078 + 4.889
 function renderStatus(t){$('#renderStatus').textContent=t}
-function renderIdle(){renderBusy=null;$('#renderGo').hidden=false;$('#renderCancel').hidden=true;['#renderPart','#renderQ','#renderCodec'].forEach(q=>$(q).disabled=false)}
-$('#renderOpen').onclick=async()=>{$('#renderModal').classList.remove('hidden');if(!renderBusy){renderStatus('');$('#renderProg').hidden=true;$('#renderRepick').hidden=true}renderPreview();if(!window.VideoEncoder){renderStatus('This browser cannot encode video (WebCodecs is missing). Use a current Chrome or Edge.');$('#renderGo').disabled=true;return}
-try{const MB=await mbLoad(),ok=await MB.getEncodableVideoCodecs(['avc','hevc'],{width:video.videoWidth||1280,height:video.videoHeight||720});[...$('#renderCodec').options].forEach(op=>op.disabled=!ok.includes(op.value));if(!ok.includes($('#renderCodec').value)&&ok.length)$('#renderCodec').value=ok[0]}catch(e){renderStatus('Could not load the video library ('+e.message+'). Check the internet connection.')}};
-$('#closeRender').onclick=()=>{if(!renderBusy)$('#renderModal').classList.add('hidden')};$('#renderToResolve').onclick=()=>{if(!renderBusy){$('#renderModal').classList.add('hidden');$('#resolveBtn').click()}};
-$('#closeResolve').addEventListener('click',()=>{if(!$('#renderModal').classList.contains('hidden'))renderPreview()});['#fontInput','#dashRatio'].forEach(q=>$(q).addEventListener('change',renderPreview));
+function renderIdle(){renderBusy=null;$('#renderGo').hidden=false;$('#renderCancel').hidden=true;$('#renderOpen').textContent='Render video';['#renderPart','#renderRes','#renderQ','#renderCodec'].forEach(q=>$(q).disabled=false)}
+// Sliders next to the number fields of the Text tab (the number fields stay the saved values).
+[['#lookSize',.005,.1,.001],['#lookX',0,1,.001],['#lookY',0,1,.001],['#lookOutline',0,.3,.005],['#optLineSpacing',.5,3,.05],['#dashRatio',0,5,.1]].forEach(([q,lo,hi,st])=>{const n=$(q),row=n.closest('.bindRow'),r=document.createElement('input');r.type='range';r.min=lo;r.max=hi;r.step=st;r.className='slider';r.dataset.for=q;row.classList.add('slRow');row.insertBefore(r,n);
+r.addEventListener('input',()=>{n.value=r.value;n.dispatchEvent(new Event('change',{bubbles:true}))});n.addEventListener('change',()=>r.value=n.value)});
+function ovSync(){$$('#resolveModal input.slider').forEach(r=>r.value=$(r.dataset.for).value);const d=video.duration,on=mode==='native'&&d>0;$('#ovFrame').disabled=!on;if(on){$('#ovFrame').max=d;$('#ovFrame').value=video.currentTime;$('#ovFrameT').textContent=video.currentTime.toFixed(2)+' s'}else $('#ovFrameT').textContent='no video'}
+const ovOpenNow=()=>!$('#resolveModal').classList.contains('hidden');
+// Preview: Text and Resolve tabs show a test timer (three made-up laps); the Render tab shows your own timer at the video cursor.
+async function ovDraw(){if(!ovOpenNow())return;const tok=++ovTok,c=$('#ovCanvas'),has=mode==='native'&&video.videoWidth>0,W=has?video.videoWidth:1280,H=has?video.videoHeight:720;
+const font=await timerFont().catch(()=>({fam:'sans-serif',asc:0,desc:0}));if(tok!==ovTok)return;if(c.width!==W||c.height!==H){c.width=W;c.height=H}const ctx=c.getContext('2d');
+if(has)ctx.drawImage(video,0,0,W,H);else{ctx.fillStyle=getComputedStyle(c).backgroundColor||'#333';ctx.fillRect(0,0,W,H)}
+const look=lookGet(),dashes=Math.min(5,Math.max(0,+$('#dashRatio').value||0));let lines,note;
+if(ovTab==='render'){const r=renderSetup();if(r.err){lines=null;note=r.err}else{const t=video.currentTime;lines=timerLines(t,r.three,r.dashes,r.o,r.rate);note='Your timer at '+t.toFixed(2)+' s'+(lines?'':' (not on screen here)')+'. Move the frame slider to check other moments.'}}
+else{const o={...optGet(),head:0,tail:null};lines=timerLines(14.956,RS_THREE,dashes,o,1000);note='Test timer with three made-up laps. Drag it on the picture to move it.'}
+drawTimer(ctx,W,H,lines,look,font,optGet().lineSpacing);$('#ovNote').textContent=note;const sc=Math.min(1920/W,1080/H);ovGeo={W,H,rW:1920/sc,rH:1080/sc}}
+function ovSetTab(t){ovTab=t;$$('.ovTab').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));$$('.ovPane').forEach(p=>p.hidden=p.dataset.pane!==t);ovSync();ovDraw();if(t==='render')renderCheck()}
+function ovOpen(t){$('#resolveModal').classList.remove('hidden');ovSetTab(t)}
+$$('.ovTab').forEach(b=>b.onclick=()=>ovSetTab(b.dataset.tab));$('#ovText').onclick=()=>ovOpen('text');$('#resolveBtn').onclick=()=>ovOpen('resolve');$('#renderOpen').onclick=()=>ovOpen('render');
+$('#closeResolve').onclick=()=>$('#resolveModal').classList.add('hidden');
+['input','change'].forEach(ev=>$('#resolveModal').addEventListener(ev,e=>{if(e.target.closest('.ovPane[data-pane="text"],.ovPane[data-pane="resolve"]'))ovDraw()}));
+$('#fontInput').addEventListener('change',()=>setTimeout(()=>{ovSync();ovDraw()},60));$('#lookReset').addEventListener('click',()=>setTimeout(()=>{ovSync();ovDraw()},0));$('#dlgOk').addEventListener('click',()=>setTimeout(()=>{ovSync();ovDraw()},60));
+$('#ovFrame').oninput=e=>{if(mode==='native'&&video.duration>0){video.currentTime=+e.target.value;$('#ovFrameT').textContent=(+e.target.value).toFixed(2)+' s'}};
+['seeked','loadeddata'].forEach(ev=>video.addEventListener(ev,()=>{if(ovOpenNow()){ovSync();ovDraw()}}));video.addEventListener('timeupdate',()=>{if(ovOpenNow()&&ovTab==='render'&&!renderBusy)ovDraw()});
+// Drag the timer on the picture: keeps the grab point under the pointer and writes Position X / Y.
+(()=>{const c=$('#ovCanvas');let drag=null;const pt=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)/r.width*c.width,(e.clientY-r.top)/r.height*c.height]};
+const anchor=()=>{const g=ovGeo,l=lookGet();return[l.x*g.rW-(g.rW-g.W)/2,(1-l.y)*g.rH-(g.rH-g.H)/2]};
+c.addEventListener('pointerdown',e=>{if(!ovGeo)return;const[px,py]=pt(e),[ax,ay]=anchor();drag={dx:ax-px,dy:ay-py};c.setPointerCapture(e.pointerId)});
+c.addEventListener('pointermove',e=>{if(!drag)return;const g=ovGeo,[px,py]=pt(e),x=(px+drag.dx+(g.rW-g.W)/2)/g.rW,y=1-(py+drag.dy+(g.rH-g.H)/2)/g.rH;lookEl.x.value=Math.min(1,Math.max(0,x)).toFixed(3);lookEl.y.value=Math.min(1,Math.max(0,y)).toFixed(3);ovSync();ovDraw()});
+const end=()=>{if(!drag)return;drag=null;lookSave();ovSync()};c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end)})();
+// Render options are remembered in this browser.
+const REN0={part:'all',res:'1440',q:'very-high',codec:'avc'},renEl={part:'#renderPart',res:'#renderRes',q:'#renderQ',codec:'#renderCodec'};
+try{const v=JSON.parse(store.get('fpvLapRender')||'{}');for(const k in renEl){const e=$(renEl[k]),x=v[k];if(x&&[...e.options].some(o=>o.value===x))e.value=x}}catch(e){}
+for(const k in renEl)$(renEl[k]).addEventListener('change',()=>{const o={};for(const j in renEl)o[j]=$(renEl[j]).value;store.set('fpvLapRender',JSON.stringify(o));if(k==='res')renderCheck()});
+// Which formats this browser can encode at the chosen size; names the original size.
+async function renderCheck(){const W=video.videoWidth||1280,H=video.videoHeight||720,oo=$('#renderRes').options[0];oo.textContent='Original ('+(video.videoWidth?W+'x'+H:'as recorded')+')';[...$('#renderRes').options].forEach(o=>{if(o.value!=='orig')o.disabled=video.videoHeight>0&&!(+o.value>H)});if($('#renderRes').selectedOptions[0]?.disabled)$('#renderRes').value='orig';
+if(renderBusy)return;$('#renderProg').hidden=true;$('#renderRepick').hidden=true;renderStatus('');if(!window.VideoEncoder){renderStatus('This browser cannot encode video (WebCodecs is missing). Use a current Chrome or Edge.');$('#renderGo').disabled=true;return}
+try{const MB=await mbLoad(),[w,h]=outDims(W,H,$('#renderRes').value),ok=await MB.getEncodableVideoCodecs(['avc','hevc'],{width:w,height:h});[...$('#renderCodec').options].forEach(op=>op.disabled=!ok.includes(op.value));if(!ok.includes($('#renderCodec').value)&&ok.length)$('#renderCodec').value=ok[0];
+$('#renderGo').disabled=!ok.length;if(!ok.length)renderStatus('This browser cannot encode video at '+w+'x'+h+'. Pick a lower resolution.')}catch(e){renderStatus('Could not load the video library ('+e.message+'). Check the internet connection.')}}
 $('#renderRepick').onclick=()=>$('#renderRepickFile').click();$('#renderRepickFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';const en=session[cur];if(!f||!en)return;if(f.name!==en.name&&!await uiConfirm('This file has a different name ('+f.name+') than the open video ('+en.name+'). Use it anyway? The laps stay as they are.','Use this file'))return;if(srcFile===en.file)srcFile=f;en.file=f;$('#renderRepick').hidden=true;renderStatus('File picked again. Starting the render...');$('#renderGo').click()};
 $('#renderCancel').onclick=()=>{if(renderBusy){renderUserCancel=true;renderBusy.cancel().catch(()=>{})}};
 $('#renderGo').onclick=async()=>{if(renderBusy)return;const r=renderSetup();if(r.err){uiAlert(r.err);return}
 const name=(r.e.name.replace(/\.[^.]+$/,'')||'video')+'-timer.mp4';let handle=null,writable=null,stream=false;
 if(window.showSaveFilePicker){try{handle=await showSaveFilePicker({suggestedName:name,types:[{description:'MP4 video',accept:{'video/mp4':['.mp4']}}]})}catch(e){if(e.name==='AbortError')return;handle=null}}
-if(renderUrl){URL.revokeObjectURL(renderUrl);renderUrl=null}$('#renderSave').hidden=true;$('#renderRepick').hidden=true;$('#renderGo').hidden=true;$('#renderCancel').hidden=false;['#renderPart','#renderQ','#renderCodec'].forEach(q=>$(q).disabled=true);$('#renderProg').hidden=false;$('#renderBarFill').style.width='0';renderStatus('Starting...');renderUserCancel=false;renderBusy={cancel:async()=>{}};
+if(renderUrl){URL.revokeObjectURL(renderUrl);renderUrl=null}$('#renderSave').hidden=true;$('#renderRepick').hidden=true;$('#renderGo').hidden=true;$('#renderCancel').hidden=false;['#renderPart','#renderRes','#renderQ','#renderCodec'].forEach(q=>$(q).disabled=true);$('#renderProg').hidden=false;$('#renderBarFill').style.width='0';renderStatus('Starting...');renderUserCancel=false;renderBusy={cancel:async()=>{}};
 let conv=null;try{const MB=await mbLoad(),font=await timerFont(),input=new MB.Input({source:new MB.BlobSource(srcFile===r.e.file&&srcBlob?srcBlob:r.e.file),formats:MB.ALL_FORMATS}),vt=await input.getPrimaryVideoTrack();
 if(!vt)throw new Error('no video track found in the file');if(!await vt.canDecode())throw new Error('this browser cannot decode the '+String(vt.codec).toUpperCase()+' video in this file');
 const first=Math.max(0,await vt.getFirstTimestamp()),dur=await input.computeDuration(),s0=r.three[0].start/r.rate,e3=r.three[2].end/r.rate;let trim,from=0;
 if($('#renderPart').value==='laps'){from=Math.max(0,s0-(r.o.head>0?r.o.head:0));const tl=r.o.tail===null?null:+r.o.tail;trim={start:first+from,end:tl===null?first+dur:Math.min(first+dur,first+e3+tl+.001)}}
-let codec=$('#renderCodec').value;const qv=$('#renderQ').value;let quality=new MB.Quality(qv==='max'?'very-high':qv);
-if(qv==='max'){const st=await vt.computePacketStats(300);if(st.averageBitrate>0)quality=new MB.Quality(Math.round(st.averageBitrate*(codec==='avc'&&vt.codec!=='avc'?1.5:1.1)))}
-let fellBack='',nFrames=0;const probe=async c=>{try{const pc=await MB.Conversion.init({input:new MB.Input({source:new MB.BlobSource(srcFile===r.e.file&&srcBlob?srcBlob:r.e.file),formats:MB.ALL_FORMATS}),output:new MB.Output({format:new MB.Mp4OutputFormat(),target:new MB.BufferTarget()}),trim,video:{codec:c,quality,forceTranscode:true}}),ok=pc.utilizedTracks.some(t=>t.isVideoTrack());try{await pc.cancel()}catch(x){}return ok}catch(x){return false}};
+const OUT=outDims(vt.displayWidth,vt.displayHeight,$('#renderRes').value),OW=OUT[0],OH=OUT[1],pix=Math.pow(OW*OH/(vt.displayWidth*vt.displayHeight),.75);let codec=$('#renderCodec').value;const qv=$('#renderQ').value;let quality=new MB.Quality(qv==='max'?'very-high':qv);
+if(qv==='max'){const st=await vt.computePacketStats(300);if(st.averageBitrate>0)quality=new MB.Quality(Math.round(st.averageBitrate*pix*(codec==='avc'&&vt.codec!=='avc'?1.5:1.1)))}
+let fellBack='',nFrames=0;const probe=async c=>{try{const pc=await MB.Conversion.init({input:new MB.Input({source:new MB.BlobSource(srcFile===r.e.file&&srcBlob?srcBlob:r.e.file),formats:MB.ALL_FORMATS}),output:new MB.Output({format:new MB.Mp4OutputFormat(),target:new MB.BufferTarget()}),trim,video:{codec:c,quality,forceTranscode:true,width:OW,height:OH,fit:'fill'}}),ok=pc.utilizedTracks.some(t=>t.isVideoTrack());try{await pc.cancel()}catch(x){}return ok}catch(x){return false}};
 if(codec!=='avc'&&!await probe(codec)&&await probe('avc')){codec='avc';fellBack=' HEVC could not be encoded in this browser, so the video was made as H.264.'}
-let est=0;try{const st=await vt.computePacketStats(300);est=st.averageBitrate*(trim?trim.end-trim.start:dur)/8*1.3}catch(x){}stream=!!handle&&est>1.5e9;
+let est=0;try{const st=await vt.computePacketStats(300);est=st.averageBitrate*pix*(trim?trim.end-trim.start:dur)/8*1.3}catch(x){}stream=!!handle&&est>1.5e9;
 let target;if(stream){writable=await handle.createWritable();target=new MB.StreamTarget(writable,{chunked:true})}else target=new MB.BufferTarget();
 const output=new MB.Output({format:new MB.Mp4OutputFormat({fastStart:stream?false:'in-memory'}),target});let cv=null,cx=null;
-conv=await MB.Conversion.init({input,output,trim,video:{codec,quality,forceTranscode:true,process:s=>{nFrames++;const W=s.displayWidth,H=s.displayHeight;if(!cv||cv.width!==W||cv.height!==H){cv=new OffscreenCanvas(W,H);cx=cv.getContext('2d')}
+conv=await MB.Conversion.init({input,output,trim,video:{codec,quality,forceTranscode:true,processedWidth:OW,processedHeight:OH,process:s=>{nFrames++;const W=OW,H=OH;if(!cv){cv=new OffscreenCanvas(W,H);cx=cv.getContext('2d');cx.imageSmoothingEnabled=true;cx.imageSmoothingQuality='high'}
 s.draw(cx,0,0,W,H);drawTimer(cx,W,H,timerLines(s.timestamp+from,r.three,r.dashes,r.o,r.rate),r.look,font,r.o.lineSpacing);return cv}}});
 if(!conv.utilizedTracks.some(t=>t.isVideoTrack()))throw new Error('this browser cannot encode the video as '+(codec==='avc'?'H.264':'HEVC')+' ('+(conv.discardedTracks.filter(d=>d.track.isVideoTrack()).map(d=>d.reason).join(', ')||'no video track')+')');if(!conv.isValid)throw new Error('the file cannot be converted ('+conv.discardedTracks.map(d=>d.reason).join(', ')+')');
 renderBusy={cancel:()=>conv.cancel()};const t0=performance.now(),len=trim?trim.end-trim.start:dur;
-conv.onProgress=(p,pt)=>{const el=(performance.now()-t0)/1000,done=Math.max(0,pt-(trim?trim.start:first)),sp=el>0?done/el:0;$('#renderBarFill').style.width=(p*100).toFixed(1)+'%';renderStatus('Rendering: '+Math.round(p*100)+'%'+(sp>0?', '+sp.toFixed(1)+'x real time, about '+Math.max(0,Math.ceil((len-done)/sp))+' s left':''))};
+conv.onProgress=(p,pt)=>{const el=(performance.now()-t0)/1000,done=Math.max(0,pt-(trim?trim.start:first)),sp=el>0?done/el:0;$('#renderBarFill').style.width=(p*100).toFixed(1)+'%';$('#renderOpen').textContent='Rendering '+Math.round(p*100)+'%';renderStatus('Rendering: '+Math.round(p*100)+'%'+(sp>0?', '+sp.toFixed(1)+'x real time, about '+Math.max(0,Math.ceil((len-done)/sp))+' s left':''))};
 await conv.execute();if(!nFrames)throw new Error('no video frames were written');const secs=((performance.now()-t0)/1000).toFixed(1);$('#renderBarFill').style.width='100%';
-if(stream)renderStatus('Done in '+secs+' s. Saved as '+handle.name+'.'+fellBack);else{const b=new Blob([output.target.buffer],{type:'video/mp4'}),mb=(b.size/1e6).toFixed(0),link=()=>{renderUrl=URL.createObjectURL(b);const a=$('#renderSave');a.href=renderUrl;a.download=name;a.hidden=false};if(handle){renderStatus('Writing '+handle.name+'...');try{const w=await handle.createWritable();try{await w.write(b);await w.close()}catch(x){try{await w.abort()}catch(y){}throw x}renderStatus('Done in '+secs+' s. Saved as '+handle.name+' ('+mb+' MB).'+fellBack)}catch(x){console.warn('save error',x);link();renderStatus('Done in '+secs+' s, but the browser could not write '+handle.name+' ('+(x&&x.message||x)+'). Press Save video to save it to your Downloads folder instead.'+fellBack)}}else{link();renderStatus('Done in '+secs+' s ('+mb+' MB). Press Save video.'+fellBack)}}}
+if(stream)renderStatus('Done in '+secs+' s at '+OW+'x'+OH+'. Saved as '+handle.name+'.'+fellBack);else{const b=new Blob([output.target.buffer],{type:'video/mp4'}),mb=(b.size/1e6).toFixed(0),link=()=>{renderUrl=URL.createObjectURL(b);const a=$('#renderSave');a.href=renderUrl;a.download=name;a.hidden=false};if(handle){renderStatus('Writing '+handle.name+'...');try{const w=await handle.createWritable();try{await w.write(b);await w.close()}catch(x){try{await w.abort()}catch(y){}throw x}renderStatus('Done in '+secs+' s at '+OW+'x'+OH+'. Saved as '+handle.name+' ('+mb+' MB).'+fellBack)}catch(x){console.warn('save error',x);link();renderStatus('Done in '+secs+' s at '+OW+'x'+OH+', but the browser could not write '+handle.name+' ('+(x&&x.message||x)+'). Press Save video to save it to your Downloads folder instead.'+fellBack)}}else{link();renderStatus('Done in '+secs+' s at '+OW+'x'+OH+' ('+mb+' MB). Press Save video.'+fellBack)}}}
 catch(e){const cancelled=renderUserCancel;console.warn('render error',e);if(writable)try{await writable.abort()}catch(x){}const unread=!cancelled&&!(writable&&(e&&e.name)==='InvalidStateError')&&(['NotReadableError','NotFoundError'].includes(e&&e.name)||/could not be read/i.test(e&&e.message||''));renderStatus(cancelled?'Cancelled.'+(stream?' The unfinished file may still be there; delete it.':''):unread?'The browser can no longer read the video file: it changed on disk or the drive was disconnected since you opened it. Press Choose the video file again and pick the same file.'+(stream?' Delete the unfinished output file.':''):writable&&(e&&e.name)==='InvalidStateError'?'Render failed: the browser could not keep writing the output file ('+e.message+'). Save it to another folder (not the SD card) and try again.':'Render failed: '+(e&&e.message||e));$('#renderRepick').hidden=!unread}finally{if(conv)conv.onProgress=undefined;renderIdle()}};
-// Render settings window: live test timer (three made-up laps) on the frame at the video cursor. Its controls are mirrors of the
-// Resolve settings inputs (same ids as source of truth): a change is written to the original input and its 'change' event fires, so saving stays in one place.
-const RS_SPEC=[['Font','sel','#fontInput'],['Text size','range','#lookSize',.005,.1,.001],['Position X','range','#lookX',0,1,.001],['Position Y','range','#lookY',0,1,.001],['Outline','range','#lookOutline',0,.3,.005],['Line spacing','range','#optLineSpacing',.5,3,.05],['Dashes per char.','range','#dashRatio',0,5,.1],['Divider','sel','#optDivider'],['Lap labels','chk','#optLabels'],['Title line','text','#optTitle'],['Head (s)','num','#optHead'],['Tail (s)','num','#optTail']];
-const RS_THREE=[{start:0,end:4989,duration:4.989},{start:4989,end:10067,duration:5.078},{start:10067,end:14956,duration:4.889}],rsMirrors=[];
-(()=>{const box=$('#rsControls');RS_SPEC.forEach(([label,kind,q,lo,hi,st])=>{const orig=$(q),row=document.createElement('div');row.className='rsRow'+(kind==='sel'||kind==='text'?' wide':'');row.title=orig.closest('.bindRow')?.title||'';row.innerHTML='<span>'+label+'</span>';box.appendChild(row);
-const send=v=>{if(kind==='chk')orig.checked=v;else orig.value=v;orig.dispatchEvent(new Event('change',{bubbles:true}));rsDraw();setTimeout(rsSync,60)};let m;
-if(kind==='sel'){m=document.createElement('select');m.className='num';row.appendChild(m);m.onchange=()=>send(m.value);rsMirrors.push(()=>{if(m.innerHTML!==orig.innerHTML)m.innerHTML=orig.innerHTML;m.value=orig.value})}
-else if(kind==='chk'){m=document.createElement('input');m.type='checkbox';row.appendChild(m);m.onchange=()=>send(m.checked);rsMirrors.push(()=>m.checked=orig.checked)}
-else if(kind==='text'||kind==='num'){m=document.createElement('input');m.type=kind==='num'?'number':'text';m.className='num';['min','max','step','maxLength','placeholder'].forEach(a=>{if(orig[a]!==undefined&&orig[a]!==''&&orig[a]!==-1)m[a]=orig[a]});row.appendChild(m);if(kind==='num')row.appendChild(document.createElement('span'));m.oninput=()=>send(m.value);rsMirrors.push(()=>{if(document.activeElement!==m)m.value=orig.value})}
-else{const r=document.createElement('input');r.type='range';r.min=lo;r.max=hi;r.step=st;m=document.createElement('input');m.type='number';m.className='num';m.min=orig.min;m.max=orig.max;m.step=st;row.append(r,m);r.oninput=()=>{m.value=r.value;send(r.value)};m.onchange=()=>send(m.value);rsMirrors.push(()=>{r.value=orig.value;if(document.activeElement!==m)m.value=orig.value})}})})();
-function rsSync(){rsMirrors.forEach(f=>f());const d=video.duration,on=mode==='native'&&d>0;$('#rsFrame').disabled=!on;if(on){$('#rsFrame').max=d;$('#rsFrame').value=video.currentTime;$('#rsFrameT').textContent=video.currentTime.toFixed(2)+' s'}else $('#rsFrameT').textContent='no video'}
-let rsGeo=null,rsTok=0;
-async function rsDraw(){if($('#rsModal').classList.contains('hidden'))return;const tok=++rsTok,c=$('#rsCanvas'),has=mode==='native'&&video.videoWidth>0,W=has?video.videoWidth:1280,H=has?video.videoHeight:720;
-const font=await timerFont().catch(()=>({fam:'sans-serif',asc:0,desc:0}));if(tok!==rsTok)return;if(c.width!==W||c.height!==H){c.width=W;c.height=H}const ctx=c.getContext('2d');
-if(has)ctx.drawImage(video,0,0,W,H);else{const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#2b3a4a');g.addColorStop(1,'#6b7d5a');ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
-const o={...optGet(),head:0,tail:null},look=lookGet(),dashes=Math.min(5,Math.max(0,+$('#dashRatio').value||0));drawTimer(ctx,W,H,timerLines(14.956,RS_THREE,dashes,o,1000),look,font,o.lineSpacing);
-const sc=Math.min(1920/W,1080/H);rsGeo={W,H,rW:1920/sc,rH:1080/sc}}
-$('#renderSettingsHome').onclick=()=>$('#renderSettings').click();$('#renderSettings').onclick=()=>{if(renderBusy)return;$('#rsModal').classList.remove('hidden');rsSync();rsDraw()};
-const rsClose=()=>{$('#rsModal').classList.add('hidden');renderPreview()};$('#closeRs').onclick=rsClose;$('#rsRender').onclick=()=>{rsClose();if($('#renderModal').classList.contains('hidden'))$('#renderOpen').click()};$('#rsDone').onclick=rsClose;
-$('#rsReset').onclick=()=>{$('#lookReset').click();rsSync();rsDraw()};$('#dlgOk').addEventListener('click',()=>setTimeout(()=>{rsSync();rsDraw()},60));$('#dlgCancel').addEventListener('click',()=>setTimeout(rsSync,60));
-$('#rsFrame').oninput=e=>{if(mode==='native'&&video.duration>0){video.currentTime=+e.target.value;$('#rsFrameT').textContent=(+e.target.value).toFixed(2)+' s'}};
-['seeked','loadeddata'].forEach(ev=>video.addEventListener(ev,()=>{if(!$('#rsModal').classList.contains('hidden')){rsSync();rsDraw()}}));
-// Drag the timer: keeps the grab point under the pointer and writes Position X / Y.
-(()=>{const c=$('#rsCanvas');let drag=null;const pt=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)/r.width*c.width,(e.clientY-r.top)/r.height*c.height]};
-const anchor=()=>{const g=rsGeo,l=lookGet();return[l.x*g.rW-(g.rW-g.W)/2,(1-l.y)*g.rH-(g.rH-g.H)/2]};
-c.addEventListener('pointerdown',e=>{if(!rsGeo)return;const[px,py]=pt(e),[ax,ay]=anchor();drag={dx:ax-px,dy:ay-py};c.setPointerCapture(e.pointerId)});
-c.addEventListener('pointermove',e=>{if(!drag)return;const g=rsGeo,[px,py]=pt(e),x=(px+drag.dx+(g.rW-g.W)/2)/g.rW,y=1-(py+drag.dy+(g.rH-g.H)/2)/g.rH;lookEl.x.value=Math.min(1,Math.max(0,x)).toFixed(3);lookEl.y.value=Math.min(1,Math.max(0,y)).toFixed(3);rsMirrors.forEach(f=>f());rsDraw()});
-const end=()=>{if(!drag)return;drag=null;lookSave();rsSync()};c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end)})();
 $$('select').forEach(themeSelect);
 
 // Video size: drag the corner grip to make the player smaller or larger (kept as a share of the column width).
