@@ -140,7 +140,7 @@ function useAbout(): AboutBox[] {
               <Link to="/docs/projects/eu-champs-race-gates/">MultiGP European Championship</Link>
             ),
           }}>
-          {'I'm deputy head of the TSV Korntal drone department and do {rd} at races for TSV Korntal and Aircrasher. In 2026 I co-organised the {euc} in Aichtal: 104 pilots from about 21 countries.'}
+          {"I'm deputy head of the TSV Korntal drone department and do {rd} at races for TSV Korntal and Aircrasher. In 2026 I co-organised the {euc} in Aichtal: 104 pilots from about 21 countries."}
         </Translate>
       ),
     },
