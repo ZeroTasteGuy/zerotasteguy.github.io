@@ -11,7 +11,7 @@ import type {RaceResult, ResultsData, YearSummary} from './types';
 
 const FIELDS = [
   'event', 'type', 'status', 'date', 'end_date', 'source', 'url', 'location', 'country', 'series',
-  'class', 'qualifying', 'position', 'pilots', 'best_lap', 'best_3_laps', 'notes', 'notes_de',
+  'class', 'qualifying', 'position', 'pilots', 'best_lap', 'best_3_laps', 'notes', 'notes_de', 'highlight',
 ];
 
 // Accepts 18.432, "18.432" or "1:02.345" and returns seconds.
@@ -93,6 +93,8 @@ export function readResult(file: string, root: string): RaceResult {
   const pilots = parseInt(pilotsPlus ? Number((d.pilots as string).trim().slice(0, -1)) : d.pilots, 'pilots', fail);
   if (position && pilots && position > pilots) fail(`"position" (${position}) is higher than "pilots" (${pilots})`);
 
+  if (d.highlight !== undefined && typeof d.highlight !== 'boolean') fail('"highlight" must be true or false');
+
   const slug = path.basename(file).replace(/\.ya?ml$/i, '').toLowerCase().replace(/[^a-z0-9-]+/g, '-');
   return {
     slug,
@@ -117,6 +119,7 @@ export function readResult(file: string, root: string): RaceResult {
     best3Laps: parseTime(d.best_3_laps, 'best_3_laps', fail),
     notes: optString(d.notes, 'notes', fail),
     notesDe: optString(d.notes_de, 'notes_de', fail),
+    highlight: d.highlight === true || undefined,
   };
 }
 
@@ -175,6 +178,17 @@ export default function raceResultsPlugin(context: LoadContext): Plugin {
       // baseUrl is "/" for English and "/de/" for German.
       const base = context.baseUrl;
       const dataPath = await actions.createData('results.json', JSON.stringify(content));
+      // Races marked "highlight: true" are shown on the About page (src/components/RaceHighlights).
+      // Season totals first, then races, newest first; same date: better place first.
+      const highlights = content.results
+        .filter(r => r.highlight)
+        .sort(
+          (a, b) =>
+            Number(b.type === 'series') - Number(a.type === 'series') ||
+            b.date.localeCompare(a.date) ||
+            (a.position ?? Infinity) - (b.position ?? Infinity),
+        );
+      actions.setGlobalData({highlights});
       actions.addRoute({
         path: `${base}results/`,
         component: '@site/src/components/results/ResultsPage.tsx',

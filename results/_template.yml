@@ -21,3 +21,4 @@ source: multigp                    # livetime, multigp, fpvscores, fpvtrackside,
 url: https://www.multigp.com/races/view/?race=12345   # link to the full results
 notes: Short note shown on the race page.
 notes_de: "Kurze Notiz auf der Rennseite." # same note in German (optional)
+# highlight: true                  # also show it in Racing highlights on the About page (optional)

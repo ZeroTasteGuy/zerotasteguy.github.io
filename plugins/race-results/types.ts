@@ -22,6 +22,8 @@ export type RaceResult = {
   notes?: string;
   /** German version of notes, shown on the German site. */
   notesDe?: string;
+  /** Shown in the Racing highlights on the About page. */
+  highlight?: boolean;
 };
 
 export type YearSummary = {

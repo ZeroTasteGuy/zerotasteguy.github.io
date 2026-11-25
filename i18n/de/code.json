@@ -566,5 +566,11 @@
   },
   "home.about.community.rd": {
     "message": "Rennleitung und Zeitnahme"
+  },
+  "about.highlights.result": {
+    "message": "Ergebnis"
+  },
+  "about.highlights.event": {
+    "message": "Rennen"
   }
 }
