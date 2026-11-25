@@ -37,6 +37,12 @@ export const Goggles = ({className}: P): ReactNode => (
     <path d="M7 10h2M15 10h2" />
   </svg>
 );
+// A race gate: frame on two feet.
+export const Gate = ({className}: P): ReactNode => (
+  <svg {...base} className={className}>
+    <path d="M6 20V5h12v15M3 20h6M15 20h6M6 9h12" />
+  </svg>
+);
 export const Code = ({className}: P): ReactNode => (
   <svg {...base} className={className}>
     <path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16" />
