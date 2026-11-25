@@ -391,25 +391,14 @@ a.site-card:hover {
 }
 
 /* ---- About page ---- */
-.about-intro {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
-}
 .about-photo {
-  flex: none;
-  width: 160px;
+  display: block;
+  width: 100%;
   height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
   border-radius: 12px;
-  border: 1px solid var(--site-line);
-}
-@media (max-width: 600px) {
-  .about-intro {
-    flex-direction: column;
-  }
-  .about-photo {
-    width: 130px;
-  }
+  margin-bottom: 1.25rem;
 }
 .glass-page h2 {
   color: var(--ifm-color-primary);
