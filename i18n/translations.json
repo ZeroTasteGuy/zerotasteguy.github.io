@@ -1,0 +1,42 @@
+{
+  "docs/intro.md": {
+    "source": "en",
+    "en": "e6032516287cea3b",
+    "de": "9b83af8a7d86e7cc"
+  },
+  "docs/projects/eu-champs-race-gates.mdx": {
+    "source": "en",
+    "en": "ff1ec79b4f4a1049",
+    "de": "83b1818b5e574f02"
+  },
+  "docs/projects/index.md": {
+    "source": "en",
+    "en": "be543cf4785c6852",
+    "de": "f02e19fa89ff3cd4"
+  },
+  "docs/projects/race-direction-and-timing.mdx": {
+    "source": "en",
+    "en": "8e214609f0081bf6",
+    "de": "166df674753d7dfa"
+  },
+  "docs/projects/tsv-korntal-race-gates.mdx": {
+    "source": "en",
+    "en": "ed2ad196d2e316f5",
+    "de": "4e2b4073bb064c1e"
+  },
+  "docs/vltl/index.md": {
+    "source": "en",
+    "en": "3580c06d4032b65b",
+    "de": "0dc5c53add1be2e6"
+  },
+  "docs/vltl/resolve-guide.mdx": {
+    "source": "en",
+    "en": "dab56f3d7c01c5ec",
+    "de": "d79ee7a44b3c3e2a"
+  },
+  "src/pages/about.mdx": {
+    "source": "en",
+    "en": "cf25d83264790366",
+    "de": "78d0380d1f9162b4"
+  }
+}

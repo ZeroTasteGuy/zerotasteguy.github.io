@@ -20,3 +20,4 @@ best_3_laps: 57.120                # best 3 consecutive laps
 source: multigp                    # livetime, multigp, fpvscores, fpvtrackside, copterrace, fpvgg, f9u, livefpv, aircrasher, manual, other
 url: https://www.multigp.com/races/view/?race=12345   # link to the full results
 notes: Short note shown on the race page.
+notes_de: "Kurze Notiz auf der Rennseite." # same note in German (optional)

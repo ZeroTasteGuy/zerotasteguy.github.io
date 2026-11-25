@@ -1,0 +1,117 @@
+---
+sidebar_position: 3
+title: "Rennleitung und Zeitnahme"
+description: "Ehrenamtliche Rennleitung und Zeitnahme bei FPV-Drohnenrennen für den TSV Korntal und Aircrasher sowie das geplante modulare Eurobox-Hardwaresystem."
+translated_from: en
+---
+
+# Rennleitung und Zeitnahme
+
+Hier geht es um meine ehrenamtliche Arbeit als Rennleiter und Zeitnehmer bei FPV-Drohnenrennen und um die Planung eines modularen „Eurobox“-Hardwaresystems für die Drohnenabteilung des TSV Korntal.
+
+## Hintergrund
+
+Bei einem FPV-Drohnenrennen hat die Rennleitung das Sagen: Sie baut den Veranstaltungsort auf, richtet das Zeitmesssystem ein, plant die Läufe, koordiniert die Frequenzen, führt die Streckenbegehung durch, leitet die Pilotenbesprechung und wertet die Ergebnisse aus. Hinter jedem Renntag steht eine mobile technische Anlage aus Videoempfängern, Zeitmesshardware, einem Computer, Netzwerk und Bildschirmen, die jedes Mal auf- und abgebaut werden muss.
+
+## Meine Rolle und mein Aufgabenbereich
+
+Seit 2025 übernehme ich diese Aufgabe ehrenamtlich, unabhängig von meiner Position als stellvertretender Leiter der Drohnenabteilung des TSV Korntal.
+
+| Veranstaltung | Anzahl | Meine Rolle |
+|---|---|---|
+| Whoop-Rennen, TSV Korntal | 3 | Organisation und Rennleitung, jeweils 20 bis 30 Piloten |
+| MultiGP Global Qualifiers, TSV Korntal | 2 | Organisation und Rennleitung |
+| FAI- und DCS-Rennen, Aircrasher-Chapter | regelmäßig | Rennleitung oder Zeitnahme, deutlich größere Teilnehmerfelder |
+
+<figure className="proj-fig">
+
+![Eine für ein Rennen aufgebaute Sporthalle](@site/docs/projects/img/rd-hall.jpg)
+
+<figcaption>Einrichtung einer Sporthalle für ein Rennen: Rennleitpult, Zeitmessung, Pilotentische und Projektionsleinwand</figcaption>
+</figure>
+
+## Veranstaltungsorganisation
+
+### Vorbereitung und Aufbau
+
+Bei den Rennen des TSV Korntal habe ich die Organisation von Anfang bis Ende übernommen:
+
+- Termin festlegen und alle Aufgaben planen, die vor dem Rennen erledigt sein müssen.
+- Ausrüstung organisieren, zum Beispiel Tische, Stühle und den Beamer.
+- Am Abend vorher die Halle aufbauen: festlegen, wo jede Station steht und wie alles verbunden wird.
+- Den Zeitmess-Rechner einrichten und alle Heats anlegen.
+
+### Renntag
+
+Am Renntag habe ich den Streckenrundgang und die Pilotenbesprechung geleitet und den Rennplan im Blick behalten. Streitigkeiten haben wir gemeinsam in einer Gruppenentscheidung geklärt.
+
+<figure className="proj-fig proj-fig--narrow">
+
+![Am Rennleitpult während eines Rennens](@site/docs/projects/img/rd-race-control.jpg)
+
+<figcaption>Am Rennleitpult während eines Rennens</figcaption>
+</figure>
+
+### Zeitmesssysteme
+
+Die Rundenzeiten werden anhand des 5,8-GHz-Videosignals jeder Drohne gemessen, sodass die Drohnen keinen zusätzlichen Transponder benötigen. Bei unseren Rennen haben wir ImmersionRC LapRF-Hardware mit LiveTime verwendet. Außerdem haben wir mehrere andere Software- und Hardware-Optionen getestet:
+
+| System | Typ und Verwendung |
+|---|---|
+| LiveTime | Rennsoftware, die wir bei unseren Rennen nutzen; verteilt die Frequenzen automatisch |
+| RotorHazard, FPVTrackside | Rennsoftware, getestet |
+| NuclearHazard | Zeitmesshardware für RotorHazard, getestet |
+| ImmersionRC LapRF | Kommerzielle Zeitmesshardware, die wir bei unseren Rennen nutzen, von einem anderen Verein ausgeliehen |
+| ZippyDecoder | Open-Source-Decoder (Raspberry Pi mit Empfänger-Nodes) für LiveTime, getestet |
+
+## Eurobox-System
+
+:::info[Stand]
+
+Die Planung ist weitgehend abgeschlossen (Oktober 2026). Die Beschaffung und der Bau der ersten Boxen stehen noch aus.
+
+:::
+
+### Problem und Zielsetzung
+
+Unsere Rennausrüstung ist aktuell auf zig Koffer verteilt, und vor Ort fehlen ständig Kabel. Ich leite gerade die Umstellung des Vereins auf einen einheitlichen Satz Auer-Euroboxen. Jede Box ist ein fertig verkabeltes Steckmodul, das in unter zwei Minuten aufgebaut ist. Das System muss alle Funktionen der alten Koffer ersetzen und neue hinzufügen: Live-Video, Videowand, Netzwerk und Streaming, Zeitmessung und HF-Überwachung.
+
+### Systemarchitektur
+
+| Box | Inhalt | Verbindung | Stand |
+|---|---|---|---|
+| EventVRX-Box A | HDZero EventVRX 4-Kanal-Empfänger und Aufzeichnung | USB 3 zum Laptop | aktiv |
+| EventVRX-Box B | HDZero EventVRX 4-Kanal-Empfänger und Aufzeichnung | USB 3 zum Laptop | aktiv |
+| Videowand-Box | 2×2-Controller für 4 Monitore | HDMI vom Laptop | aktiv |
+| Netzwerkbox | LTE-Router und PoE+-Switch | LAN zu Laptop, Timer und SDR | aktiv |
+| Laptop / OBS-Box | Rennleitung und Streaming | – | auf Eis gelegt |
+| Zeitmessbox | NuclearHazard-Timer, Strom über PoE | PoE+ | auf Eis gelegt |
+| HackRF-Box | Web-SDR zur Überwachung des 5,8-GHz-Bands | LAN | auf Eis gelegt |
+
+Die Netzstromversorgung (230 V) wird von Box zu Box in Reihe geschaltet (C14-Eingang, C13-Ausgang, max. 10 A). In jeder Box sitzt ein Mean-Well-12-V-Netzteil mit abgesicherten Ausgängen für alle Geräte. Die beiden EventVRX-Boxen haben Zwangsbelüftung mit Staubfiltern, und die Antennenanschlüsse der Empfänger führen direkt durch die Boxwand.
+
+### Standards, Sicherheit und Budget
+
+- **Gemeinsame Standards:** Anschlüsse nur an den Seiten, echte Einbausteckdosen statt loser Kupplungen, 3D-gedruckte Griffe, Halterungen und Anschlussplatten.
+- **Kabel:** Jede Box hat ihre eigenen Kabel dabei; ein Farbcode aus fünf Farben mit passenden Ringen an beiden Kabelenden zeigt, welches Kabel zu welcher Box gehört.
+- **Elektrische Sicherheit:** 230-V-Innenverkabelung mit Schutzleiter, abgesicherte 12-V-Verteiler, gedruckte Berührungsschutz-Abdeckungen, Überprüfung durch einen qualifizierten Elektriker geplant.
+- **Budget:** Ziel ca. 800 Euro. Der aktive Umfang (zwei EventVRX-Boxen, Videowand, Netzwerk, Kabel, Beschriftung) beläuft sich auf ca. 695–715 Euro. Durch den Einkauf der Steckverbinder für die Schalttafelmontage konnten wir die Kosten von etwa 96 auf 72 Euro drücken. Laptop, HackRF und Timer-Boxen (rund 450–530 Euro) haben wir erst mal auf Eis gelegt, damit wir im Budget bleiben.
+
+Die Planung dokumentiere ich mit Lageplänen, Teile- und Kabellisten, Signal- und Stromversorgungsdiagrammen sowie Kostenaufstellungen.
+
+## Ergebnis
+
+Das Feedback der Piloten zu den Rennen war stets sehr positiv. Bei unserem letzten MultiGP Global Qualifier, der zu Beginn der Saison stattfand, wurden die vier weltweit schnellsten Zeiten kurzzeitig bei unserer Veranstaltung erzielt, und eine Zeit aus unserem Qualifier landete unter den globalen Top 10.
+
+| Kennzahl | Wert |
+|---|---|
+| Rennen beim TSV Korntal geleitet | 5 (3 Whoop-Rennen, 2 MultiGP Global Qualifiers) |
+| Teilnehmer pro Whoop-Rennen | 20–30 |
+| Zeitmessung bei den Rennen | ImmersionRC LapRF mit LiveTime |
+| Eurobox-Budget (aktiver Umfang) | ca. 700 EUR von 800 EUR |
+
+## Fazit
+
+Rennen verlangen Organisation, Technik und Kommunikation: Das Ganze läuft nur, wenn Zeitplan, Zeitmessung und die Leute vor Ort gut zusammenarbeiten. Der Test verschiedener Systeme hat gezeigt, wie wichtig am Renntag eine zuverlässige Hardware-Basis ist, die sich schnell aufbauen lässt.
+
+**Ausblick:** Sobald die ersten Euroboxen gebaut sind, sparen wir bei jedem Rennen Aufbauzeit, und fehlende Kabel gehören der Vergangenheit an.

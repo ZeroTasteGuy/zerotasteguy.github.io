@@ -2,6 +2,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import raceResults from './plugins/race-results';
+import latest from './plugins/latest';
 
 const config: Config = {
   title: 'maxd.ax',
@@ -23,10 +24,15 @@ const config: Config = {
 
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'de'],
+    localeConfigs: {
+      en: {label: 'English', htmlLang: 'en'},
+      de: {label: 'Deutsch', htmlLang: 'de'},
+    },
   },
 
-  plugins: [raceResults],
+  // latest: picks the newest docs and race results for the homepage.
+  plugins: [raceResults, latest],
 
   presets: [
     [
@@ -36,6 +42,8 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           editUrl:
             'https://github.com/ZeroTasteGuy/zerotasteguy.github.io/tree/main/',
+          // German pages link to their own file in i18n/de/.
+          editLocalizedFiles: true,
         },
         blog: false,
         sitemap: {
@@ -79,6 +87,7 @@ const config: Config = {
         },
         {to: '/results/', label: 'Race results', position: 'left'},
         {to: '/about/', label: 'About', position: 'left'},
+        {type: 'localeDropdown', position: 'right'},
       ],
     },
     footer: {

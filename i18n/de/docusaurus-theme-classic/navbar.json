@@ -1,0 +1,30 @@
+{
+  "title": {
+    "message": "maxd.ax",
+    "description": "The title in the navbar"
+  },
+  "item.label.Tools": {
+    "message": "Tools",
+    "description": "Navbar item with label Tools"
+  },
+  "item.label.Docs": {
+    "message": "Anleitungen",
+    "description": "Navbar item with label Docs"
+  },
+  "item.label.Race results": {
+    "message": "Rennergebnisse",
+    "description": "Navbar item with label Race results"
+  },
+  "item.label.About": {
+    "message": "Über mich",
+    "description": "Navbar item with label About"
+  },
+  "item.label.All tools": {
+    "message": "Alle Tools",
+    "description": "Navbar item with label All tools"
+  },
+  "item.label.Video Lap Tracking Lab": {
+    "message": "Video Lap Tracking Lab",
+    "description": "Navbar item with label Video Lap Tracking Lab"
+  }
+}
