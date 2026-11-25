@@ -34,5 +34,6 @@ You can see the message under the repository's **Actions** tab.
 | `url` | no | link to the full results |
 | `notes` | no | free text, in English or German |
 | `notes_de` | no | the same note in German, shown on the German site. Without it, both sites show `notes`. |
+| `highlight` | no | `true` also shows the race in **Racing highlights** on the About page. Season totals come first, then races, newest first. |
 
 New sources are added in `plugins/race-results/sources.ts`.
