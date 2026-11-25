@@ -32,8 +32,7 @@
   --accent-hover:#f27676;
   --accentText:#1a0606;    /* text on an accent background */
   --accent-tint:rgba(239,91,91,.2);   /* selected / switched on */
-  --best:rgba(239,91,91,.1);          /* best 3 laps, current video */
-  --blue:#5cc8ff;          /* 3-consecutive total */
+  --best:rgba(115,115,115,.14);       /* best 3 laps, current video (neutral; the accent bar on the left marks them) */
   --danger:#ff9a52;        /* bad laps, reset (orange, so it does not look like the red accent) */
   --danger-tint:rgba(255,154,82,.15);
   --star:#ffcb36;
@@ -64,8 +63,7 @@
   --accent-hover:#c33232;
   --accentText:#fff;
   --accent-tint:rgba(210,60,60,.12);
-  --best:rgba(210,60,60,.07);
-  --blue:#0a74a8;
+  --best:rgba(115,115,115,.1);
   --danger:#c2510c;
   --danger-tint:rgba(194,81,12,.12);
   --star:#b7791f;
@@ -115,21 +113,24 @@ a:hover{text-decoration:underline}
 
 /* ---- Cards ---- */
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-/* Card title: small accent caps, like the section headings on maxd.ax */
-.statTop,.tableHead>div:first-child{color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+/* Card title: small muted caps. Red is kept for the main actions, so the page does not get too loud. */
+.statTop,.tableHead>div:first-child{color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
 
 /* ---- Buttons ---- */
 .btn{border:1px solid transparent;background:var(--item);color:var(--text);padding:7px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;white-space:nowrap;transition:background .12s,color .12s,border-color .12s}
 .btn:hover:not(:disabled){background:var(--item-hover)}
-.primary{display:inline-flex;align-items:center;gap:7px;background:var(--accent-tint);color:var(--accent)}
-.primary:hover:not(:disabled){background:var(--accent-tint);border-color:var(--accent)}
-.btn.on,td button.on{color:var(--accent);background:var(--accent-tint)}
+.primary{display:inline-flex;align-items:center;gap:7px}
+.primary:hover:not(:disabled){border-color:var(--accent)}
+.btn.on,td button.on{color:var(--text);background:var(--item-hover);border-color:var(--accent)}
 .danger{color:var(--danger)}
 .danger:hover:not(:disabled){background:var(--danger-tint)!important;color:var(--danger)!important}
 /* Big filled buttons: Play and Record lap (like .button--primary on maxd.ax) */
-.play,.record{background:var(--accent);color:var(--accentText);border:0;border-radius:10px;font-weight:700;padding:9px 20px;transition:background .12s}
-.play{min-width:120px}
-.play:hover:not(:disabled),.record:hover:not(:disabled){background:var(--accent-hover)}
+.play,.record{border:0;border-radius:10px;font-weight:700;padding:9px 20px;transition:background .12s}
+/* Record lap is the one filled red button (like .button--primary on maxd.ax) */
+.record{background:var(--accent);color:var(--accentText)}
+.record:hover:not(:disabled){background:var(--accent-hover)}
+.play{min-width:120px;background:var(--item-hover);color:var(--text)}
+.play:hover:not(:disabled){background:color-mix(in srgb,var(--item-hover) 100%,var(--text) 8%)}
 .linkBtn{background:none;border:0;padding:0;color:var(--accent);font:inherit;font-weight:700;cursor:pointer}
 .linkBtn:hover{text-decoration:underline}
 
@@ -253,7 +254,6 @@ input[type=checkbox],input[type=range]{accent-color:var(--accent)}
 .stat{padding:16px 18px}
 .statTop{display:flex;justify-content:space-between;align-items:center;gap:6px}
 .statNumber{font:700 28px var(--mono);margin-top:12px;letter-spacing:-.02em}
-.blue{color:var(--blue)}
 .statSub{color:var(--muted);font:12px var(--mono);margin-top:4px}
 .statSub.clip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .badge,.pill{font-size:11px;font-weight:600;border-radius:999px;padding:2px 9px;background:var(--item);color:var(--muted);white-space:nowrap;letter-spacing:0;text-transform:none}
@@ -279,7 +279,7 @@ input[type=checkbox],input[type=range]{accent-color:var(--accent)}
 .sRow.cur{background:var(--best);box-shadow:inset 3px 0 var(--accent)}
 .sRow .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sRow .t{font:700 12px var(--mono)}
-.sRow.top .t{color:var(--accent)}
+.sRow.top .t{color:var(--text)}
 .sRow .r{color:var(--muted);font:11px var(--mono);text-align:right}
 .sRow .t,.sRow .s{text-align:right}
 .sRow .s{color:var(--muted);font:11px var(--mono)}
@@ -324,7 +324,7 @@ tr.starLap td:first-child{box-shadow:inset 3px 0 0 var(--star)}
 .modal.hidden{display:none}
 .modalInner{padding:22px 24px;zoom:var(--mz,1);width:min(calc(100vw / var(--mz,1) - 32px),460px);box-shadow:var(--shadow-pop)}
 .modalHead{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.modalInner h2{margin:0;font-size:17px;color:var(--accent)}
+.modalInner h2{margin:0;font-size:17px;color:var(--text)}
 .closeBtn{width:32px;height:32px;padding:0;display:inline-grid;place-items:center;border-radius:50%}
 .resolveBox{width:min(calc(100vw / var(--mz,1) - 32px),540px);max-height:calc(92vh / var(--mz,1));overflow:auto}
 .setHead{margin:18px 0 4px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
@@ -393,7 +393,7 @@ tr.starLap td:first-child{box-shadow:inset 3px 0 0 var(--star)}
   .ytBar #ytChips{display:contents}
 }
 </style></head><body><div class="app">
-<div class="ver" id="ver">build 2026-11-25.1</div><nav class="navbar" aria-label="maxd.ax"><a class="brand" href="/">maxd.ax</a><span class="crumb" aria-hidden="true">/</span><h1 class="logo" tabindex="0" aria-label="Video Lap Tracking Lab"><span class="col" aria-hidden="true">V<span class="rest"><i>i</i><i>d</i><i>e</i><i>o</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>p</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">T<span class="rest"><i>r</i><i>a</i><i>c</i><i>k</i><i>i</i><i>n</i><i>g</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>b</i></span></span><span class="name" aria-hidden="true">Video Lap Tracking Lab</span></h1><span class="navSpacer"></span><a class="navLink" href="/tools/">Tools</a><a class="navLink" href="/docs/vltl/">Docs</a><a class="navLink" href="/results/">Race results</a><a class="navLink" href="/about/">About me</a><button id="themeBtn" class="iconBtn" type="button"></button></nav>
+<div class="ver" id="ver">build 2026-11-25.2</div><nav class="navbar" aria-label="maxd.ax"><a class="brand" href="/">maxd.ax</a><span class="crumb" aria-hidden="true">/</span><h1 class="logo" tabindex="0" aria-label="Video Lap Tracking Lab"><span class="col" aria-hidden="true">V<span class="rest"><i>i</i><i>d</i><i>e</i><i>o</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>p</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">T<span class="rest"><i>r</i><i>a</i><i>c</i><i>k</i><i>i</i><i>n</i><i>g</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>b</i></span></span><span class="name" aria-hidden="true">Video Lap Tracking Lab</span></h1><span class="navSpacer"></span><a class="navLink" href="/tools/">Tools</a><a class="navLink" href="/docs/vltl/">Docs</a><a class="navLink" href="/results/">Race results</a><a class="navLink" href="/about/">About me</a><button id="themeBtn" class="iconBtn" type="button"></button></nav>
 <header class="top"><div class="topActions"><label class="fpsControl">Video FPS <select id="fpsPreset"><option>23.976</option><option>24</option><option>25</option><option>29.97</option><option>30</option><option>50</option><option selected>60</option><option>90</option><option>120</option><option>240</option><option value="custom">Custom</option></select></label><span class="sep"></span><span class="tipWrap" data-tip="DaVinci Resolve (free or Studio)&#10;1. Put your video on Video 1.&#10;2. Click here to copy the script.&#10;3. In Resolve press F6 (Workspace &gt; Console).&#10;4. Paste and press Enter.&#10;The timer title is added on Video 2, sized to your clip, with the font and layout set. The first run also adds the Text+ template to your Media Pool.&#10;Guide: see the link in the Resolve panel."><button id="resolveScriptBtn" class="btn primary" disabled><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="4.2" r="3.2" fill="#ee5a5a" fill-opacity=".9"/><circle cx="4.4" cy="10.4" r="3.2" fill="#4fc3f7" fill-opacity=".9"/><circle cx="11.6" cy="10.4" r="3.2" fill="#66d17a" fill-opacity=".9"/></svg>Copy Resolve script</button></span><button id="resolveBtn" class="btn" title="Font, size, position and outline of the Resolve timer">Resolve settings</button><input id="sessionTitle" class="num" style="width:150px" placeholder="Session title" maxlength="60" title="Used in the names of exported and saved files" aria-label="Session title"><div class="menu"><button id="exportMenuBtn" class="btn" aria-haspopup="true" aria-expanded="false">File ▾</button><div id="exportMenu" class="menuItems" hidden><div class="menuLabel">Export this video</div><button id="csvBtn" class="btn">CSV</button><div class="menuLabel">Export all videos</div><button id="allCsvBtn" class="btn allExp" disabled>CSV</button><div class="menuLabel">Save and restore</div><button id="saveLaps" class="btn allExp" disabled title="Save the laps of every video in the list">Save laps (JSON)</button><button id="loadLaps" class="btn" title="Restore laps saved earlier (matched by file name and size)">Load laps (JSON)…</button><input id="lapsInput" type="file" accept=".json,application/json" hidden><div class="menuLabel">Settings</div><button id="exportSettings" class="btn" title="Save your keys and Resolve settings to a file">Export settings (JSON)</button><button id="importSettings" class="btn" title="Load keys and Resolve settings from a file">Import settings…</button><input id="settingsInput" type="file" accept=".json,application/json" hidden></div></div><span class="sep"></span><button id="undoBtn" class="btn" disabled title="Undo last lap change (Ctrl+Z)">Undo</button><button id="reset" class="btn danger" title="Erase all lap marks from the video that is open now. Laps on your other videos are not touched (R)">Reset this video's laps</button><button id="statsBtn" class="btn" title="Overall stats, box plots and lap-by-lap lines for all videos">Stats</button><button id="settingsBtn" class="btn">Keys</button></div></header>
 <div class="layout"><main class="left"><div class="videoWrap"><video id="video" playsinline></video><div id="ytPlayer" class="embedPlayer" hidden></div><iframe id="drivePlayer" class="embedPlayer" hidden allow="autoplay; fullscreen" referrerpolicy="strict-origin-when-cross-origin" title="Google Drive video preview"></iframe><div class="videoTime" id="videoTime">00:00.000</div><div id="vGrip" class="vGrip" title="Drag to make the video smaller or larger (double-click to fit the screen)"></div></div>
 <div class="source"><div id="dropZone" class="drop"><input id="fileInput" type="file" accept="video/*,.ts,.m2ts" multiple hidden><div><strong>Drop videos here or click to browse</strong><small id="fileStatus">MP4, WebM, MOV, MPEG-TS · No video loaded</small></div></div>
