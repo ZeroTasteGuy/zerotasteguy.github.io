@@ -1,5 +1,5 @@
 /*
- * maxd.ax theme. Dark first, one accent colour.
+ * maxd.ax theme. Light by default (dark via the toggle), one accent colour.
  * To change the accent, edit the --ifm-color-primary shades below
  * (:root is light mode, [data-theme=dark] is dark mode).
  */
@@ -157,10 +157,13 @@ body {
   --ifm-footer-title-color: var(--ifm-font-color-base);
   --ifm-footer-color: var(--site-muted);
   background: rgba(115, 115, 115, 0.05);
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   margin-top: 3rem;
+}
+[data-theme='dark'] .footer {
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.25);
 }
 .footer__link-item:hover {
   color: var(--ifm-color-primary);
