@@ -1,0 +1,7 @@
+BetaflightOSD.ttf is generated from the default analog OSD font of Betaflight Configurator
+(https://raw.githubusercontent.com/betaflight/betaflight-configurator/master/resources/osd/2/default.mcm),
+by tools/build_analog_font.py (white pixels traced to vector outlines).
+
+Betaflight Configurator is published under the GNU General Public License version 3:
+https://github.com/betaflight/betaflight-configurator/blob/master/LICENSE
+This font is a converted form of that file and is distributed under the same license (GPL-3.0).
