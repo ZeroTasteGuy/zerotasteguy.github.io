@@ -1,8 +1,9 @@
 ---
 sidebar_position: 2
-title: Rundenzeit-Overlay für DaVinci Resolve
-sidebar_label: Resolve-Anleitung
-description: Bring das Rundenzeit-Overlay mit einem kopierten Skript in DaVinci Resolve und installier die HDZero-OSD-Schrift.
+title: "Rundenzeit-Overlay für DaVinci Resolve"
+sidebar_label: "Resolve-Anleitung"
+description: "Das Rundenzeit-Overlay mit einem kopierten Skript in DaVinci Resolve einfügen und die HDZero-OSD-Schriftart installieren."
+translated_from: en
 ---
 
 <head>
@@ -11,15 +12,15 @@ description: Bring das Rundenzeit-Overlay mit einem kopierten Skript in DaVinci 
 
 # Rundenzeit-Overlay für DaVinci Resolve
 
-Bring live laufende Rundenzeiten in dein HDZero-Video. Du markierst deine Runden im [Lap Timer](pathname:///vltl/), kopierst ein Skript und fügst es in Resolve ein. Das klappt auch mit der kostenlosen Version von DaVinci Resolve.
+So kommen Live-Rundenzeiten direkt ins HDZero-Video: Runden im [Lap Timer](pathname:///vltl/) markieren, ein Skript kopieren und in Resolve einfügen. Das funktioniert auch mit der kostenlosen Version von DaVinci Resolve.
 
-## 1. HDZero-OSD-Schrift installieren {/* #font */}
+## 1. Schriftart „HDZero OSD“ installieren {/* #font */}
 
-Mach das zuerst, damit die Schrift später in der Liste von Resolve auftaucht. Das OSD in der Brille wird aus einer Bitmap gezeichnet, nicht aus einer normalen Schrift, deshalb hat Resolve nichts Vergleichbares. Diese Schrift ist genau diese Bitmap als echte `.ttf`: breite Buchstaben mit abgerundeten Ecken und **Ziffern, die alle gleich breit sind**, damit die Zahlen beim Hochzählen nicht springen.
+Dieser Schritt kommt zuerst, damit die Schriftart später in der Liste von Resolve auftaucht. Das OSD der Brille wird aus einer Bitmap gezeichnet, nicht aus einer normalen Schriftart, daher gibt es in Resolve nichts Vergleichbares. Diese Schriftart ist genau diese Bitmap, umgewandelt in eine echte `.ttf`-Datei: breite, abgerundete quadratische Buchstaben und **Ziffern, die alle die gleiche Breite haben**, sodass die Zahlen beim Zählen nicht flackern.
 
 <div className="osd-shot">
   <div className="osd osd--small">{'F:4:25\n4S 3.93V\nMAXDAX 3\n0123456789'}</div>
-  <div className="osd-cap">Live-Vorschau: Dieser Text ist in der Schrift selbst gesetzt.</div>
+  <div className="osd-cap">Live-Vorschau: Dieser Text ist in der Schriftart selbst gesetzt.</div>
 </div>
 
 <p>
@@ -29,25 +30,25 @@ Mach das zuerst, damit die Schrift später in der Liste von Resolve auftaucht. D
 
 ### Installieren
 
-1. Lade die Datei mit dem Button oben herunter.
+1. Datei über die Schaltfläche oben herunterladen.
 2. **Windows:** Rechtsklick auf die Datei → **Für alle Benutzer installieren**.
-3. **Mac:** Doppelklick auf die Datei → **Installieren**.
-4. Wenn DaVinci Resolve offen ist, **schließ es und starte es neu**. Resolve liest die Schriftenliste nur beim Start.
-5. Fertig. Das Skript in Schritt 3 wählt die Schrift **HDZero OSD** von selbst aus.
+3. **Mac:** Datei doppelt anklicken → **Schriftart installieren**.
+4. Falls DaVinci Resolve schon offen ist: **Resolve schließen und neu starten**, denn die Schriftartenliste wird nur beim Programmstart eingelesen.
+5. Fertig. Das Skript in Schritt 3 wählt die Schriftart **HDZero OSD** automatisch aus.
 
-### Was drin ist
+### Was ist enthalten?
 
-Ziffern, Großbuchstaben A–Z (Kleinbuchstaben werden wie im OSD als Großbuchstaben angezeigt) und `. : - + / % & ( ) ! ? , ; = < > @ [ ] \ ^ _ #`. Keine Pfeile oder Akku-Symbole. Es ist eine Pixelschrift: Stark vergrößert sieht sie pixelig aus, genau wie das OSD selbst. Sie hat keinen schwarzen Rand, deshalb fügt das Skript eine schwarze Kontur hinzu.
+Ziffern, Großbuchstaben A–Z (Kleinbuchstaben werden wie im OSD als Großbuchstaben angezeigt) und `. : - + / % & ( ) ! ? , ; = < > @ [ ] \ ^ _ #`. Keine Pfeile oder Akkusymbole. Es ist eine Pixel-Schriftart: Stark vergrößert wirkt sie klobig, genau wie das OSD selbst. Einen schwarzen Rand hat sie nicht, deshalb fügt das Skript eine schwarze Kontur hinzu.
 
-<small className="site-muted">Die Formen stammen aus der Schrift `BTFL_000.bmp` der HDZero-Goggle-Firmware ([hd-zero/hdzero-goggle](https://github.com/hd-zero/hdzero-goggle), MIT-Lizenz). Das ist eine inoffizielle Umwandlung, nicht von HDZero gemacht oder unterstützt.</small>
+<small className="site-muted">Die Formen stammen aus der HDZero-Goggle-Firmware-Schriftart `BTFL_000.bmp` ([hd-zero/hdzero-goggle](https://github.com/hd-zero/hdzero-goggle), MIT-Lizenz). Inoffizielle Konvertierung, nicht von HDZero erstellt oder unterstützt.</small>
 
-### Du fliegst analog? Die Betaflight-OSD-Schrift {/* #analogfont */}
+### Analog unterwegs? Die Betaflight-OSD-Schriftart {/* #analogfont */}
 
-Das Gleiche für analoges Video: Betaflights Standard-Analog-OSD-Schrift (MAX7456) als `.ttf`. Installier sie genauso und wähl dann ganz oben in der Font-Liste in den **Resolve settings** des Lap Timers **Betaflight OSD** aus.
+Dasselbe Prinzip für analoges Material: die Standard-Analog-OSD-Schriftart von Betaflight (MAX7456) als `.ttf`. Genauso installieren und dann in den **Resolve settings** des Lap Timers ganz oben in der Font-Liste **Betaflight OSD** wählen.
 
 <div className="osd-shot">
   <div className="osd osd--small osd--bf">{'F:4:25\n4S 3.93V\nMAXDAX 3\n0123456789'}</div>
-  <div className="osd-cap">Live-Vorschau in der Betaflight-OSD-Schrift.</div>
+  <div className="osd-cap">Live-Vorschau in der Betaflight-OSD-Schriftart.</div>
 </div>
 
 <p>
@@ -55,7 +56,7 @@ Das Gleiche für analoges Video: Betaflights Standard-Analog-OSD-Schrift (MAX745
   <a className="button button--secondary button--outline" href="pathname:///vltl/resolve/BetaflightOSD-LICENSE.txt">Lizenz (GPL-3.0)</a>
 </p>
 
-<small className="site-muted">Umgewandelt aus `default.mcm` in [betaflight/betaflight-configurator](https://github.com/betaflight/betaflight-configurator) (GPL-3.0). Großbuchstaben, Ziffern und die üblichen Satzzeichen, keine Symbole. Inoffiziell, nicht von Betaflight gemacht oder unterstützt.</small>
+<small className="site-muted">Konvertiert aus `default.mcm` aus [betaflight/betaflight-configurator](https://github.com/betaflight/betaflight-configurator) (GPL-3.0). Großbuchstaben, Ziffern und die üblichen Satzzeichen; keine Sonderzeichen. Inoffiziell, nicht von Betaflight erstellt oder empfohlen.</small>
 
 ## 2. Projekt und Video {/* #start */}
 
@@ -63,21 +64,21 @@ Das Gleiche für analoges Video: Betaflights Standard-Analog-OSD-Schrift (MAX745
 
 <div className="fig">
 
-![Dialog „Create New Project“ mit eingetipptem Namen](@site/docs/vltl/img/02-new-project.png)
+![Dialog „Create New Project“ mit eingetragenem Namen](@site/docs/vltl/img/02-new-project.png)
 
-1. Starte Resolve, doppelklick auf **New Project** und gib einen Namen ein, zum Beispiel `Lap Timer Overlay`.
-2. Klick auf **Create**.
+1. Resolve starten, auf **New Project** doppelklicken und einen Namen eingeben, z. B. `Lap Timer Overlay`.
+2. Auf **Create** klicken.
 
 </div>
 
-### 2.2 Video in den Media Pool holen
+### 2.2 Video zum Media Pool hinzufügen
 
 <div className="fig">
 
-![Die Videodatei wird aus einem Ordnerfenster in den leeren Media Pool gezogen](@site/docs/vltl/img/03-media-pool.png)
+![Videodatei wird aus einem Ordnerfenster in den leeren Media Pool gezogen](@site/docs/vltl/img/03-media-pool.png)
 
-1. Zieh deine Videodatei aus ihrem Ordner.
-2. Lass sie im **Media Pool** los.
+1. Die Videodatei aus ihrem Ordner ziehen …
+2. … und im **Media Pool** ablegen.
 
 </div>
 
@@ -85,93 +86,93 @@ Das Gleiche für analoges Video: Betaflights Standard-Analog-OSD-Schrift (MAX745
 
 <div className="fig">
 
-![Der Clip im Media Pool wird auf die leere Timeline gezogen](@site/docs/vltl/img/04-timeline.png)
+![Der Clip im Media Pool, der auf die leere Timeline gezogen wurde](@site/docs/vltl/img/04-timeline.png)
 
-1. Auf der Seite **Edit** liegt der Clip jetzt im Media Pool. Zieh ihn von dort...
-2. ...in die leere Timeline. Resolve legt die Timeline für dich an, und dein Video liegt auf Spur **Video 1**.
+1. Auf der Seite **Edit** liegt der Clip jetzt im Media Pool. Von dort ziehen …
+2. … auf die leere Timeline. Resolve erstellt die Timeline automatisch, und das Video liegt auf **Video 1**.
 
 </div>
 
 :::note
-HDZero-`.ts`-Dateien lassen sich problemlos importieren. Falls Resolve deine nicht lesen kann, wandle sie vorher mit dem [ts2mp4-Konverter](https://github.com/ZeroTasteGuy/ts2mp4) in MP4 um (ffmpeg-Skripte zum Umwandeln, Hochskalieren und Zuschneiden von `.ts`-Dateien).
+HDZero-`.ts`-Dateien lassen sich problemlos importieren. Kann Resolve eine Datei nicht lesen, lässt sie sich vorher mit dem [ts2mp4-Konverter](https://github.com/ZeroTasteGuy/ts2mp4) in MP4 umwandeln (ffmpeg-Skripte zum Konvertieren, Hochskalieren und Zuschneiden von `.ts`-Dateien).
 :::
 
 :::note
-Jede Framerate funktioniert, das Skript liest sie aus deiner Timeline. Der Timer kommt auf Video 2, über dein Video.
+Jede Bildrate funktioniert, das Skript liest sie aus der Timeline aus. Der Timer landet auf Video 2, über dem Video.
 :::
 
 ## 3. Skript kopieren und ausführen {/* #script */}
 
-### 3.1 Aus dem Lap Timer kopieren
+### 3.1 Skript im Lap Timer kopieren
 
-Markier zuerst deine Runden im [Lap Timer](pathname:///vltl/), bis er deine besten 3 Runden am Stück anzeigt, und zwar mit derselben Videodatei, die auch in Resolve liegt.
+Zuerst im [Lap Timer](pathname:///vltl/) die Runden markieren, bis die besten 3 Runden am Stück angezeigt werden, und zwar mit derselben Videodatei, die auch in Resolve liegt.
 
 <div className="fig">
 
-![Lap-Timer-Seite mit markiertem Button „Copy Resolve script“, Font-Feld und „Dashes per character“](@site/docs/vltl/img/12-lap-timer.png)
+![Lap-Timer-Seite mit markierter Schaltfläche „Copy Resolve script“, dem Feld „Font“ und „Dashes per character“](@site/docs/vltl/img/12-lap-timer.png)
 
-1. Klick auf **Copy Resolve script**. Das Skript enthält jetzt deine besten 3 Runden.
-2. **Font**: Die Seite nimmt **HDZero OSD**, wenn die Schrift auf deinem Rechner installiert ist (Schritt 1). Wenn nicht, startet sie mit Open Sans. Du kannst jeden Schriftnamen eintippen oder einen aus der Liste wählen. **Load my fonts** listet die auf diesem Rechner installierten Schriften auf (Chrome und Edge fragen einmal nach der Erlaubnis). Die Schrift muss auf dem Rechner installiert sein, auf dem Resolve läuft.
-3. Optional: **Dashes per character** ist die Länge der gestrichelten Linie unter der Gesamtzeit. `1` passt zur HDZero-OSD-Schrift, etwa `1.5` zu normalen Schriften. Der Wert springt auf 1 oder 1.5, wenn du die Schrift wechselst, und du kannst ihn auch von Hand setzen.
+1. Auf **Copy Resolve script** klicken. Das Skript enthält jetzt die besten 3 Runden.
+2. **Font**: Die Seite nimmt **HDZero OSD**, wenn die Schriftart installiert ist (Schritt 1), sonst Open Sans. Jeder Schriftname lässt sich eintippen oder aus der Liste wählen. **Load my fonts** listet die auf diesem Rechner installierten Schriftarten auf (Chrome und Edge fragen einmal nach der Berechtigung). Die Schriftart muss auf dem Rechner installiert sein, auf dem Resolve läuft.
+3. Optional: **Dashes per character** bestimmt die Länge der gestrichelten Linie unter der Summe. `1` passt zur HDZero-OSD-Schrift, etwa `1.5` zu normalen Schriftarten. Beim Wechsel der Schriftart springt der Wert auf 1 bzw. 1,5 und lässt sich auch von Hand setzen.
 
 </div>
 
 ### 3.2 In die Konsole von Resolve einfügen
 
-1. Öffne in Resolve dein Projekt und sorg dafür, dass die Timeline mit deinem Video auf Video 1 offen ist (Seite Edit).
-2. Drück <kbd>F6</kbd> (oder öffne im Menü **Workspace → Console**). Ein kleines Konsolenfenster geht auf.
-3. Klick in die Zeile unten in der Konsole, drück <kbd>Strg</kbd>+<kbd>V</kbd> und dann <kbd>Enter</kbd>. (Falls die Konsole einen Sprach-Button hat, wähl **Lua**.)
-4. Die Konsole gibt Zeilen aus, die mit `VLTL:` anfangen. Die letzte sagt **done**. Der Timer liegt jetzt auf Video 2 über deinem Video.
+1. In Resolve das Projekt öffnen und sicherstellen, dass die Timeline mit dem Video auf Video 1 offen ist (Seite **Edit**).
+2. <kbd>F6</kbd> drücken (oder im Menü **Workspace → Console** öffnen). Ein kleines Konsolenfenster geht auf.
+3. In die Zeile unten in der Konsole klicken, <kbd>Strg</kbd>+<kbd>V</kbd> und dann <kbd>Enter</kbd> drücken. (Hat die Konsole eine Sprachauswahl, **Lua** wählen.)
+4. Die Konsole gibt Zeilen aus, die mit `VLTL:` beginnen. Die letzte lautet **done**. Der Timer liegt jetzt auf Video 2 über dem Video.
 
-### 3.3 Ergebnis prüfen
+### 3.3 Ergebnis überprüfen
 
 <div className="fig">
 
-![Konsolenausgabe mit „done“ am Ende, der Timer-Clip auf Video 2 und der VLTL-Ordner im Media Pool](@site/docs/vltl/img/05-console-result.png)
+![Konsolenausgabe endet mit „done“, der Timer-Clip auf Video 2 und der VLTL-Bin im Media Pool](@site/docs/vltl/img/05-console-result.png)
 
-1. Die Konsole gibt Zeilen aus, die mit `VLTL:` anfangen. Die letzte sagt **done**.
+1. Die Konsole gibt Zeilen aus, die mit `VLTL:` beginnen. Die letzte lautet **done**.
 2. Der Timer liegt auf **Video 2**, über die ganze Länge des Videos.
-3. Beim allerersten Mal legt das Skript außerdem eine kleine Text+-Vorlage in deinen Media Pool (in einem Ordner namens **VLTL**). Die musst du nicht anfassen.
+3. Beim allerersten Mal legt das Skript außerdem eine kleine Text+-Vorlage im Media Pool ab (Bin **VLTL**). Die muss nicht angefasst werden.
 
 </div>
 
 :::note
-Wenn sich die FPS des Videos und der Timeline nicht glatt teilen lassen (zum Beispiel ein 90-fps-Video auf einer 60-fps-Timeline), starten und stoppen die Timer auf dem nächstgelegenen Timeline-Frame, ein paar Millisekunden daneben. Die eingefrorenen Rundenzeiten am Ende stimmen trotzdem exakt.
+Gehen Video- und Timeline-Bildrate nicht glatt ineinander auf (z. B. ein 90-fps-Video auf einer 60-fps-Timeline), starten und stoppen die Timer auf dem nächstgelegenen Timeline-Frame, also ein paar Millisekunden daneben. Die am Ende eingefrorenen Rundenzeiten stimmen trotzdem exakt.
 :::
 
-### 3.4 Was das Skript für dich erledigt
+### 3.4 Was das Skript übernimmt
 
-- Liest die Framerate deiner Timeline und findet dein Video auf Video 1 (über den Dateinamen oder den Clip unter dem Playhead).
-- Legt den Timer auf Video 2, mit demselben Start und derselben Länge wie dein Video. Das klappt auch, wenn der Anfang des Clips getrimmt ist.
-- Setzt die gewählte Schrift, die Größe, die Position oben rechts und eine schwarze Kontur.
-- Füllt den Timer so, dass er die besten 3 Runden live mitzählt und jede Runde bei ihrer exakten Zeit einfriert.
+- Liest die Bildrate der Timeline aus und findet das Video auf Video 1 (über den Dateinamen oder den Clip unter dem Abspielkopf).
+- Legt den Timer auf Video 2, mit demselben Start und derselben Länge wie das Video. Das klappt auch, wenn der Anfang des Clips getrimmt ist.
+- Setzt die gewählte Schriftart, die Größe, die Position oben rechts und eine schwarze Kontur.
+- Richtet den Timer so ein, dass er die besten 3 Runden live mitzählt und jede Runde bei ihrer exakten Zeit einfriert.
 
 <details>
-<summary>Die Einstellungen, die es setzt (falls du sie danach ändern willst)</summary>
+<summary>Die gesetzten Einstellungen (falls später etwas angepasst werden soll)</summary>
 
-Du kannst alles davon im Inspector ändern: Klick auf den Timer auf Video 2, dann auf den Tab **Title**.
+Alles davon lässt sich im Inspector ändern: den Timer auf Video 2 anklicken, dann den Tab **Title**.
 
 | Wo | Einstellung | Wert |
 | --- | --- | --- |
-| Tab Text | Font | die Schrift, die du auf der Seite gewählt hast (standardmäßig HDZero OSD, Regular) |
+| Tab Text | Font | die auf der Seite gewählte Schriftart (HDZero OSD, standardmäßig Regular) |
 | Tab Text | Size | 0.025 |
-| Tab Text | V Anchor | -1 (oben: Die Zeilen wachsen nach unten und die erste Zeile bleibt, wo sie ist) |
+| Tab Text | V Anchor | -1 (oben: Die Zeilen wachsen nach unten, die erste Zeile bleibt stehen) |
 | Tab Layout | Center X / Y | 0.78 / 0.844 |
-| Tab Shading, Element 2 | Enabled, Outline, schwarz | Thickness 0.06 |
+| Tab Shading, Element 2 | Enabled, Outline, Schwarz | Thickness 0.06 |
 
-Du nutzt eine andere Auflösung oder ein anderes Seitenverhältnis? Ändere nur **Size**, bis die Ziffern so hoch sind wie die OSD-Ziffern, und pass dann **Center X/Y** an. Wenn du Size änderst, skalier die **Thickness** der Kontur um denselben Faktor.
+Bei anderer Auflösung oder anderem Seitenverhältnis nur **Size** ändern, bis die Ziffern so hoch sind wie die OSD-Ziffern, dann **Center X/Y** nachziehen. Wird Size geändert, die Kontur-**Thickness** um denselben Faktor skalieren.
 
 </details>
 
 ## 4. Ergebnis {/* #result */}
 
-Zurück auf der Seite Edit fährst du mit dem Playhead über deine besten 3 Runden. Die Zähler laufen live hoch, frieren am Ende jeder Runde ein und zeigen oben die Gesamtzeit der 3 Runden.
+Zurück auf der Seite **Edit** den Abspielkopf über die besten 3 Runden bewegen. Die Zähler laufen live hoch, bleiben am Ende jeder Runde stehen und zeigen oben die Summe der 3 Runden.
 
 <div className="fig">
 
 ![Fertiges Overlay oben rechts im Video](@site/docs/vltl/img/22-result.png)
 
-1. Gesamtzeit der 3 Runden, eine gestrichelte Linie, dann Runde 1, Runde 2 und Runde 3 (eingefroren bei ihrer exakten Zeit).
+1. Summe der 3 Runden, eine gestrichelte Linie, dann Runde 1, Runde 2 und Runde 3 (auf ihre genauen Zeiten eingefroren).
 
 </div>
 
@@ -179,31 +180,31 @@ So sieht es mit 1 Strich pro Zeichen aus:
 
 <div className="osd-shot">
   <div className="osd">{'14.956\n------\n04.989\n05.078\n04.889'}</div>
-  <div className="osd-cap">Mit der HDZero-OSD-Schrift und schwarzer Kontur.</div>
+  <div className="osd-cap">Mit der Schriftart HDZero OSD und schwarzer Kontur.</div>
 </div>
 
 ## 5. Video schneiden und bearbeiten {/* #edit */}
 
-Wenn der Timer passt, kannst du schneiden und trimmen, so viel du willst. **Verknüpf vorher Video und Timer**, damit sie synchron bleiben (die Timer zählen ab dem Anfang des Timer-Clips).
+Sieht der Timer gut aus, kann beliebig geschnitten und getrimmt werden. **Vorher Video und Timer verknüpfen**, damit beide synchron bleiben (die Timer zählen ab dem Anfang des Timer-Clips).
 
-1. Wähl in der Timeline den Timer-Clip auf Video 2 und deinen Video-Clip aus.
-2. Rechtsklick auf einen der beiden → **Link Clips** (Tastenkürzel <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd>). Ein Haken daneben heißt, sie sind verknüpft.
-3. Jetzt kannst du die Clips trimmen, schneiden und verschieben, wie du willst. Video und Timer bewegen sich zusammen, also bleiben die Timer im Takt mit dem Video.
+1. In der Timeline den Timer-Clip auf Video 2 und den Videoclip auswählen.
+2. Rechtsklick auf einen der beiden → **Link Clips** (Tastenkürzel <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd>). Ein Häkchen daneben zeigt, dass sie verknüpft sind.
+3. Jetzt die Clips nach Belieben trimmen, schneiden und verschieben. Video und Timer bewegen sich gemeinsam, die Timer bleiben also im Takt mit dem Video.
 
 :::warning
-Wenn du nach dem Skript das Video oder den Timer allein trimmst (nicht verknüpft), passen die Timer nicht mehr zum Video. Um es neu zu machen, lösch den Timer-Clip auf Video 2 und führ das Skript nochmal aus.
+Wird nach dem Skript das Video oder der Timer einzeln (nicht verknüpft) getrimmt, passen die Timer nicht mehr zum Video. Dann den Timer-Clip auf Video 2 löschen und das Skript noch einmal ausführen.
 :::
 
 ## Wenn etwas nicht stimmt {/* #trouble */}
 
-- **Die Konsole zeigt einen Fehler, oder es passiert nichts:** Öffne zuerst dein Projekt und die Timeline und füg das Skript dann nochmal ein. Prüf, ob du das ganze Skript kopiert hast.
-- **„Could not tell which clip on Video 1 is your video“:** Dein Video muss auf Video 1 liegen. Stell den Playhead darauf und führ das Skript nochmal aus. Es hilft auch, wenn das Video im Lap Timer denselben Dateinamen hat wie der Clip in Resolve.
-- **„Could not add the template“:** Füg die Vorlage einmal von Hand hinzu. Öffne auf der Seite Edit **Effects → Titles**, zieh **Text+** in den Media Pool, benenn es in `VLTL_TextPlus` um und führ das Skript nochmal aus.
-- **Die Schrift sieht falsch aus oder fehlt:** Die Schrift muss auf dem Rechner installiert sein, auf dem Resolve läuft. Für HDZero OSD installier sie wie in Schritt 1 und starte Resolve neu. Resolve liest die Schriftenliste nur beim Start. Wenn du einen Schriftnamen eingetippt hast, prüf die Schreibweise.
-- **Ich hab es zweimal ausgeführt und jetzt sind da zwei Timer:** Jeder Durchlauf legt einen neuen Titel auf Video 2. Lösch den überzähligen.
-- **Die Timer starten im falschen Moment:** Die Markierungen kommen aus dem Video, das im Lap Timer geladen ist. Stell sicher, dass es dieselbe Datei ist wie in Resolve, prüf die Rundenmarkierungen, kopier das Skript dann nochmal und führ es aus (nachdem du den alten Timer gelöscht hast).
-- **Die gestrichelte Linie ist zu lang oder zu kurz:** Ändere **Dashes per character** im Lap Timer, kopier das Skript nochmal und lösch vorher den alten Timer.
+- **Die Konsole zeigt einen Fehler oder es passiert nichts:** Erst Projekt und Timeline öffnen, dann erneut einfügen. Prüfen, ob wirklich das ganze Skript kopiert wurde.
+- **„Could not tell which clip on Video 1 is your video“:** Das Video muss auf Video 1 liegen. Den Abspielkopf darauf setzen und das Skript erneut ausführen. Es hilft außerdem, wenn das Video im Lap Timer denselben Dateinamen hat wie der Clip in Resolve.
+- **„Could not add the template“:** Die Vorlage einmal von Hand anlegen. Auf der Seite **Edit** **Effects → Titles** öffnen, **Text+** in den Media Pool ziehen, in `VLTL_TextPlus` umbenennen und das Skript erneut ausführen.
+- **Die Schriftart sieht falsch aus oder fehlt:** Sie muss auf dem Rechner installiert sein, auf dem Resolve läuft. HDZero OSD wie in Schritt 1 installieren und Resolve neu starten, denn Resolve liest die Schriftartenliste nur beim Start ein. Bei einem eingetippten Schriftnamen die Schreibweise prüfen.
+- **Zweimal ausgeführt, jetzt gibt es zwei Timer:** Jeder Durchlauf legt einen neuen Titel auf Video 2 an. Den überzähligen löschen.
+- **Die Timer starten im falschen Moment:** Die Markierungen stammen aus dem Video, das im Lap Timer geladen ist. Prüfen, ob es dieselbe Datei wie in Resolve ist, die Rundenmarkierungen kontrollieren, dann das Skript neu kopieren und ausführen (vorher den alten Timer löschen).
+- **Die gestrichelte Linie ist zu lang oder zu kurz:** Im Lap Timer **Dashes per character** ändern, das Skript neu kopieren und vorher den alten Timer löschen.
 
 ---
 
-<small className="site-muted">Teil von [Video Lap Tracking Lab](pathname:///vltl/). Alles bleibt in deinem Browser, kein Video wird hochgeladen. Die Screenshots sind aus DaVinci Resolve 21, andere Versionen sehen etwas anders aus.</small>
+<small className="site-muted">Teil des [Video Lap Tracking Lab](pathname:///vltl/). Alles bleibt im Browser, kein Video wird hochgeladen. Die Screenshots stammen aus DaVinci Resolve 21, andere Versionen sehen etwas anders aus.</small>
