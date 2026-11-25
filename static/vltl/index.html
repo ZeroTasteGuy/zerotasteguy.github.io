@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#141416"><meta name="description" content="Time FPV laps from video frame by frame, find your best 3 consecutive laps, and put live lap timers on your footage in DaVinci Resolve."><link rel="canonical" href="https://maxd.ax/vltl/"><meta property="og:type" content="website"><meta property="og:site_name" content="Video Lap Tracking Lab"><meta property="og:title" content="Video Lap Tracking Lab"><meta property="og:url" content="https://maxd.ax/vltl/"><meta property="og:description" content="Time FPV laps from video frame by frame, find your best 3 consecutive laps, and put live lap timers on your footage in DaVinci Resolve."><meta name="twitter:card" content="summary">
 <title>Video Lap Tracking Lab</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23141416'/%3E%3Cg font-family='Arial,Helvetica,sans-serif' font-weight='800' font-size='27' fill='%23ef5b5b' text-anchor='middle'%3E%3Ctext x='16' y='28'%3EV%3C/text%3E%3Ctext x='48' y='28'%3EL%3C/text%3E%3Ctext x='16' y='57'%3ET%3C/text%3E%3Ctext x='48' y='57'%3EL%3C/text%3E%3C/g%3E%3Cg fill='%239a9aa3'%3E%3Crect x='27' y='19' width='10' height='3' rx='1.5'/%3E%3Crect x='27' y='48' width='10' height='3' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
@@ -13,7 +13,7 @@
  * If you change a colour there, change it here too.
  * Only use the tokens below in the rules further down, so the light and dark themes keep working. */
 
-/* ---- Tokens: dark (default) ---- */
+/* ---- Tokens: dark ---- */
 :root{
   color-scheme:dark;
   --font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
@@ -38,7 +38,8 @@
   --star:#ffcb36;
   --marker:#e7e7ea;        /* lap marks on the timeline */
   --tip:#0f0f11;           /* tooltips (dark in both themes) */
-  --video:#000;
+  --video:#232327;         /* video player background (behind and around the picture) */
+  --grip:rgba(255,255,255,.7);
   --shadow:0 20px 25px -5px rgba(0,0,0,.35),0 8px 10px -6px rgba(0,0,0,.3);
   --shadow-pop:0 12px 28px rgba(0,0,0,.45);
   --blur:blur(12px);
@@ -46,7 +47,7 @@
   --radius-sm:8px;         /* buttons, fields */
   font-family:var(--font);
 }
-/* ---- Tokens: light ---- */
+/* ---- Tokens: light (the default: <html data-theme="light">) ---- */
 :root[data-theme=light]{
   color-scheme:light;
   --bg:#f5f5f6;
@@ -68,7 +69,8 @@
   --danger-tint:rgba(194,81,12,.12);
   --star:#b7791f;
   --marker:#1c1e21;
-  --video:#0d0d0f;
+  --video:#e9e9ec;
+  --grip:rgba(0,0,0,.45);
   --shadow:0 20px 25px -5px rgba(0,0,0,.08),0 8px 10px -6px rgba(0,0,0,.06);
   --shadow-pop:0 12px 28px rgba(0,0,0,.14);
 }
@@ -176,10 +178,10 @@ input[type=checkbox],input[type=range]{accent-color:var(--accent)}
 .videoWrap{position:relative;aspect-ratio:16/9;width:min(100%,max(360px,calc((100vh - 600px)*16/9)));border-radius:var(--radius);overflow:hidden;background:var(--video);border:1px solid var(--border);box-shadow:var(--shadow);display:grid;place-items:center}
 .videoWrap video{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain}
 .videoTime{position:absolute;right:12px;top:12px;background:rgba(15,15,17,.8);color:#fff;border-radius:8px;padding:6px 10px;font:600 13px var(--mono);pointer-events:none}
-.embedPlayer{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.embedPlayer{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--video)}
 #ytPlayer{pointer-events:none}
 .videoWrap:has(.embedPlayer:not([hidden])) .videoTime{display:none}
-.vGrip{position:absolute;right:0;bottom:0;width:24px;height:24px;cursor:nwse-resize;z-index:5;touch-action:none;opacity:.45;background:linear-gradient(135deg,transparent 0 48%,#fff 48% 56%,transparent 56% 70%,#fff 70% 78%,transparent 78%)}
+.vGrip{position:absolute;right:0;bottom:0;width:24px;height:24px;cursor:nwse-resize;z-index:5;touch-action:none;opacity:.6;background:linear-gradient(135deg,transparent 0 48%,var(--grip) 48% 56%,transparent 56% 70%,var(--grip) 70% 78%,transparent 78%)}
 .vGrip:hover{opacity:1}
 .videoWrap.badZone::before{content:"";position:absolute;inset:0;border:4px solid var(--danger);border-radius:var(--radius);pointer-events:none;z-index:3}
 .videoWrap.badZone::after{content:"BAD LAP";position:absolute;left:12px;top:12px;z-index:3;background:var(--danger);color:#1a0d02;border-radius:8px;padding:5px 10px;font:700 12px var(--mono);pointer-events:none}
@@ -393,7 +395,7 @@ tr.starLap td:first-child{box-shadow:inset 3px 0 0 var(--star)}
   .ytBar #ytChips{display:contents}
 }
 </style></head><body><div class="app">
-<div class="ver" id="ver">build 2026-11-25.2</div><nav class="navbar" aria-label="maxd.ax"><a class="brand" href="/">maxd.ax</a><span class="crumb" aria-hidden="true">/</span><h1 class="logo" tabindex="0" aria-label="Video Lap Tracking Lab"><span class="col" aria-hidden="true">V<span class="rest"><i>i</i><i>d</i><i>e</i><i>o</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>p</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">T<span class="rest"><i>r</i><i>a</i><i>c</i><i>k</i><i>i</i><i>n</i><i>g</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>b</i></span></span><span class="name" aria-hidden="true">Video Lap Tracking Lab</span></h1><span class="navSpacer"></span><a class="navLink" href="/tools/">Tools</a><a class="navLink" href="/docs/vltl/">Docs</a><a class="navLink" href="/results/">Race results</a><a class="navLink" href="/about/">About me</a><button id="themeBtn" class="iconBtn" type="button"></button></nav>
+<div class="ver" id="ver">build 2026-11-25.3</div><nav class="navbar" aria-label="maxd.ax"><a class="brand" href="/">maxd.ax</a><span class="crumb" aria-hidden="true">/</span><h1 class="logo" tabindex="0" aria-label="Video Lap Tracking Lab"><span class="col" aria-hidden="true">V<span class="rest"><i>i</i><i>d</i><i>e</i><i>o</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>p</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">T<span class="rest"><i>r</i><i>a</i><i>c</i><i>k</i><i>i</i><i>n</i><i>g</i></span></span><span class="dash" aria-hidden="true"></span><span class="col" aria-hidden="true">L<span class="rest"><i>a</i><i>b</i></span></span><span class="name" aria-hidden="true">Video Lap Tracking Lab</span></h1><span class="navSpacer"></span><a class="navLink" href="/tools/">Tools</a><a class="navLink" href="/docs/vltl/">Docs</a><a class="navLink" href="/results/">Race results</a><a class="navLink" href="/about/">About me</a><button id="themeBtn" class="iconBtn" type="button"></button></nav>
 <header class="top"><div class="topActions"><label class="fpsControl">Video FPS <select id="fpsPreset"><option>23.976</option><option>24</option><option>25</option><option>29.97</option><option>30</option><option>50</option><option selected>60</option><option>90</option><option>120</option><option>240</option><option value="custom">Custom</option></select></label><span class="sep"></span><span class="tipWrap" data-tip="DaVinci Resolve (free or Studio)&#10;1. Put your video on Video 1.&#10;2. Click here to copy the script.&#10;3. In Resolve press F6 (Workspace &gt; Console).&#10;4. Paste and press Enter.&#10;The timer title is added on Video 2, sized to your clip, with the font and layout set. The first run also adds the Text+ template to your Media Pool.&#10;Guide: see the link in the Resolve panel."><button id="resolveScriptBtn" class="btn primary" disabled><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="4.2" r="3.2" fill="#ee5a5a" fill-opacity=".9"/><circle cx="4.4" cy="10.4" r="3.2" fill="#4fc3f7" fill-opacity=".9"/><circle cx="11.6" cy="10.4" r="3.2" fill="#66d17a" fill-opacity=".9"/></svg>Copy Resolve script</button></span><button id="resolveBtn" class="btn" title="Font, size, position and outline of the Resolve timer">Resolve settings</button><input id="sessionTitle" class="num" style="width:150px" placeholder="Session title" maxlength="60" title="Used in the names of exported and saved files" aria-label="Session title"><div class="menu"><button id="exportMenuBtn" class="btn" aria-haspopup="true" aria-expanded="false">File ▾</button><div id="exportMenu" class="menuItems" hidden><div class="menuLabel">Export this video</div><button id="csvBtn" class="btn">CSV</button><div class="menuLabel">Export all videos</div><button id="allCsvBtn" class="btn allExp" disabled>CSV</button><div class="menuLabel">Save and restore</div><button id="saveLaps" class="btn allExp" disabled title="Save the laps of every video in the list">Save laps (JSON)</button><button id="loadLaps" class="btn" title="Restore laps saved earlier (matched by file name and size)">Load laps (JSON)…</button><input id="lapsInput" type="file" accept=".json,application/json" hidden><div class="menuLabel">Settings</div><button id="exportSettings" class="btn" title="Save your keys and Resolve settings to a file">Export settings (JSON)</button><button id="importSettings" class="btn" title="Load keys and Resolve settings from a file">Import settings…</button><input id="settingsInput" type="file" accept=".json,application/json" hidden></div></div><span class="sep"></span><button id="undoBtn" class="btn" disabled title="Undo last lap change (Ctrl+Z)">Undo</button><button id="reset" class="btn danger" title="Erase all lap marks from the video that is open now. Laps on your other videos are not touched (R)">Reset this video's laps</button><button id="statsBtn" class="btn" title="Overall stats, box plots and lap-by-lap lines for all videos">Stats</button><button id="settingsBtn" class="btn">Keys</button></div></header>
 <div class="layout"><main class="left"><div class="videoWrap"><video id="video" playsinline></video><div id="ytPlayer" class="embedPlayer" hidden></div><iframe id="drivePlayer" class="embedPlayer" hidden allow="autoplay; fullscreen" referrerpolicy="strict-origin-when-cross-origin" title="Google Drive video preview"></iframe><div class="videoTime" id="videoTime">00:00.000</div><div id="vGrip" class="vGrip" title="Drag to make the video smaller or larger (double-click to fit the screen)"></div></div>
 <div class="source"><div id="dropZone" class="drop"><input id="fileInput" type="file" accept="video/*,.ts,.m2ts" multiple hidden><div><strong>Drop videos here or click to browse</strong><small id="fileStatus">MP4, WebM, MOV, MPEG-TS · No video loaded</small></div></div>
@@ -1036,7 +1038,7 @@ renderAll();
 const THEME_ICONS={light:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg>',dark:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg>'};
 // The theme is shared with the rest of maxd.ax: Docusaurus keeps it in localStorage "theme".
 function applyTheme(theme){document.documentElement.dataset.theme=theme;const b=$('#themeBtn'),label=theme==='dark'?'Switch to light mode':'Switch to dark mode';b.innerHTML=THEME_ICONS[theme];b.title=label;b.setAttribute('aria-label',label);store.set('fpvLapTheme',theme);store.set('theme',theme)}
-applyTheme([store.get('theme'),store.get('fpvLapTheme')].find(t=>t==='dark'||t==='light')||'dark');$('#themeBtn').onclick=()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+applyTheme([store.get('theme'),store.get('fpvLapTheme')].find(t=>t==='dark'||t==='light')||'light');$('#themeBtn').onclick=()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
 
 // In-page dialogs that replace the browser's alert / confirm / prompt. Each returns a promise.
 function dlgOpen({title,msg='',input,ok='OK',cancel='Cancel',danger=false}){return new Promise(res=>{const box=$('#dlg'),inp=$('#dlgInput'),okB=$('#dlgOk'),noB=$('#dlgCancel'),isPrompt=input!==undefined;
