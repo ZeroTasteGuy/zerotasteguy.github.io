@@ -91,26 +91,25 @@ function useAbout(): AboutBox[] {
       title: translate({id: 'home.about.laps.title', message: 'Lap timing'}),
       text: (
         <Translate id="home.about.laps.text" values={{link: <a href="/vltl/">Video Lap Tracking Lab</a>}}>
-          {'{link} times laps frame by frame from your DVR and puts live lap timers on your footage in DaVinci Resolve.'}
+          {'{link} times laps frame by frame from your DVR. At races I fly with lap timers and help run them, and I build my own lap timers based on the ESP32-C5.'}
         </Translate>
       ),
     },
     {
-      key: 'fonts',
-      icon: I.Goggles,
-      title: translate({id: 'home.about.fonts.title', message: 'OSD fonts'}),
+      key: 'builds',
+      icon: I.Gate,
+      title: translate({id: 'home.about.builds.title', message: 'Builds'}),
       text: (
         <Translate
-          id="home.about.fonts.text"
+          id="home.about.builds.text"
           values={{
-            ttf: <code>.ttf</code>,
             link: (
-              <Link to="/docs/vltl/resolve-guide/#font">
-                <Translate id="home.about.fonts.link">Get them here</Translate>
+              <Link to="/docs/projects/">
+                <Translate id="home.about.builds.link">Projects</Translate>
               </Link>
             ),
           }}>
-          {'The HDZero and Betaflight analog OSD fonts as real {ttf} fonts, so your overlays look like your goggles. {link}.'}
+          {'Race gates and event hardware: crash-resistant gates for my club, aluminium gates for the European Championship designed in FreeCAD, and a plug-in Eurobox system for race control. All documented under {link}.'}
         </Translate>
       ),
     },
@@ -132,10 +131,16 @@ function useAbout(): AboutBox[] {
         <Translate
           id="home.about.community.text"
           values={{
-            youtube: <a href="https://www.youtube.com/@maxdax_fpv">YouTube</a>,
-            instagram: <a href="https://www.instagram.com/maxdax_fpv/">Instagram</a>,
+            rd: (
+              <Link to="/docs/projects/race-direction-and-timing/">
+                <Translate id="home.about.community.rd">race direction and timing</Translate>
+              </Link>
+            ),
+            euc: (
+              <Link to="/docs/projects/eu-champs-race-gates/">MultiGP European Championship</Link>
+            ),
           }}>
-          {'Follow along on {youtube} and {instagram}, or find me on Discord as ZeroTasteGuy.'}
+          {'I'm deputy head of the TSV Korntal drone department and do {rd} at races for TSV Korntal and Aircrasher. In 2026 I co-organised the {euc} in Aichtal: 104 pilots from about 21 countries.'}
         </Translate>
       ),
     },

@@ -24,16 +24,7 @@
     "message": "Zeitmessung"
   },
   "home.about.laps.text": {
-    "message": "{link} misst Runden frame für frame aus deinem DVR und bringt live laufende Rundenzeiten in DaVinci Resolve auf dein Video."
-  },
-  "home.about.fonts.title": {
-    "message": "OSD-Schriften"
-  },
-  "home.about.fonts.text": {
-    "message": "Die HDZero- und Betaflight-Analog-OSD-Schriften als echte {ttf}-Fonts, damit deine Overlays aussehen wie in deiner Brille. {link}."
-  },
-  "home.about.fonts.link": {
-    "message": "Hier gibt's sie"
+    "message": "{link} misst Runden frame für frame aus deinem DVR. Bei Rennen fliege ich mit Lap Timern und helfe beim Betrieb, und ich baue eigene Lap Timer auf Basis des ESP32-C5."
   },
   "home.about.code.title": {
     "message": "Open Source"
@@ -45,7 +36,7 @@
     "message": "Community"
   },
   "home.about.community.text": {
-    "message": "Folg mir auf {youtube} und {instagram}, oder schreib mir auf Discord als ZeroTasteGuy."
+    "message": "Ich bin stellvertretender Leiter der Drohnenabteilung des TSV Korntal und mache {rd} bei Rennen des TSV Korntal und von Aircrasher. 2026 habe ich die {euc} in Aichtal mitorganisiert: 104 Piloten aus rund 21 Ländern."
   },
   "home.description": {
     "message": "FPV-Tools, Anleitungen und Rennergebnisse von maxd.ax."
@@ -563,5 +554,17 @@
   "docTiles.pages": {
     "message": "{count} Seiten",
     "description": "Number of pages in a docs category tile"
+  },
+  "home.about.builds.title": {
+    "message": "Bauprojekte"
+  },
+  "home.about.builds.text": {
+    "message": "Race Gates und Event-Hardware: crashsichere Gates für meinen Verein, in FreeCAD konstruierte Aluminium-Gates für die Europameisterschaft und ein steckbares Eurobox-System für die Rennleitung. Alles dokumentiert unter {link}."
+  },
+  "home.about.builds.link": {
+    "message": "Projekte"
+  },
+  "home.about.community.rd": {
+    "message": "Rennleitung und Zeitnahme"
   }
 }
