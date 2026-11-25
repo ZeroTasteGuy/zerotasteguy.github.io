@@ -2,30 +2,6 @@
   "home.sponsors.heading": {
     "message": "Sponsoren"
   },
-  "home.latest.vltl.label": {
-    "message": "Tool"
-  },
-  "home.latest.vltl.text": {
-    "message": "Miss deine Runden frame für frame aus deinem Goggle-Video und finde deine besten 3 Runden am Stück."
-  },
-  "home.latest.guide.label": {
-    "message": "Anleitung"
-  },
-  "home.latest.guide.title": {
-    "message": "Rundenzeit-Overlay für DaVinci Resolve"
-  },
-  "home.latest.guide.text": {
-    "message": "Kopier ein Skript aus dem Lap Timer und hol dir live laufende Rundenzeiten in dein Video, dazu die OSD-Schriften."
-  },
-  "home.latest.results.label": {
-    "message": "Demnächst"
-  },
-  "home.latest.results.title": {
-    "message": "Rennergebnisse"
-  },
-  "home.latest.results.text": {
-    "message": "Ergebnisse von MultiGP und den anderen Rennen, die ich fliege, alle an einem Ort."
-  },
   "home.about.racing.title": {
     "message": "Racing"
   },
@@ -85,9 +61,6 @@
   },
   "home.latest.heading": {
     "message": "Neu"
-  },
-  "home.latest.allTools": {
-    "message": "Alle Tools →"
   },
   "home.about.heading": {
     "message": "Über mich"
@@ -574,5 +547,21 @@
   },
   "doc.onlyEnglish": {
     "message": "Diese Seite gibt es bisher nur auf Englisch."
+  },
+  "home.latest.allDocs": {
+    "message": "Alle Anleitungen →"
+  },
+  "home.races.heading": {
+    "message": "Letzte Rennen"
+  },
+  "home.races.all": {
+    "message": "Alle Rennergebnisse →"
+  },
+  "home.races.placeOf": {
+    "message": "{place} von {pilots}"
+  },
+  "docTiles.pages": {
+    "message": "{count} Seiten",
+    "description": "Number of pages in a docs category tile"
   }
 }

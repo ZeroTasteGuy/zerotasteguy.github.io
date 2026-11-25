@@ -2,6 +2,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import raceResults from './plugins/race-results';
+import latest from './plugins/latest';
 
 const config: Config = {
   title: 'maxd.ax',
@@ -30,7 +31,8 @@ const config: Config = {
     },
   },
 
-  plugins: [raceResults],
+  // latest: picks the newest docs and race results for the homepage.
+  plugins: [raceResults, latest],
 
   presets: [
     [

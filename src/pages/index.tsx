@@ -5,41 +5,43 @@ import Heading from '@theme/Heading';
 import Translate, {translate} from '@docusaurus/Translate';
 import Sponsors from '@site/src/components/Sponsors';
 import * as I from '@site/src/components/home/Icons';
+import {usePluginData} from '@docusaurus/useGlobalData';
+import type {LatestData, LatestRace} from '@site/plugins/latest';
+import {countryName, formatDate, formatDates, medal, ordinal, statusLabel, useLang, type Lang} from '@site/src/components/results/format';
 import styles from './index.module.css';
 
-// "Latest" cards (like Betaflight's news row).
-// The English text is written here; the German text is in i18n/de/code.json.
-function useLatest() {
-  return [
-    {
-      label: translate({id: 'home.latest.vltl.label', message: 'Tool'}),
-      title: 'Video Lap Tracking Lab',
-      text: translate({
-        id: 'home.latest.vltl.text',
-        message: 'Time your laps from goggle footage frame by frame and find your best 3 consecutive laps.',
-      }),
-      to: 'pathname:///vltl/',
-      self: true,
-    },
-    {
-      label: translate({id: 'home.latest.guide.label', message: 'Guide'}),
-      title: translate({id: 'home.latest.guide.title', message: 'Lap timer overlay for DaVinci Resolve'}),
-      text: translate({
-        id: 'home.latest.guide.text',
-        message: 'Copy one script from the lap timer and get live lap timers on your footage, plus the OSD fonts.',
-      }),
-      to: '/docs/vltl/resolve-guide/',
-    },
-    {
-      label: translate({id: 'home.latest.results.label', message: 'Coming soon'}),
-      title: translate({id: 'home.latest.results.title', message: 'Race results'}),
-      text: translate({
-        id: 'home.latest.results.text',
-        message: 'Results from MultiGP and the other races I fly, all in one place.',
-      }),
-      to: '/results/',
-    },
-  ];
+// "Latest" cards (like Betaflight's news row). They are not written here: the
+// "latest" plugin (plugins/latest) picks the newest docs pages and race results
+// when the site is built, in the language being built.
+function useLatest(): LatestData {
+  return (usePluginData('latest') as LatestData | undefined) ?? {docs: [], races: []};
+}
+
+function RaceCard({r, lang}: {r: LatestRace; lang: Lang}): ReactNode {
+  const where = [r.location, countryName(r.country, lang)].filter(Boolean).join(', ');
+  const place = r.position
+    ? r.pilots
+      ? translate(
+          {id: 'home.races.placeOf', message: '{place} of {pilots}'},
+          {place: ordinal(r.position, lang), pilots: `${r.pilots.toLocaleString(lang === 'de' ? 'de-DE' : 'en-US')}${r.pilotsPlus ? '+' : ''}`},
+        )
+      : ordinal(r.position, lang)
+    : undefined;
+  return (
+    <Link className={styles.latestCard} to={`/results/${r.slug}/`}>
+      <span className={styles.latestLabel}>{formatDates(r, lang)}</span>
+      <span className={styles.latestTitle}>{r.event}</span>
+      {place && (
+        <span className={styles.racePlace}>
+          {medal(r.position)} {place}
+        </span>
+      )}
+      <span className={styles.latestText}>
+        {[r.class, where].filter(Boolean).join(' · ')}
+        {r.status && <span className={styles.raceStatus}> · {statusLabel(r.status)}</span>}
+      </span>
+    </Link>
+  );
 }
 
 // "About" boxes with a title tab on top (like Betaflight's About section).
@@ -150,6 +152,7 @@ const follow = [
 
 export default function Home(): ReactNode {
   const latest = useLatest();
+  const lang = useLang();
   const about = useAbout();
   return (
     <Layout
@@ -188,18 +191,36 @@ export default function Home(): ReactNode {
             <Translate id="home.latest.heading">Latest</Translate>
           </Heading>
           <div className={styles.latest}>
-            {latest.map(c => (
-              <Link key={c.to} className={styles.latestCard} to={c.to} target={c.self ? '_self' : undefined}>
-                <span className={styles.latestLabel}>{c.label}</span>
-                <span className={styles.latestTitle}>{c.title}</span>
-                <span className={styles.latestText}>{c.text}</span>
+            {latest.docs.map(d => (
+              <Link key={d.id} className={styles.latestCard} to={d.permalink}>
+                <span className={styles.latestLabel}>
+                  {[d.category, formatDate(d.date, lang)].filter(Boolean).join(' · ')}
+                </span>
+                <span className={styles.latestTitle}>{d.title}</span>
+                {d.description && <span className={styles.latestText}>{d.description}</span>}
               </Link>
             ))}
           </div>
-          <Link className={styles.more} to="/tools/">
-            <Translate id="home.latest.allTools">All tools →</Translate>
+          <Link className={styles.more} to="/docs/">
+            <Translate id="home.latest.allDocs">All docs →</Translate>
           </Link>
         </section>
+
+        {latest.races.length > 0 && (
+          <section className={styles.block}>
+            <Heading as="h2" className="section-title">
+              <Translate id="home.races.heading">Latest races</Translate>
+            </Heading>
+            <div className={styles.latest}>
+              {latest.races.map(r => (
+                <RaceCard key={r.slug} r={r} lang={lang} />
+              ))}
+            </div>
+            <Link className={styles.more} to="/results/">
+              <Translate id="home.races.all">All race results →</Translate>
+            </Link>
+          </section>
+        )}
 
         <section className={styles.block}>
           <Heading as="h2" className="section-title">

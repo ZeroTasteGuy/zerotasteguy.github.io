@@ -25,6 +25,8 @@ npm run serve      # serve the production build (static/ pages like /vltl/ work 
 Every push to `main` builds the site and deploys it with GitHub Actions
 (`.github/workflows/deploy.yml`). In the repo's Settings → Pages, the source must be set to **GitHub Actions**.
 
+The homepage's "Latest" and "Latest races" cards and the tiles on the Docs page fill themselves when the site is built (`plugins/latest`, `src/components/DocTiles`). A docs page counts from the day it was first committed; set `date: 2026-11-24` in its front matter to override, or `hide_from_latest: true` to leave it out.
+
 To add a tool: put it in `static/<name>/`, then add it to `src/pages/tools/index.tsx` and to the Tools dropdown in `docusaurus.config.ts`.
 
 ## English and German

@@ -93,6 +93,15 @@
 .latestText {
   margin-top: 0.5rem;
 }
+.racePlace {
+  margin-top: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.raceStatus {
+  opacity: 0.7;
+}
 .more {
   display: block;
   width: fit-content;
