@@ -53,16 +53,17 @@ German folder, commits that to `main` and deploys again. Translated pages show a
 "automatically translated" note. If you change the page you wrote, the translation is redone; if
 you fix the translation by hand, your fix is kept.
 
-The translation uses [Opus-MT](https://github.com/Helsinki-NLP/Opus-MT), open-source translation
-models from the University of Helsinki, run with
-[transformers.js](https://github.com/huggingface/transformers.js) right on the GitHub runner.
-No account, key or paid service is needed. It is machine translation, so check the result: it
-uses the formal "Sie", and it can get FPV words wrong. Names and terms that must not be translated
-(or always translated the same way) go in `i18n/glossary.json`.
+The translation uses DeepL, told to write natural German with "du" (or natural English) that
+keeps the meaning rather than translating word for word. The whole page is sent along as context.
+Names and terms that must not be translated (or always translated the same way) go in
+`i18n/glossary.json`. Read the result anyway and fix what sounds off: your fixes are kept.
 
-To run it on your computer (downloads about 800 MB of models once, into `.cache/`):
+It needs a DeepL API key (the free plan is fine) saved as the repository secret `DEEPL_API_KEY`
+(Settings → Secrets and variables → Actions). Without it the workflow does nothing.
+
+To run it on your computer:
 
 ```sh
-npm install --no-save @huggingface/transformers@4.3.2
-npm run translate              # add -- --dry-run to only see what it would do
+DEEPL_API_KEY=... npm run translate              # add -- --dry-run to only see what it would do
+DEEPL_API_KEY=... npm run translate -- --all     # translate every page again (overwrites hand fixes)
 ```

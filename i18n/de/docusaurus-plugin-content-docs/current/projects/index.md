@@ -1,18 +1,18 @@
 ---
 sidebar_position: 1
 title: "Projekte"
-description: "Dokumentation meiner FPV-Event- und Engineering-Projekte: Race Gates für den MultiGP European Championship 2026, Rennleitung und Timing und crashresistenten Club Gates."
+description: "Hier findest du die Dokumentation meiner FPV-Event- und Technikprojekte: Race Gates für die MultiGP European Championship 2026, Rennleitung und Zeitnahme sowie crashsichere Race Gates für den Verein."
 translated_from: en
 ---
 
 # Projekte
 
-Dokumentation von Projekten, die ich um FPV Drohnenrennen geplant und gebaut habe. Jede Seite deckt den Hintergrund, was ich getan habe, das Ergebnis und was ich gelernt habe.
+Hier dokumentiere ich meine Projekte rund um FPV-Drohnenrennen – von der Planung bis zum Aufbau. Auf jeder Seite erfährst du, was dahintersteckte, was ich gemacht habe, wie das Ergebnis aussah und was ich dabei gelernt habe.
 
-| Vorhaben | Wann | Themen |
+| Projekt | Wann | Themen |
 |---|---|---|
-| [Race Gates für die MultiGP European Championship 2026](./eu-champs-race-gates.mdx) | 2026 | CAD (FreeCAD), Bauanleitungen, Lieferanten-Problem, Streckenaufbau |
-| [Rennleitung und Zeitpunkt](./race-direction-and-timing.mdx) | seit 2025 | Organisation der Veranstaltung, Zeitsysteme, Eurobox Hardware System |
-| [C-resistent Race Gates für TSV Korntal](./tsv-korntal-race-gates.mdx) | 2025 | Materialauswahl, 3D-gedruckte TPU-Teile, Einkauf |
+| [Race Gates für die MultiGP European Championship 2026](./eu-champs-race-gates.mdx) | 2026 | CAD (FreeCAD), Bauanleitungen, Lieferantenprobleme, Streckenaufbau |
+| [Rennleitung und Zeitnahme](./race-direction-and-timing.mdx) | seit 2025 | Veranstaltungsorganisation, Zeitmesssysteme, Eurobox-Hardwaresystem |
+| [Crashsichere Race Gates für den TSV Korntal](./tsv-korntal-race-gates.mdx) | 2025 | Materialauswahl, 3D-gedruckte TPU-Teile, Beschaffung |
 
-Meine Rennergebnisse sind auf der Seite [Rennenergebnisse](/results/).
+Meine Rennergebnisse findest du auf der Seite [Rennergebnisse](/results/).
