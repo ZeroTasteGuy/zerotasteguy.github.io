@@ -53,7 +53,7 @@ German folder, commits that to `main` and deploys again. Translated pages show a
 "automatically translated" note. If you change the page you wrote, the translation is redone; if
 you fix the translation by hand, your fix is kept.
 
-The translation uses DeepL, told to write natural German with "du" (or natural English) that
+The translation uses DeepL, told to write natural German (impersonal style without "du" for docs, "du" elsewhere) or natural English that
 keeps the meaning rather than translating word for word. The whole page is sent along as context.
 Names and terms that must not be translated (or always translated the same way) go in
 `i18n/glossary.json`. Read the result anyway and fix what sounds off: your fixes are kept.

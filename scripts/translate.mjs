@@ -129,10 +129,16 @@ const GLOSSARY = (() => {
 const escapeRe = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // How the translation should sound, sent to DeepL with every request.
+// German docs are written like German technical documentation: impersonal, without
+// "du" or "Sie". Pages like About talk to the reader with "du".
 const STYLE = {
   de: [
     'This is the personal website of a German FPV drone racing pilot. Write natural, idiomatic German as a native speaker would write it, not a word-for-word translation. Keep the meaning and intent; rephrase freely.',
     'Address the reader informally with "du". Keep a friendly, direct, matter-of-fact tone.',
+  ],
+  'de-docs': [
+    'This is technical documentation on the website of a German FPV drone racing pilot. Write natural, idiomatic German as a native speaker would write documentation, not a word-for-word translation. Keep the meaning and intent; rephrase freely.',
+    'Write in the impersonal style of German technical documentation: never address the reader with "du" or "Sie". Use infinitives for instructions and steps (e.g. "Datei herunterladen."), passive voice or "man" elsewhere. The author may still write about himself with "ich".',
   ],
   en: [
     'This is the personal website of a German FPV drone racing pilot. Write natural, idiomatic English as a native speaker would write it, not a word-for-word translation. Keep the meaning and intent; rephrase freely.',
@@ -163,7 +169,7 @@ function glossaryInstructions(target) {
   return out;
 }
 
-async function deepl(texts, target, context) {
+async function deepl(texts, target, context, style = target) {
   const key = process.env.DEEPL_API_KEY;
   if (!key) throw new Error('DEEPL_API_KEY is not set.');
   const host = key.endsWith(':fx') ? 'https://api-free.deepl.com' : 'https://api.deepl.com';
@@ -178,8 +184,8 @@ async function deepl(texts, target, context) {
       tag_handling: 'xml',
       ignore_tags: ['x'],
       preserve_formatting: true,
-      ...(target === 'de' ? {formality: 'prefer_less'} : {}),
-      custom_instructions: [...STYLE[target], ...glossaryInstructions(target)].slice(0, 10),
+      ...(style === 'de' ? {formality: 'prefer_less'} : {}),
+      custom_instructions: [...STYLE[style], ...glossaryInstructions(target)].slice(0, 10),
     }),
   });
   if (!res.ok) throw new Error(`DeepL: ${res.status} ${await res.text()}`);
@@ -261,8 +267,9 @@ const hasProse = t => /\p{L}{2,}/u.test(t.replace(/<\/?[xp]\d+\/?>/g, ''));
 // Collects every piece of prose in a file, translates them in batches, then
 // puts the file back together.
 class Job {
-  constructor(target, context) {
+  constructor(target, context, style) {
     this.target = target;
+    this.style = style;
     this.context = context;
     this.units = [];
     this.out = [];
@@ -297,7 +304,7 @@ class Job {
       const sent = batch.map(u =>
         xmlEscape(u.text).replace(/<x(\d+)\/>/g, (_, k) => `<x i="${k}">${xmlEscapeAll(u.m.raw(Number(k)))}</x>`),
       );
-      const res = await deepl(sent, this.target, this.context);
+      const res = await deepl(sent, this.target, this.context, this.style);
       res.forEach((r, j) => {
         const back = r.replace(/<x i="(\d+)">[\s\S]*?<\/x>/g, (_, k) => `<x${k}/>`);
         this.out[i + j] = xmlUnescape(back).replace(/(\p{L})<(p\d+)>/gu, '$1 <$2>').replace(/<\/(p\d+)>(\p{L})/gu, '</$1> $2');
@@ -327,7 +334,7 @@ function addLine(job, line) {
 }
 
 // Translates a whole Markdown file into `target` ('en' or 'de').
-async function translateFile(text, target) {
+async function translateFile(text, target, style = target) {
   const {fm, body} = splitFrontMatter(text);
   // The page as plain text, so DeepL knows what each line is about (not billed).
   const context = body
@@ -335,7 +342,7 @@ async function translateFile(text, target) {
     .replace(/<[^>]+>|\{[^}]*\}|\]\([^)]*\)|[*_`#|>[\]]/g, ' ')
     .replace(/\s+/g, ' ')
     .slice(0, 6000);
-  const job = new Job(target, context);
+  const job = new Job(target, context, style);
   const fields = TEXT_FIELDS.filter(f => fmGet(fm, f)).map(f => [f, job.add(fmGet(fm, f))]);
   let inCode = false;
   const lines = body.split('\n').map(line => {
@@ -384,7 +391,7 @@ async function translateInto(srcRel, srcLang, dstRel, dstLang) {
   log(`${srcRel} (${LANG_NAME[srcLang]}) → ${dstRel} (${LANG_NAME[dstLang]})`);
   if (dryRun) return;
   const src = read(srcRel);
-  const t = await translateFile(src, dstLang);
+  const t = await translateFile(src, dstLang, dstLang === 'de' && /(^|\/)docs\//.test(srcRel + dstRel) ? 'de-docs' : dstLang);
   let fm = fmSet(t.fm ?? '', 'translated_from', srcLang);
   fm = fmSet(fm, 'lang', undefined);
   write(dstRel, join(fm, fixImages(t.body, srcRel)));
