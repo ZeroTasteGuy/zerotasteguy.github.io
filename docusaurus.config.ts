@@ -86,7 +86,7 @@ const config: Config = {
           label: 'Docs',
         },
         {to: '/results/', label: 'Race results', position: 'left'},
-        {to: '/about/', label: 'About', position: 'left'},
+        {to: '/about/', label: 'About me', position: 'left'},
         {type: 'localeDropdown', position: 'right'},
       ],
     },
