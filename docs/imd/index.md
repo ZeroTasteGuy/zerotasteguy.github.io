@@ -40,7 +40,7 @@ Point at a line or a channel (or tap it on a phone) to see where it comes from.
 Under the chart is a **score** from 0 to 100, followed by the problems in plain words, for example "3-pilot IMD lands on R6" or "Neighbours R6/R7: if a VTX bleeds, it hits the other pilot".
 
 - 100 means nothing lands within 35 MHz of any of your channels.
-- Every product that lands near a channel takes points off, more the closer it lands. 2-pilot and 3-pilot IMD count fully, VTX bleed about half, 5th order less than a third. Two channels closer than 35 MHz also take points off.
+- The score assumes all pilots are in the air at the same time. Every product that lands near a channel takes points off, more the closer it lands. 2-pilot and 3-pilot IMD count fully, VTX bleed about half, 5th order less than a third. Two channels closer than 35 MHz also take points off.
 - **ET rating** is the score of ET's IMDTabler, also shown in RotorHazard. It only counts 2-pilot IMD, which is why R1 R3 R6 R8 gets 100 there although its 3-pilot IMD lands right on the other channels.
 - **Small changes that make it cleaner** suggests swapping one channel, with the new score.
 
@@ -62,6 +62,8 @@ There is no perfect set of 4 Raceband channels: Raceband is an even 37 MHz grid,
 
 - **R1 R3 R6 R7** (RotorHazard's default) has no 2-pilot or 3-pilot IMD on a channel. But R6 and R7 are neighbours, so a VTX that bleeds hits the other pilot.
 - **R1 R3 R6 R8** keeps every pilot two channels apart, so bleed lands on empty channels. But it is symmetric (R1 + R8 = R3 + R6), so its 3-pilot IMD lands right on the other channels: R1 + R8 − R3 = R6.
+
+- **R1 R3 R5 R8** also keeps a free channel between pilots and has no 3-pilot IMD, but its 2-pilot IMD lands on two channels: 2·R3 − R1 = R5 and 2·R3 − R5 = R1. The score assumes every pilot is in the air at once and counts 2-pilot and 3-pilot IMD the same, so its two hits beat the four of R1 R3 R6 R8. That is why it comes first with *Some bleed into the next channel*, even though its ET rating is −22 (ET only counts 2-pilot IMD).
 
 If your pictures break up only when all four are in the air and close together, IMD is the likely cause and R1 R3 R6 R7 is the better choice. If one pilot always smears a neighbour, it is bleed, and R1 R3 R6 R8 is better.
 
