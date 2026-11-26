@@ -30,6 +30,7 @@ export default function ImdTool(): ReactNode {
   const [showEU, setShowEU] = useState(false);
   const [custom, setCustom] = useState('');
   const [copied, setCopied] = useState(false);
+  const [best, setBest] = useState<{pilots: number; score: number} | null>(null);
 
   useEffect(() => {
     const h = readHash();
@@ -147,7 +148,7 @@ export default function ImdTool(): ReactNode {
 
         <Chart set={set} analysis={analysis} showBleed={showBleed} rows={rows} showEU={showEU} onToggle={toggle} />
 
-        <ScorePanel set={set} analysis={analysis} bleedOffset={bleedOffset} />
+        <ScorePanel set={set} analysis={analysis} bleedOffset={bleedOffset} best={best} />
 
         {set.length >= 2 && (
           <>
@@ -210,7 +211,7 @@ export default function ImdTool(): ReactNode {
         <p className={styles.muted}>
           {translate({id: 'imd.find.intro', message: 'Choose how many pilots fly at once and which channels you may use. Click Show on a result to see it in the chart.'})}
         </p>
-        <Finder bleedOffset={bleedOffset} onShow={showSet} current={ids} />
+        <Finder bleedOffset={bleedOffset} onShow={showSet} current={ids} onBest={setBest} />
       </section>
       <BuildLine />
     </main>

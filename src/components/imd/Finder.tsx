@@ -1,9 +1,9 @@
 import {useEffect, useRef, useState, type ReactNode} from 'react';
 import {translate} from '@docusaurus/Translate';
 import {SYSTEMS, POOLS, channelById, fullName, inEU} from './channels';
-import {analyze, findings, type Mode, type SearchDone, type SearchInput} from './engine';
+import {analyze, findings, noiseOf, WEIGHTS, type Mode, type SearchDone, type SearchInput} from './engine';
 import {findingText, fmt} from './text';
-import {ScoreBadge} from './Scores';
+import {BarsLegend, bandStyle, NoiseBars, ScoreBadge} from './Scores';
 import styles from './styles.module.css';
 
 // "Find the cleanest channels": pick the number of pilots and the allowed channels,
@@ -15,10 +15,12 @@ export default function Finder({
   bleedOffset,
   onShow,
   current,
+  onBest,
 }: {
   bleedOffset: number;
   onShow: (ids: string[]) => void;
   current: string[];
+  onBest?: (best: {pilots: number; score: number} | null) => void;
 }): ReactNode {
   const [pilots, setPilots] = useState(4);
   const [allowed, setAllowed] = useState<Set<string>>(() => new Set(POOLS.find(p => p.id === 'rf')!.ids));
@@ -90,6 +92,13 @@ export default function Finder({
     return () => clearTimeout(t);
   }, [poolKey, pilots, minSep, mode, bleedOffset]);
 
+  // The best score tells the chart above what is possible (only for the default weights,
+  // which the chart's score uses too).
+  useEffect(() => {
+    const top = done?.results[0];
+    onBest?.(top && done!.complete && mode === 'balanced' && !running ? {pilots: top.ids.length, score: top.score} : null);
+  }, [done, mode, running]);
+
   const stop = () => {
     worker.current?.terminate();
     worker.current = null;
@@ -158,7 +167,7 @@ export default function Finder({
         <summary>{translate({id: 'imd.find.single', message: 'Pick single channels'})}</summary>
       <div className={styles.poolGrid}>
         {ROWS.map(s => (
-          <div key={s.id} className={styles.poolRow}>
+          <div key={s.id} className={styles.poolRow} style={bandStyle(s.id)}>
             <span className={styles.poolRowName}>{s.name}</span>
             <div className={styles.poolChips}>
               {s.channels.map(c => {
@@ -224,19 +233,46 @@ export default function Finder({
             <p>{translate({id: 'imd.find.noResult', message: 'No set fits. Lower the minimum gap or allow more channels.'})}</p>
           ) : (
             <>
+              <p className={styles.bestLine}>
+                {translate(
+                  {id: 'imd.find.best', message: 'Best possible with {n} pilots: {score}. More pilots always means more interference, so compare sets with the same number of pilots.'},
+                  {n: pilots, score: done.results[0].score},
+                )}
+              </p>
               <ol className={styles.resultList}>
                 {done.results.map(r => {
                   const shown = r.ids.length === current.length && r.ids.every(id => current.includes(id));
                   const set = r.ids.map(id => channelById(id)!);
                   const issues = findings(r.mhz, analyze(r.mhz, bleedOffset));
+                  const noise = noiseOf(r.mhz, bleedOffset, WEIGHTS[mode]);
                   return (
                     <li key={r.ids.join()} className={`${styles.result} ${shown ? styles.resultShown : ''}`}>
                       <ScoreBadge score={r.score} />
                       <div className={styles.resultMain}>
                         <div className={styles.resultSet}>
-                          <strong>{r.ids.map(name).join(' ')}</strong>
+                          <strong>
+                            {r.ids.map((id, k) => (
+                              <span key={id} className={styles.bandText} style={bandStyle(set[k].system)}>
+                                {name(id)}
+                              </span>
+                            ))}
+                          </strong>
                           <span className={styles.mhzLine}>{r.mhz.map(fmt).join(' ')} MHz</span>
                         </div>
+                        <NoiseBars set={set} noise={noise} />
+                        {r.twins.length > 0 && (
+                          <div className={styles.twins}>
+                            {translate({id: 'imd.find.twins', message: 'Works exactly the same:'})}{' '}
+                            {r.twins.map((t, k) => (
+                              <span key={t.ids.join()}>
+                                {k > 0 && ', '}
+                                <button type="button" className={styles.linkButton} onClick={() => onShow(t.ids)}>
+                                  {t.ids.map(name).join(' ')}
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
                         {issues.length === 0 ? (
                           <div className={styles.good}>{translate({id: 'imd.verdict.good', message: 'Clean: nothing lands on any of your channels.'})}</div>
                         ) : (
@@ -259,8 +295,9 @@ export default function Finder({
                   );
                 })}
               </ol>
+              <BarsLegend />
               <p className={styles.muted}>
-                {translate({id: 'imd.find.scoreHelp', message: 'Score: 100 means nothing lands within 35 MHz of a channel. Every IMD product, bleed and tight gap near a channel takes points off, more the closer it lands.'})}{' '}
+                {translate({id: 'imd.find.scoreHelp2', message: 'The bars show how much interference lands on each channel (a full bar is about two direct hits). The score counts every channel, and one badly hit channel costs more than the same interference spread over several.'})}{' '}
                 <button type="button" className={styles.linkButton} onClick={() => copy(done.results.map((r, i) => `${i + 1}. ${asText(r.ids, r.mhz)}`).join('\n'), 'all')}>
                   {copied === 'all' ? '✓' : translate({id: 'imd.find.copyAll', message: 'Copy all 10'})}
                 </button>

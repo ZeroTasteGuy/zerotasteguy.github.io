@@ -8,6 +8,27 @@
   --warn-tint: rgba(230, 160, 0, 0.16);
   --ok: #2b8a3e;
   --ok-tint: rgba(43, 138, 62, 0.1);
+  /* One colour per channel system (chart rows, your channels, results). Kept away from the
+     orange and amber that mark interference. */
+  --band-R: #1c7ed6;
+  --band-F: #7048e8;
+  --band-E: #2f9e44;
+  --band-B: #d6336c;
+  --band-A: #5c6f82;
+  --band-L: #ae3ec9;
+  --band-hz: #0c8599;
+  --band-ws: #74b816;
+  --band-dj: #495057;
+  --band-o3: #343a40;
+  --band-o4: #212529;
+  --band-custom: var(--ifm-color-primary);
+  /* Parts of the noise bars */
+  --part-im3: #e8590c;
+  --part-im3t: #c92a2a;
+  --part-im5: #e0a800;
+  --part-bleed: #4c6ef5;
+  --part-gap: #868e96;
+  --part-edge: #9c36b5;
   padding: 1.25rem 1.5rem;
   margin-top: 1.5rem;
 }
@@ -18,6 +39,23 @@
   --warn-tint: rgba(255, 203, 54, 0.14);
   --ok: #69db7c;
   --ok-tint: rgba(105, 219, 124, 0.1);
+  --band-R: #4dabf7;
+  --band-F: #9775fa;
+  --band-E: #51cf66;
+  --band-B: #f06595;
+  --band-A: #91a7bc;
+  --band-L: #da77f2;
+  --band-hz: #3bc9db;
+  --band-ws: #a9e34b;
+  --band-dj: #adb5bd;
+  --band-o3: #ced4da;
+  --band-o4: #e9ecef;
+  --part-im3: #ff922b;
+  --part-im3t: #ff6b6b;
+  --part-im5: #ffd43b;
+  --part-bleed: #748ffc;
+  --part-gap: #adb5bd;
+  --part-edge: #da77f2;
 }
 @media (max-width: 600px) {
   .card {
@@ -145,8 +183,8 @@
   cursor: pointer;
 }
 .setRect {
-  fill: var(--ifm-color-primary);
-  stroke: var(--ifm-color-primary);
+  fill: var(--band, var(--ifm-color-primary));
+  stroke: var(--band, var(--ifm-color-primary));
   stroke-width: 2;
 }
 .setRect.lv_bad {
@@ -205,12 +243,16 @@
   cursor: pointer;
 }
 .chanRect {
-  fill: var(--site-panel);
-  stroke: var(--site-line);
+  fill: color-mix(in srgb, var(--band, transparent) 14%, var(--site-panel));
+  stroke: color-mix(in srgb, var(--band, var(--site-line)) 55%, var(--site-line));
   stroke-width: 1;
 }
 .chan:hover .chanRect {
-  stroke: var(--ifm-color-primary);
+  stroke: var(--band, var(--ifm-color-primary));
+  stroke-width: 2;
+}
+.rowSwatch {
+  fill: var(--band);
 }
 .chanRect.lv_bad {
   fill: var(--bad-tint);
@@ -221,11 +263,11 @@
   stroke: var(--warn);
 }
 .chanChosen {
-  fill: var(--ifm-color-primary);
-  stroke: var(--ifm-color-primary);
+  fill: var(--band, var(--ifm-color-primary));
+  stroke: var(--band, var(--ifm-color-primary));
 }
 .chanSame {
-  stroke: var(--ifm-color-primary);
+  stroke: var(--band, var(--ifm-color-primary));
   stroke-width: 1.5;
   stroke-dasharray: 3 2;
 }
@@ -472,9 +514,9 @@
   color: var(--site-muted);
 }
 .chipOn {
-  background: var(--accent-tint);
-  border-color: var(--ifm-color-primary);
-  color: var(--ifm-color-primary);
+  background: color-mix(in srgb, var(--band, var(--ifm-color-primary)) 16%, transparent);
+  border-color: var(--band, var(--ifm-color-primary));
+  color: var(--band, var(--ifm-color-primary));
 }
 .chipOff {
   opacity: 0.35;
@@ -683,6 +725,105 @@
     width: 100%;
     padding-left: 3.35rem;
   }
+}
+
+/* ---- Noise bars (one per channel) ---- */
+.bars {
+  display: flex;
+  gap: 0.3rem;
+  margin: 0.35rem 0 0.15rem;
+}
+.barCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 2.1rem;
+  cursor: help;
+}
+.barTrack {
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  width: 0.9rem;
+  height: 1.6rem;
+  border-radius: 3px;
+  background: var(--site-line);
+  overflow: hidden;
+}
+.barsBig .barTrack {
+  width: 1.4rem;
+  height: 2.8rem;
+}
+.barsBig .barCol {
+  width: 2.8rem;
+}
+.barTrack i {
+  display: block;
+  flex: none;
+}
+.barOver {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.7rem;
+  line-height: 1;
+  color: #fff;
+}
+.barName {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--band, inherit);
+  white-space: nowrap;
+}
+.part_im3 {
+  background: var(--part-im3);
+}
+.part_im3t {
+  background: var(--part-im3t);
+}
+.part_im5 {
+  background: var(--part-im5);
+}
+.part_bleed {
+  background: var(--part-bleed);
+}
+.part_gap {
+  background: var(--part-gap);
+}
+.part_edge {
+  background: var(--part-edge);
+}
+.barsLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.9rem;
+  margin: 0.25rem 0 0.5rem;
+  font-size: 0.78rem;
+  color: var(--site-muted);
+}
+.barsLegend i {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 2px;
+  vertical-align: -1px;
+}
+.bandText {
+  color: var(--band, inherit);
+  margin-right: 0.35em;
+}
+.bandText:last-child {
+  margin-right: 0;
+}
+.twins {
+  font-size: 0.82rem;
+  color: var(--site-muted);
+}
+.bestLine {
+  font-size: 0.88rem;
+  margin-bottom: 0.4rem;
 }
 
 .buildLine {
