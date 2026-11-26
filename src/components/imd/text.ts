@@ -72,6 +72,12 @@ export function findingText(x: Finding, set: SetChannel[]): string {
       {pairs},
     );
   }
+  if (x.kind === 'low') {
+    return translate(
+      {id: 'imd.issue.low', message: '{ch}: outside the range of common 5.8 GHz antennas (about 5600–6000 MHz), so the picture gets weaker.'},
+      {ch: listNames(x.on.map(n))},
+    );
+  }
   const on = listNames(x.on.map(n));
   const close = listNames(x.close.map(n));
   const what = typeName(x.type);

@@ -818,5 +818,8 @@
   },
   "imd.desc.onIt": {
     "message": "genau darauf"
+  },
+  "imd.issue.low": {
+    "message": "{ch}: außerhalb des Bereichs gängiger 5,8-GHz-Antennen (etwa 5600–6000 MHz), das Bild wird schwächer."
   }
 }

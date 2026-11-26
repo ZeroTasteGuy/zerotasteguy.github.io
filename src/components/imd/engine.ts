@@ -145,6 +145,18 @@ export const WEIGHTS: Record<Mode, Weights> = {
 
 const curve = (d: number) => (d < ET_LIMIT ? ((ET_LIMIT - d) / ET_LIMIT) ** 2 : 0);
 
+// Channels outside the range of common 5.8 GHz antennas. Rated bands (maker specs):
+// Foxeer Lollipop 4 5500–6000 MHz, TrueRC/Pagoda-2 5550–6050, RushFPV Cherry 2 5600–6000
+// (wideband ones like the Lumenier AXII 2 go down to 5300). All of them are in spec from
+// 5600 to 6000 MHz, so that costs nothing. Below 5600 more and more antennas are out of
+// spec (and 5470–5725 MHz is also 5 GHz Wi-Fi); below 5500 all of them are. The penalty
+// grows with the square of the distance, 1 (one direct IMD hit) at 100 MHz outside:
+// L8 0, L7 ≈ 0.03, L6 ≈ 0.3, L5 ≈ 0.8, L4 ≈ 1.6, L3 ≈ 2.7, L2 ≈ 4, L1 ≈ 5.7.
+export const ANT_MIN = 5600;
+export const ANT_MAX = 6000;
+export const edgePenalty = (mhz: number) =>
+  mhz < ANT_MIN ? ((ANT_MIN - mhz) / 100) ** 2 : mhz > ANT_MAX ? ((mhz - ANT_MAX) / 100) ** 2 : 0;
+
 export function penalty(f: number[], bleedOffset: number, w: Weights): number {
   const n = f.length;
   let pen = 0;
@@ -170,6 +182,7 @@ export function penalty(f: number[], bleedOffset: number, w: Weights): number {
       pen += w.im3 * near(2 * f[a] - f[b], a, b, -1);
       pen += w.im5 * near(3 * f[a] - 2 * f[b], a, b, -1);
     }
+    pen += edgePenalty(f[a]);
     if (bleedOffset > 0) pen += w.bleed * (near(f[a] - bleedOffset, a, -1, -1) + near(f[a] + bleedOffset, a, -1, -1));
   }
   return pen;
@@ -182,7 +195,8 @@ export const scoreOf = (pen: number, n: number) => Math.round(100 * Math.exp(-pe
 export type Finding =
   | {kind: 'gap'; a: number; b: number; d: number}
   | {kind: 'hit'; type: ProductType; on: number[]; close: number[]}
-  | {kind: 'neighbours'; pairs: [number, number][]};
+  | {kind: 'neighbours'; pairs: [number, number][]}
+  | {kind: 'low'; on: number[]};
 
 export function findings(f: number[], analysis: Analysis): Finding[] {
   const out: Finding[] = [];
@@ -210,6 +224,8 @@ export function findings(f: number[], analysis: Analysis): Finding[] {
     pairs.set(pair.join(), pair);
   }
   if (pairs.size) out.push({kind: 'neighbours', pairs: [...pairs.values()]});
+  const low = f.map((_, i) => i).filter(i => edgePenalty(f[i]) >= 0.25);
+  if (low.length) out.push({kind: 'low', on: low});
   return out;
 }
 
