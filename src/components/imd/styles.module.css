@@ -684,3 +684,10 @@
     padding-left: 3.35rem;
   }
 }
+
+.buildLine {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--site-muted);
+}

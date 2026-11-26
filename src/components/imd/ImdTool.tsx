@@ -1,5 +1,6 @@
 import {useEffect, useMemo, useState, type ReactNode} from 'react';
 import Link from '@docusaurus/Link';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Heading from '@theme/Heading';
 import {translate} from '@docusaurus/Translate';
 import {PRESETS, SYSTEMS, channelById, type SetChannel} from './channels';
@@ -211,6 +212,24 @@ export default function ImdTool(): ReactNode {
         </p>
         <Finder bleedOffset={bleedOffset} onShow={showSet} current={ids} />
       </section>
+      <BuildLine />
     </main>
+  );
+}
+
+// "Version 26.11.2026, 14:52 (abc1234)": when this page was built, in Berlin time.
+function BuildLine(): ReactNode {
+  const {siteConfig, i18n} = useDocusaurusContext();
+  const {buildTime, buildCommit} = siteConfig.customFields as {buildTime: string; buildCommit: string};
+  const when = new Date(buildTime).toLocaleString(i18n.currentLocale === 'de' ? 'de-DE' : 'en-GB', {
+    timeZone: 'Europe/Berlin',
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+  return (
+    <p className={styles.buildLine}>
+      {translate({id: 'imd.version', message: 'Version {when}'}, {when})}
+      {buildCommit ? ` (${buildCommit})` : ''}
+    </p>
   );
 }
