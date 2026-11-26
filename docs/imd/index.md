@@ -29,30 +29,32 @@ The calculator looks at three kinds:
 ## Reading the chart
 
 - **Your channels** are the red blocks at the top. Click a block, or a channel in any row, to remove or add it.
-- **IMD / bleed** shows each product as a line: triangle for 2-pilot, diamond for 3-pilot, dot for 5th order, dashed for bleed.
-- The lines run down through the rows of every channel system (Raceband, Fatshark, HDZero, Walksnail, DJI and more), so you see which channel each one hits.
+- **Interference** shows each product as a line: triangle for 2-pilot, diamond for 3-pilot, dot for 5th order.
+- The lines run down through the rows of Raceband, Fatshark and HDZero, so you see which channel each one hits. **Also show** adds rows for the low band, bands E, B and A, Walksnail and DJI, the VTX bleed lines and the EU range (5725 to 5875 MHz).
 - **Orange** means it lands on a channel (under 10 MHz away), **amber** means close (10 to 20 MHz).
-- The green area is the EU / German 5.8 GHz range, 5725 to 5875 MHz.
 
 Point at a line or a channel (or tap it on a phone) to see where it comes from.
 
-## The numbers
+## The score
 
-- **IMD rating (ET):** the same score as ET's IMDTabler and RotorHazard's settings page. 100 means no 2-pilot product comes within 35 MHz of a channel; it can go below zero. It only counts 2-pilot IMD.
-- **Closest channels:** the smallest gap in your set. Under about 30 MHz the pilots interfere directly.
-- **2-pilot, 3-pilot, 5th order, bleed:** how close the worst product of each kind comes to one of your channels. Bigger is better.
+Under the chart is a **score** from 0 to 100, followed by the problems in plain words, for example "3-pilot IMD lands on R6" or "Neighbours R6/R7: if a VTX bleeds, it hits the other pilot".
+
+- 100 means nothing lands within 35 MHz of any of your channels.
+- Every product that lands near a channel takes points off, more the closer it lands. 2-pilot and 3-pilot IMD count fully, VTX bleed about half, 5th order less than a third. Two channels closer than 35 MHz also take points off.
+- **ET rating** is the score of ET's IMDTabler, also shown in RotorHazard. It only counts 2-pilot IMD, which is why R1 R3 R6 R8 gets 100 there although its 3-pilot IMD lands right on the other channels.
+- **Small changes that make it cleaner** suggests swapping one channel, with the new score.
 
 ## Finding channels
 
-Choose the number of pilots and the allowed channels (one click for Raceband, HDZero, Walksnail, DJI and more, plus *EU only*), then click **Find the cleanest channels**. It checks every possible set and lists the best 10. **Show** puts a set into the chart.
+Pick the number of pilots, what your video transmitters are like, and the allowed channels (one click for Raceband + F2 + F4, HDZero with the low band, Raceband, Fatshark, all analog, Walksnail or DJI). The list updates right away with the 10 best sets, each with its score and what to watch out for. **Show** puts a set into the chart.
 
-Under *More options*:
+*Your video transmitters* changes how much VTX bleed counts:
 
-- **Min. gap between channels** (35 MHz by default) skips sets with channels closer than that.
-- **Rank by**
-  - *Least IMD first*: no 2-pilot or 3-pilot IMD on a channel, then as little bleed as possible.
-  - *Safe from VTX bleed first*: no pilot's bleed lands on another pilot, then as little IMD as possible.
-  - *ET rating*: the classic ranking of ET's FreqSetGen.
+- *Mixed or not sure*: bleed counts about half as much as IMD.
+- *All clean*: bleed hardly counts, so neighbouring channels are fine.
+- *Some bleed into the next channel*: bleed counts double, so sets keep a free channel between pilots.
+
+Under *More options* you can limit the search to EU-legal channels and set the minimum gap between channels (30 MHz by default).
 
 ## Example: 4 pilots on Raceband
 

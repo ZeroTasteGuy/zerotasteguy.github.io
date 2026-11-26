@@ -24,22 +24,24 @@ export default function Chart({
   set,
   analysis,
   showBleed,
-  moreBands,
+  rows,
+  showEU,
   onToggle,
 }: {
   set: SetChannel[];
   analysis: Analysis;
   showBleed: boolean;
-  moreBands: boolean; // also show bands E, B, A and the low band (wider view)
+  rows: string[]; // ids of the channel systems to show; 'L' also widens the view to the low band
+  showEU: boolean;
   onToggle: (id: string) => void;
 }): ReactNode {
-  const showLow = moreBands;
+  const showLow = rows.includes('L');
   const lo = showLow ? 5340 : 5630;
   const hi = 5960;
   const x = (mhz: number) => LABEL + ((mhz - lo) / (hi - lo)) * (W - LABEL - RIGHT);
   const pxPerMhz = (W - LABEL - RIGHT) / (hi - lo);
   const inRange = (mhz: number) => mhz >= lo - 5 && mhz <= hi + 5;
-  const systems = SYSTEMS.filter(s => moreBands || !['E', 'B', 'A', 'L'].includes(s.id));
+  const systems = SYSTEMS.filter(s => rows.includes(s.id));
   const rowsTop = TOP + SET_H + IMD_H + AXIS_H;
   const chipW = (id: string) => Math.max(Math.min((WIDE[id] ?? 20) * pxPerMhz, 46), 22);
   // Channels that would overlap in a row (HDZero R2 and E1, DJI CH2 and the 40 MHz channel)
@@ -122,17 +124,21 @@ export default function Chart({
           aria-label={translate({id: 'imd.chart.aria', message: 'Frequency chart of the chosen channels and their IMD products'})}
           onMouseLeave={() => setHover(null)}>
           {/* EU band */}
-          <rect x={x(EU_MIN)} y={TOP} width={x(EU_MAX) - x(EU_MIN)} height={H - TOP - 4} className={styles.euBand} />
-          <text x={x(EU_MIN) + 4} y={H - 7} className={styles.euLabel}>
-            EU 5725–5875
-          </text>
+          {showEU && (
+            <>
+              <rect x={x(EU_MIN)} y={TOP} width={x(EU_MAX) - x(EU_MIN)} height={H - TOP - 4} className={styles.euBand} />
+              <text x={x(EU_MIN) + 4} y={H - 7} className={styles.euLabel}>
+                EU 5725–5875
+              </text>
+            </>
+          )}
 
           {/* Lane labels */}
           <text x={8} y={TOP + SET_H / 2 + 4} className={styles.laneLabel}>
             {translate({id: 'imd.chart.yourSet', message: 'Your channels'})}
           </text>
           <text x={8} y={TOP + SET_H + IMD_H / 2 + 4} className={styles.laneLabel}>
-            {translate({id: 'imd.chart.imd', message: 'IMD / bleed'})}
+            {translate({id: 'imd.chart.imd', message: 'Interference'})}
           </text>
 
           {/* Guide lines of products through every row */}
@@ -258,7 +264,7 @@ export default function Chart({
         <span><i className={`${styles.swatch} ${styles.lv_warn}`} /> {translate({id: 'imd.legend.warn', message: 'close (10–20 MHz)'})}</span>
         {outside > 0 && (
           <span className={styles.muted}>
-            {translate({id: 'imd.legend.outside', message: '{n} close products are outside the view (turn on the low band)'}, {n: outside})}
+            {translate({id: 'imd.legend.outside', message: '{n} close products are outside the view (show the low band)'}, {n: outside})}
           </span>
         )}
       </div>

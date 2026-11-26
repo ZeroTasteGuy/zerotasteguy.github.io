@@ -125,35 +125,29 @@ export function level(d: number): Level {
   if (d < ET_LIMIT) return 'near';
   return 'ok';
 }
-export const tier = (d: number) => (d < 10 ? 0 : d < 20 ? 1 : d < ET_LIMIT ? 2 : 3);
 
-// ---------- Ranking ----------
-// Distances only get smaller as channels are added, so all of these are "bigger is better"
-// numbers that can only fall as a set grows. That lets the search drop a partial set as
-// soon as it can no longer reach the top 10.
+// ---------- Score ----------
+// One number per set, so sets can be ranked and compared at a glance.
+// Every product adds a penalty that grows as it gets closer to a channel (ET's curve,
+// scaled to 1 for a direct hit): ((35 − d) / 35)², times a weight for how strong that
+// kind of interference is. Two channels closer than 35 MHz add a penalty the same way.
+//   score = 100 · e^(−penalty / 2n)   → 100 = nothing within 35 MHz; for 4 pilots one
+//   direct 2-pilot hit gives 88. Dividing by the number of pilots keeps 6 or 8 pilots readable.
+// The penalty only grows as channels are added, which lets the search skip sets early.
 
-export type Priority = 'imd' | 'bleed' | 'et';
-
-export type Metrics = {
-  et: number;
-  t: number; // ET's raw penalty
-  minSep: number;
-  im3: number;
-  im3t: number;
-  im5: number;
-  bleed: number;
-  hits: number; // products of any kind (bleed too) less than 10 MHz from a channel
+export type Mode = 'balanced' | 'imd' | 'bleed';
+export type Weights = Record<ProductType, number> & {gap: number};
+export const WEIGHTS: Record<Mode, Weights> = {
+  balanced: {im3: 1, im3t: 1, im5: 0.3, bleed: 0.6, gap: 4},
+  imd: {im3: 1, im3t: 1, im5: 0.3, bleed: 0.2, gap: 4},
+  bleed: {im3: 1, im3t: 1, im5: 0.3, bleed: 2, gap: 4},
 };
 
-export function metrics(f: number[], bleedOffset: number): Metrics {
+const curve = (d: number) => (d < ET_LIMIT ? ((ET_LIMIT - d) / ET_LIMIT) ** 2 : 0);
+
+export function penalty(f: number[], bleedOffset: number, w: Weights): number {
   const n = f.length;
-  let t = 0;
-  let im3 = Infinity;
-  let im3t = Infinity;
-  let im5 = Infinity;
-  let bleed = Infinity;
-  let minSep = Infinity;
-  let hits = 0;
+  let pen = 0;
   const near = (p: number, a: number, b: number, c: number) => {
     let d = Infinity;
     for (let i = 0; i < n; i++) {
@@ -162,49 +156,61 @@ export function metrics(f: number[], bleedOffset: number): Metrics {
       const ax = x < 0 ? -x : x;
       if (ax < d) d = ax;
     }
-    if (d < 10) hits++;
-    return d;
+    return curve(d);
   };
   for (let a = 0; a < n; a++) {
     for (let b = 0; b < n; b++) {
       if (a === b) continue;
-      if (a < b) minSep = Math.min(minSep, Math.abs(f[a] - f[b]));
-      const p = 2 * f[a] - f[b];
-      im3 = Math.min(im3, near(p, a, b, -1));
-      im5 = Math.min(im5, near(3 * f[a] - 2 * f[b], a, b, -1));
-      if (p >= ET_MIN && p <= ET_MAX) {
-        let d = Infinity;
-        for (const x of f) d = Math.min(d, Math.abs(p - x));
-        if (d < ET_LIMIT) t += (ET_LIMIT - d) ** 2;
-      }
       if (a < b) {
+        pen += w.gap * curve(Math.abs(f[a] - f[b]));
         for (let c = 0; c < n; c++) {
-          if (c === a || c === b) continue;
-          im3t = Math.min(im3t, near(f[a] + f[b] - f[c], a, b, c));
+          if (c !== a && c !== b) pen += w.im3t * near(f[a] + f[b] - f[c], a, b, c);
         }
       }
+      pen += w.im3 * near(2 * f[a] - f[b], a, b, -1);
+      pen += w.im5 * near(3 * f[a] - 2 * f[b], a, b, -1);
     }
-    if (bleedOffset > 0) {
-      bleed = Math.min(bleed, near(f[a] - bleedOffset, a, -1, -1), near(f[a] + bleedOffset, a, -1, -1));
+    if (bleedOffset > 0) pen += w.bleed * (near(f[a] - bleedOffset, a, -1, -1) + near(f[a] + bleedOffset, a, -1, -1));
+  }
+  return pen;
+}
+
+export const scoreOf = (pen: number, n: number) => Math.round(100 * Math.exp(-pen / (2 * Math.max(n, 1))));
+
+// ---------- What to watch out for ----------
+// Short findings for a set, used under the chart and in the search results.
+export type Finding =
+  | {kind: 'gap'; a: number; b: number; d: number}
+  | {kind: 'hit'; type: ProductType; on: number[]; close: number[]}
+  | {kind: 'neighbours'; pairs: [number, number][]};
+
+export function findings(f: number[], analysis: Analysis): Finding[] {
+  const out: Finding[] = [];
+  for (let a = 0; a < f.length; a++) {
+    for (let b = a + 1; b < f.length; b++) {
+      const d = Math.abs(f[a] - f[b]);
+      if (d < 30) out.push({kind: 'gap', a, b, d});
     }
   }
-  return {et: n ? 100 - Math.floor(Math.floor(t / 5) / n) : 100, t, minSep, im3, im3t, im5, bleed, hits};
-}
-
-// Sort key, compared left to right, bigger is better. `finalN` turns ET's rating of a
-// partial set into an upper bound for the full set (T can only grow).
-export function rankKey(m: Metrics, priority: Priority, finalN: number): number[] {
-  const et = 100 - Math.floor(Math.floor(m.t / 5) / finalN);
-  const imd = tier(Math.min(m.im3, m.im3t));
-  const sep = Math.min(m.minSep, 200);
-  if (priority === 'et') return [et, sep, imd, tier(m.im5), -m.hits];
-  if (priority === 'bleed') return [tier(m.bleed), imd, tier(m.im5), et, -m.hits, sep];
-  return [imd, tier(m.bleed), tier(m.im5), et, -m.hits, sep];
-}
-
-export function compareKeys(x: number[], y: number[]): number {
-  for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] - y[i];
-  return 0;
+  for (const type of ['im3t', 'im3', 'im5'] as const) {
+    const on = new Set<number>();
+    const close = new Set<number>();
+    for (const p of analysis.products) {
+      if (p.type !== type || p.hit < 0) continue;
+      if (p.dist < 10) on.add(p.hit);
+      else if (p.dist < 20) close.add(p.hit);
+    }
+    for (const i of on) close.delete(i);
+    if (on.size || close.size) out.push({kind: 'hit', type, on: [...on].sort((x, y) => f[x] - f[y]), close: [...close].sort((x, y) => f[x] - f[y])});
+  }
+  const pairs = new Map<string, [number, number]>();
+  for (const p of analysis.products) {
+    if (p.type !== 'bleed' || p.hit < 0 || p.dist >= 10) continue;
+    const pair: [number, number] = f[p.from[0]] < f[p.hit] ? [p.from[0], p.hit] : [p.hit, p.from[0]];
+    pairs.set(pair.join(), pair);
+  }
+  if (pairs.size) out.push({kind: 'neighbours', pairs: [...pairs.values()]});
+  return out;
 }
 
 // ---------- Search ----------
@@ -214,13 +220,12 @@ export type SearchInput = {
   pilots: number;
   minSep: number;
   bleedOffset: number;
-  priority: Priority;
-  must: string[]; // ids that every result has to contain
+  mode: Mode;
   top?: number;
   timeLimitMs?: number;
 };
 
-export type SearchResult = {ids: string[]; mhz: number[]; m: Metrics; key: number[]};
+export type SearchResult = {ids: string[]; mhz: number[]; pen: number; score: number; et: number; minSep: number};
 
 export type SearchDone = {results: SearchResult[]; checked: number; complete: boolean; ms: number};
 
@@ -228,28 +233,31 @@ export function search(input: SearchInput, onProgress?: (checked: number) => voi
   const start = Date.now();
   const top = input.top ?? 10;
   const limit = input.timeLimitMs ?? 15000;
+  const w = WEIGHTS[input.mode];
   // One entry per frequency (R7 and F8 are both 5880), lowest first.
   const seen = new Set<number>();
   const pool = [...input.pool]
     .sort((a, b) => a.mhz - b.mhz)
     .filter(c => (seen.has(c.mhz) ? false : (seen.add(c.mhz), true)));
-  const must = pool.filter(c => input.must.includes(c.id));
-  const rest = pool.filter(c => !input.must.includes(c.id));
   const N = input.pilots;
   const results: SearchResult[] = [];
   let checked = 0;
   let stopped = false;
+  const chosen: {id: string; mhz: number}[] = [];
 
-  const worst = () => (results.length < top ? null : results[results.length - 1].key);
+  // Best first; ties go to the better ET rating, then the wider gap.
+  const better = (x: SearchResult, y: SearchResult) =>
+    x.pen !== y.pen ? x.pen < y.pen : x.et !== y.et ? x.et > y.et : x.minSep > y.minSep;
+  const keys = new Set<string>();
   const insert = (r: SearchResult) => {
+    const k = r.ids.join();
+    if (keys.has(k)) return;
+    keys.add(k);
     let i = results.length;
-    while (i > 0 && compareKeys(r.key, results[i - 1].key) > 0) i--;
+    while (i > 0 && better(r, results[i - 1])) i--;
     results.splice(i, 0, r);
     if (results.length > top) results.pop();
   };
-
-  const chosen: {id: string; mhz: number}[] = [...must];
-  const freqs = () => chosen.map(c => c.mhz);
 
   function dfs(from: number) {
     if (stopped) return;
@@ -261,36 +269,67 @@ export function search(input: SearchInput, onProgress?: (checked: number) => voi
       }
       onProgress?.(checked);
     }
+    const f = chosen.map(c => c.mhz);
     if (chosen.length >= 2) {
-      const m = metrics(freqs(), input.bleedOffset);
-      if (m.minSep < input.minSep) return;
-      const key = rankKey(m, input.priority, N);
-      const w = worst();
-      if (w && compareKeys(key, w) <= 0) return;
+      const last = f[f.length - 1];
+      for (let i = 0; i < f.length - 1; i++) if (last - f[i] < input.minSep) return;
+      const pen = penalty(f, input.bleedOffset, w);
+      if (results.length === top && pen > results[top - 1].pen + 1e-9) return;
       if (chosen.length === N) {
-        insert({ids: chosen.map(c => c.id), mhz: freqs(), m, key});
+        let minSep = Infinity;
+        for (let i = 1; i < f.length; i++) minSep = Math.min(minSep, f[i] - f[i - 1]);
+        insert({ids: chosen.map(c => c.id), mhz: f, pen, score: scoreOf(pen, N), et: etRating(f), minSep});
         return;
       }
     }
-    if (chosen.length === N) return;
-    for (let i = from; i <= rest.length - (N - chosen.length); i++) {
-      chosen.push(rest[i]);
+    for (let i = from; i <= pool.length - (N - chosen.length); i++) {
+      chosen.push(pool[i]);
       dfs(i + 1);
       chosen.pop();
       if (stopped) return;
     }
   }
+  const make = (idx: number[]): SearchResult | null => {
+    const cs = [...idx].sort((a, b) => a - b).map(i => pool[i]);
+    const f = cs.map(c => c.mhz);
+    let minSep = Infinity;
+    for (let i = 1; i < f.length; i++) minSep = Math.min(minSep, f[i] - f[i - 1]);
+    if (minSep < input.minSep) return null;
+    const pen = penalty(f, input.bleedOffset, w);
+    return {ids: cs.map(c => c.id), mhz: f, pen, score: scoreOf(pen, N), et: etRating(f), minSep};
+  };
 
-  if (must.length <= N && pool.length >= N) {
-    if (must.length === N) {
-      const m = metrics(freqs(), input.bleedOffset);
-      insert({ids: chosen.map(c => c.id), mhz: freqs(), m, key: rankKey(m, input.priority, N)});
-    } else dfs(0);
+  // Quick local search first (swap one channel while it helps, from random starts). Good
+  // sets found here make the full search below skip far more, without changing its result.
+  if (pool.length >= N && pool.length > 16) {
+    let seed = 12345;
+    const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+    const until = Date.now() + 250;
+    while (Date.now() < until) {
+      let cur: number[] = [];
+      while (cur.length < N) {
+        const i = Math.floor(rnd() * pool.length);
+        if (!cur.includes(i)) cur.push(i);
+      }
+      let best = make(cur);
+      for (let improved = true; improved; ) {
+        improved = false;
+        for (let k = 0; k < N; k++) {
+          for (let i = 0; i < pool.length; i++) {
+            if (cur.includes(i)) continue;
+            const next = cur.map((x, j) => (j === k ? i : x));
+            const r = make(next);
+            if (r && (!best || r.pen < best.pen)) {
+              best = r;
+              cur = next;
+              improved = true;
+            }
+          }
+        }
+      }
+      if (best) insert(best);
+    }
   }
-  for (const r of results) {
-    const order = r.mhz.map((_, i) => i).sort((a, b) => r.mhz[a] - r.mhz[b]);
-    r.ids = order.map(i => r.ids[i]);
-    r.mhz = order.map(i => r.mhz[i]);
-  }
+  if (pool.length >= N) dfs(0);
   return {results, checked, complete: !stopped, ms: Date.now() - start};
 }

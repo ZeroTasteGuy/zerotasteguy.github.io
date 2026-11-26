@@ -2,12 +2,11 @@ import {useEffect, useMemo, useState, type ReactNode} from 'react';
 import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import {translate} from '@docusaurus/Translate';
-import {PRESETS, channelById, fullName, type SetChannel} from './channels';
+import {PRESETS, SYSTEMS, channelById, type SetChannel} from './channels';
 import {analyze} from './engine';
 import Chart from './Chart';
 import Finder from './Finder';
 import {HitList, Improvements, ScorePanel} from './Scores';
-import {describeProduct} from './text';
 import styles from './styles.module.css';
 
 // State lives in the URL hash (#R1,R3,R6,R7), so a set can be shared as a link.
@@ -25,26 +24,44 @@ export default function ImdTool(): ReactNode {
   const [ids, setIds] = useState<string[]>(DEFAULT);
   const [showBleed, setShowBleed] = useState(false);
   const [bleedOffset, setBleedOffset] = useState(37);
-  const [moreBands, setMoreBands] = useState(false);
+  // Raceband, Fatshark and HDZero are always shown; the rest can be switched on.
+  const [extra, setExtra] = useState<Set<string>>(() => new Set());
+  const [showEU, setShowEU] = useState(false);
   const [custom, setCustom] = useState('');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const h = readHash();
     if (h.ids.length) setIds(h.ids);
-    if (h.bleed) {
-      setShowBleed(true);
-      setBleedOffset(h.bleed);
-    }
+    if (h.bleed) setBleedOffset(h.bleed);
   }, []);
   useEffect(() => {
-    const hash = `#${ids.join(',')}${showBleed ? `&bleed=${bleedOffset}` : ''}`;
+    const hash = `#${ids.join(',')}${bleedOffset !== 37 ? `&bleed=${bleedOffset}` : ''}`;
     if (window.location.hash !== hash) window.history.replaceState(null, '', hash);
-  }, [ids, showBleed, bleedOffset]);
+  }, [ids, bleedOffset]);
 
   const set: SetChannel[] = useMemo(() => ids.map(id => channelById(id)!).filter(Boolean), [ids]);
-  const analysis = useMemo(() => analyze(set.map(c => c.mhz), showBleed ? bleedOffset : 0), [set, showBleed, bleedOffset]);
-  const needLow = set.some(c => c.mhz < 5630);
+  // Bleed always counts in the score; the switch only draws its lines.
+  const analysis = useMemo(() => analyze(set.map(c => c.mhz), bleedOffset), [set, bleedOffset]);
+  const forced = new Set<string>(set.map(c => (c.system === 'hz' && c.mhz < 5630 ? 'L' : c.system)));
+  if (set.some(c => c.mhz < 5630)) forced.add('L');
+  const rowOn = (id: string) => extra.has(id) || forced.has(id);
+  const rows = SYSTEMS.map(s => s.id).filter(id => ['R', 'F', 'hz'].includes(id) || rowOn(id));
+  const flip = (ids: string[]) =>
+    setExtra(prev => {
+      const next = new Set(prev);
+      const on = ids.every(id => next.has(id));
+      for (const id of ids) on ? next.delete(id) : next.add(id);
+      return next;
+    });
+  const TOGGLES: {label: string; ids: string[]}[] = [
+    {label: translate({id: 'imd.rows.low', message: 'Low band'}), ids: ['L']},
+    {label: translate({id: 'imd.rows.eba', message: 'Bands E, B, A'}), ids: ['E', 'B', 'A']},
+    {label: 'Walksnail', ids: ['ws']},
+    {label: 'DJI V1 / Vista', ids: ['dj']},
+    {label: 'DJI O3', ids: ['o3']},
+    {label: 'DJI O4', ids: ['o4']},
+  ];
 
   const toggle = (id: string) => setIds(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
   const addCustom = () => {
@@ -66,36 +83,6 @@ export default function ImdTool(): ReactNode {
     setIds(next);
     document.getElementById('imd-chart')?.scrollIntoView({behavior: 'smooth', block: 'start'});
   };
-
-  // One plain sentence on top of the numbers.
-  const verdict = (() => {
-    if (set.length < 2) return null;
-    const bad = analysis.products.filter(p => p.hit >= 0 && p.dist < 10 && (showBleed || p.type !== 'bleed'));
-    const close = analysis.minSep < 30;
-    if (!bad.length && !close) {
-      return {cls: styles.verdictGood, text: translate({id: 'imd.verdict.good', message: 'Clean: no IMD lands on any of your channels.'})};
-    }
-    const worst = [...bad].sort((a, b) => a.dist - b.dist)[0];
-    const hitChannels = new Set(bad.map(p => p.hit)).size;
-    const parts: string[] = [];
-    if (close && analysis.minSepPair) {
-      parts.push(
-        translate(
-          {id: 'imd.verdict.close', message: '{a} and {b} are only {d} MHz apart.'},
-          {a: fullName(set[analysis.minSepPair[0]]), b: fullName(set[analysis.minSepPair[1]]), d: String(analysis.minSep)},
-        ),
-      );
-    }
-    if (worst) {
-      parts.push(
-        translate(
-          {id: 'imd.verdict.hits', message: 'Interference lands on {n} of your channels, e.g. {example}.'},
-          {n: hitChannels, example: describeProduct(worst, set)},
-        ),
-      );
-    }
-    return {cls: styles.verdictBad, text: parts.join(' ')};
-  })();
 
   return (
     <main className="container margin-vert--xl">
@@ -128,65 +115,91 @@ export default function ImdTool(): ReactNode {
           </div>
         </div>
 
-        <Chart set={set} analysis={analysis} showBleed={showBleed} moreBands={moreBands || needLow} onToggle={toggle} />
-
-        <div className={styles.options}>
-          <label className={styles.check}>
-            <input type="checkbox" checked={moreBands || needLow} disabled={needLow} onChange={e => setMoreBands(e.target.checked)} />
-            {translate({id: 'imd.opt.moreBands', message: 'Show bands E, B, A and low band'})}
-          </label>
-          <label className={styles.check}>
-            <input type="checkbox" checked={showBleed} onChange={e => setShowBleed(e.target.checked)} />
-            {translate({id: 'imd.opt.bleed', message: 'Show VTX bleed at ±'})}
-            <input
-              type="number"
-              className={styles.smallNum}
-              min={5}
-              max={100}
-              value={bleedOffset}
-              onChange={e => setBleedOffset(Math.min(100, Math.max(5, Number(e.target.value) || 37)))}
-              aria-label={translate({id: 'imd.opt.bleedMhz', message: 'Bleed offset in MHz'})}
-            />
-            MHz
-          </label>
-          <form
-            className={styles.customForm}
-            onSubmit={e => {
-              e.preventDefault();
-              addCustom();
-            }}>
-            <input
-              type="text"
-              inputMode="decimal"
-              placeholder={translate({id: 'imd.opt.customPh', message: 'Other MHz, e.g. 5790'})}
-              value={custom}
-              onChange={e => setCustom(e.target.value)}
-              aria-label={translate({id: 'imd.opt.custom', message: 'Add a frequency in MHz'})}
-            />
-            <button type="submit" className="button button--sm button--secondary">
-              {translate({id: 'imd.opt.add', message: 'Add'})}
-            </button>
-          </form>
-          <button type="button" className="button button--sm button--secondary" onClick={share} disabled={!set.length}>
-            {copied ? '✓' : translate({id: 'imd.share', message: 'Copy link'})}
+        <div className={styles.rowToggles}>
+          <span className={styles.muted}>{translate({id: 'imd.rows.show', message: 'Also show:'})}</span>
+          {TOGGLES.map(t => {
+            const on = t.ids.every(rowOn);
+            const locked = t.ids.some(id => forced.has(id));
+            return (
+              <button
+                key={t.label}
+                type="button"
+                aria-pressed={on}
+                disabled={locked}
+                title={locked ? translate({id: 'imd.rows.locked', message: 'Shown because one of your channels is in it'}) : undefined}
+                className={`${styles.pill} ${on ? styles.pillOn : ''}`}
+                onClick={() => flip(t.ids)}>
+                {on ? '✓ ' : '+ '}
+                {t.label}
+              </button>
+            );
+          })}
+          <button type="button" aria-pressed={showBleed} className={`${styles.pill} ${showBleed ? styles.pillOn : ''}`} onClick={() => setShowBleed(v => !v)}>
+            {showBleed ? '✓ ' : '+ '}
+            {translate({id: 'imd.rows.bleed', message: 'VTX bleed lines'})}
+          </button>
+          <button type="button" aria-pressed={showEU} className={`${styles.pill} ${showEU ? styles.pillOn : ''}`} onClick={() => setShowEU(v => !v)}>
+            {showEU ? '✓ ' : '+ '}
+            {translate({id: 'imd.rows.eu', message: 'EU range'})}
           </button>
         </div>
 
-        {verdict && <p className={`${styles.verdict} ${verdict.cls}`}>{verdict.text}</p>}
-        <ScorePanel set={set} analysis={analysis} showBleed={showBleed} />
+        <Chart set={set} analysis={analysis} showBleed={showBleed} rows={rows} showEU={showEU} onToggle={toggle} />
+
+        <ScorePanel set={set} analysis={analysis} bleedOffset={bleedOffset} />
 
         {set.length >= 2 && (
           <>
             <details className={styles.details}>
-              <summary>{translate({id: 'imd.hits.title', message: 'Everything that lands near your channels'})}</summary>
-              <HitList set={set} analysis={analysis} showBleed={showBleed} />
+              <summary>{translate({id: 'imd.better.title', message: 'Small changes that make it cleaner'})}</summary>
+              <Improvements set={set} bleedOffset={bleedOffset} onApply={setIds} />
             </details>
             <details className={styles.details}>
-              <summary>{translate({id: 'imd.better.title', message: 'Small changes that make it cleaner'})}</summary>
-              <Improvements set={set} bleedOffset={showBleed ? bleedOffset : 0} onApply={setIds} />
+              <summary>{translate({id: 'imd.hits.title', message: 'Everything that lands near your channels'})}</summary>
+              <HitList set={set} analysis={analysis} />
             </details>
           </>
         )}
+
+        <details className={styles.details}>
+          <summary>{translate({id: 'imd.opt.title', message: 'Other frequency, bleed distance, share'})}</summary>
+          <div className={styles.options}>
+            <form
+              className={styles.customForm}
+              onSubmit={e => {
+                e.preventDefault();
+                addCustom();
+              }}>
+              <input
+                type="text"
+                inputMode="decimal"
+                placeholder={translate({id: 'imd.opt.customPh', message: 'MHz, e.g. 5790'})}
+                value={custom}
+                onChange={e => setCustom(e.target.value)}
+                aria-label={translate({id: 'imd.opt.custom', message: 'Add a frequency in MHz'})}
+              />
+              <button type="submit" className="button button--sm button--secondary">
+                {translate({id: 'imd.opt.add', message: 'Add'})}
+              </button>
+            </form>
+            <label className={styles.check}>
+              {translate({id: 'imd.opt.bleed', message: 'VTX bleed at ±'})}
+              <input
+                type="number"
+                className={styles.smallNum}
+                min={5}
+                max={100}
+                value={bleedOffset}
+                onChange={e => setBleedOffset(Math.min(100, Math.max(5, Number(e.target.value) || 37)))}
+                aria-label={translate({id: 'imd.opt.bleedMhz', message: 'Bleed offset in MHz'})}
+              />
+              MHz
+            </label>
+            <button type="button" className="button button--sm button--secondary" onClick={share} disabled={!set.length}>
+              {copied ? '✓' : translate({id: 'imd.share', message: 'Copy link to this set'})}
+            </button>
+          </div>
+        </details>
       </section>
 
       <section className={`glass ${styles.card}`}>

@@ -151,13 +151,14 @@ export const inEU = (mhz: number) => mhz >= EU_MIN && mhz <= EU_MAX;
 export type Pool = {id: string; label: string; ids: string[]};
 const ids = (sys: string) => SYSTEMS.find(s => s.id === sys)!.channels.map(c => c.id);
 export const POOLS: Pool[] = [
-  {id: 'R', label: 'Raceband', ids: ids('R')},
-  // Max's HDZero list: Raceband, F2, F4 and the low band (E1 and F1 are left out).
-  {id: 'hz', label: 'HDZero', ids: [...ids('R'), 'F2', 'F4', ...ids('L')]},
   {id: 'rf', label: 'Raceband + F2 + F4', ids: [...ids('R'), 'F2', 'F4']},
+  // Max's HDZero list: Raceband, F2, F4 and the low band (E1 and F1 are left out).
+  {id: 'hz', label: 'HDZero (+ low band)', ids: [...ids('R'), 'F2', 'F4', ...ids('L')]},
+  {id: 'R', label: 'Raceband', ids: ids('R')},
+  {id: 'F', label: 'Fatshark', ids: ids('F')},
+  {id: 'analog', label: 'All analog', ids: [...ids('R'), ...ids('F'), ...ids('E'), ...ids('B'), ...ids('A'), ...ids('L')]},
   {id: 'ws', label: 'Walksnail', ids: ids('ws')},
   {id: 'dj', label: 'DJI V1 / Vista', ids: ids('dj')},
-  {id: 'analog', label: 'Analog R F E B A', ids: [...ids('R'), ...ids('F'), ...ids('E'), ...ids('B'), ...ids('A')]},
 ];
 
 // Known sets for the IMD chart.

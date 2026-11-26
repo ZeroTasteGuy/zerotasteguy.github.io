@@ -556,3 +556,131 @@
   cursor: pointer;
   text-decoration: underline;
 }
+
+/* ---- Row switches above the chart ---- */
+.rowToggles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.85rem;
+}
+.pill:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+
+/* ---- Score summary ---- */
+.summary {
+  margin-top: 0.9rem;
+}
+.summaryNums {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.summaryNums .metric {
+  min-width: 140px;
+}
+.metricValue small {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--site-muted);
+}
+.findings {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+}
+.findings li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+  font-weight: 500;
+}
+.findings .lv_bad .dot {
+  background: var(--bad);
+}
+.findings .lv_warn .dot {
+  background: var(--warn);
+}
+.verdict.verdictGood {
+  margin-top: 0.75rem;
+}
+.betterScore {
+  opacity: 0.7;
+  margin-left: 0.25rem;
+}
+
+/* ---- Score badge ---- */
+.badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.b_ok {
+  background: var(--ok-tint);
+  color: var(--ok);
+}
+.b_warn {
+  background: var(--warn-tint);
+  color: var(--warn);
+}
+.b_bad {
+  background: var(--bad-tint);
+  color: var(--bad);
+}
+
+/* ---- Search results ---- */
+.resultList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+}
+.result {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--site-line);
+  border-radius: 8px;
+}
+.resultShown {
+  background: var(--accent-tint);
+}
+.resultMain {
+  flex: 1;
+  min-width: 0;
+}
+.resultSet {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.6rem;
+}
+.resultIssues {
+  margin: 0.15rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  color: var(--site-muted);
+}
+.result .good {
+  font-size: 0.85rem;
+}
+@media (max-width: 600px) {
+  .result {
+    flex-wrap: wrap;
+  }
+  .result .actions {
+    width: 100%;
+    padding-left: 3.35rem;
+  }
+}

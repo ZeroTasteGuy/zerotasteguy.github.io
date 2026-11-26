@@ -1,8 +1,9 @@
 import {useEffect, useRef, useState, type ReactNode} from 'react';
 import {translate} from '@docusaurus/Translate';
 import {SYSTEMS, POOLS, channelById, fullName, inEU} from './channels';
-import {level, type Priority, type SearchDone, type SearchInput} from './engine';
-import {fmt} from './text';
+import {analyze, findings, type Mode, type SearchDone, type SearchInput} from './engine';
+import {findingText, fmt} from './text';
+import {ScoreBadge} from './Scores';
 import styles from './styles.module.css';
 
 // "Find the cleanest channels": pick the number of pilots and the allowed channels,
@@ -23,8 +24,8 @@ export default function Finder({
   const [allowed, setAllowed] = useState<Set<string>>(() => new Set(POOLS.find(p => p.id === 'rf')!.ids));
   const [pool, setPool] = useState<string | null>('rf');
   const [euOnly, setEuOnly] = useState(false);
-  const [minSep, setMinSep] = useState(35);
-  const [priority, setPriority] = useState<Priority>('imd');
+  const [minSep, setMinSep] = useState(30);
+  const [mode, setMode] = useState<Mode>('balanced');
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState<SearchDone | null>(null);
@@ -56,7 +57,6 @@ export default function Finder({
     worker.current = w;
     setRunning(true);
     setProgress(0);
-    setDone(null);
     w.onmessage = (e: MessageEvent<{progress?: number; done?: SearchDone}>) => {
       if (e.data.progress !== undefined) setProgress(e.data.progress);
       if (e.data.done) {
@@ -71,13 +71,25 @@ export default function Finder({
       pilots,
       minSep,
       bleedOffset,
-      priority,
-      must: [],
+      mode,
       top: 10,
-      timeLimitMs: 20000,
+      timeLimitMs: 8000,
     };
     w.postMessage(input);
   };
+  // Search again whenever a setting changes (most searches take a few milliseconds).
+  const poolKey = usable.map(c => c.id).join();
+  useEffect(() => {
+    if (uniqueFreqs < pilots) {
+      worker.current?.terminate();
+      setRunning(false);
+      setDone(null);
+      return;
+    }
+    const t = setTimeout(run, 200);
+    return () => clearTimeout(t);
+  }, [poolKey, pilots, minSep, mode, bleedOffset]);
+
   const stop = () => {
     worker.current?.terminate();
     worker.current = null;
@@ -95,8 +107,6 @@ export default function Finder({
       /* clipboard blocked: nothing to do */
     }
   };
-  const dist = (d: number) => (d === Infinity ? '–' : fmt(d));
-  const cell = (d: number) => <td className={styles[`c_${level(d)}`]}>{dist(d)}</td>;
 
   return (
     <div className={styles.finder}>
@@ -109,6 +119,14 @@ export default function Finder({
                 {n}
               </option>
             ))}
+          </select>
+        </label>
+        <label className={styles.field}>
+          <span>{translate({id: 'imd.find.mode', message: 'Your video transmitters'})}</span>
+          <select value={mode} onChange={e => setMode(e.target.value as Mode)}>
+            <option value="balanced">{translate({id: 'imd.find.mode.balanced', message: 'Mixed or not sure'})}</option>
+            <option value="imd">{translate({id: 'imd.find.mode.imd', message: 'All clean (only IMD matters)'})}</option>
+            <option value="bleed">{translate({id: 'imd.find.mode.bleed', message: 'Some bleed into the next channel'})}</option>
           </select>
         </label>
       </div>
@@ -125,9 +143,6 @@ export default function Finder({
               {p.label}
             </button>
           ))}
-          <button type="button" className={`${styles.pill} ${euOnly ? styles.pillOn : ''}`} onClick={() => setEuOnly(v => !v)}>
-            {translate({id: 'imd.find.eu', message: 'EU only (5725–5875)'})}
-          </button>
           <button
             type="button"
             className={styles.pill}
@@ -170,6 +185,10 @@ export default function Finder({
       <details className={styles.details}>
         <summary>{translate({id: 'imd.find.more', message: 'More options'})}</summary>
         <div className={styles.finderControls}>
+        <label className={styles.check}>
+          <input type="checkbox" checked={euOnly} onChange={e => setEuOnly(e.target.checked)} />
+          {translate({id: 'imd.find.eu', message: 'Only EU-legal channels (5725–5875 MHz)'})}
+        </label>
         <label className={styles.field}>
           <span>{translate({id: 'imd.find.minSep', message: 'Min. gap between channels'})}</span>
           <span className={styles.inputUnit}>
@@ -177,94 +196,71 @@ export default function Finder({
             MHz
           </span>
         </label>
-        <label className={styles.field}>
-          <span>{translate({id: 'imd.find.priority', message: 'Rank by'})}</span>
-          <select value={priority} onChange={e => setPriority(e.target.value as Priority)}>
-            <option value="imd">{translate({id: 'imd.find.pri.imd', message: 'Least IMD first'})}</option>
-            <option value="bleed">{translate({id: 'imd.find.pri.bleed', message: 'Safe from VTX bleed first'})}</option>
-            <option value="et">{translate({id: 'imd.find.pri.et', message: 'ET rating (like FreqSetGen)'})}</option>
-          </select>
-        </label>
         </div>
       </details>
 
       <div className={styles.runRow}>
-        {running ? (
-          <button type="button" className="button button--secondary" onClick={stop}>
-            {translate({id: 'imd.find.stop', message: 'Stop'})}
-          </button>
-        ) : (
-          <button type="button" className="button button--primary" disabled={uniqueFreqs < pilots} onClick={run}>
-            {translate({id: 'imd.find.run', message: 'Find the cleanest channels'})}
-          </button>
-        )}
         <span className={styles.muted}>
           {running
             ? translate({id: 'imd.find.running', message: 'Checking… {n} sets so far'}, {n: progress.toLocaleString()})
             : uniqueFreqs < pilots
               ? translate({id: 'imd.find.tooFew', message: 'Allow at least {n} different frequencies.'}, {n: pilots})
-              : translate({id: 'imd.find.count', message: '{n} different frequencies allowed'}, {n: uniqueFreqs})}
+              : done && !done.complete
+                ? translate({id: 'imd.find.doneTime', message: 'Stopped after {s} s: these are the best sets found so far (the first is usually already the best). Allow fewer channels for a full search.'}, {s: (done.ms / 1000).toFixed(1)})
+                : done
+                  ? translate({id: 'imd.find.doneAll2', message: 'Best {n} of all possible sets from {f} frequencies.'}, {n: done.results.length, f: uniqueFreqs})
+                  : ''}
         </span>
+        {running && (
+          <button type="button" className="button button--sm button--secondary" onClick={stop}>
+            {translate({id: 'imd.find.stop', message: 'Stop'})}
+          </button>
+        )}
       </div>
 
       {done && (
         <div className={styles.results}>
-          <p className={styles.muted}>
-            {done.complete
-              ? translate({id: 'imd.find.doneAll', message: 'Checked every set in {s} s.'}, {s: (done.ms / 1000).toFixed(1)})
-              : translate({id: 'imd.find.doneTime', message: 'Stopped after {s} s: these are the best sets found so far. Allow fewer channels for a full search.'}, {s: (done.ms / 1000).toFixed(1)})}
-          </p>
           {done.results.length === 0 ? (
             <p>{translate({id: 'imd.find.noResult', message: 'No set fits. Lower the minimum gap or allow more channels.'})}</p>
           ) : (
             <>
-              <div className={styles.tableScroll}>
-                <table className={styles.resultTable}>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>{translate({id: 'imd.find.col.set', message: 'Channels'})}</th>
-                      <th title={translate({id: 'imd.find.col.etHelp', message: 'ET rating, 100 = best'})}>ET</th>
-                      <th>{translate({id: 'imd.find.col.gap', message: 'Gap'})}</th>
-                      <th>{translate({id: 'imd.find.col.im3', message: '2-pilot'})}</th>
-                      <th>{translate({id: 'imd.find.col.im3t', message: '3-pilot'})}</th>
-                      <th>{translate({id: 'imd.find.col.im5', message: '5th'})}</th>
-                      <th>{translate({id: 'imd.find.col.bleed', message: 'Bleed'})}</th>
-                      <th />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {done.results.map((r, i) => {
-                      const shown = r.ids.length === current.length && r.ids.every(id => current.includes(id));
-                      return (
-                        <tr key={r.ids.join()} className={shown ? styles.rowShown : ''}>
-                          <td>{i + 1}</td>
-                          <td>
-                            <strong>{r.ids.map(name).join(' ')}</strong>
-                            <div className={styles.mhzLine}>{r.mhz.map(fmt).join(' ')}</div>
-                          </td>
-                          <td className={r.m.et >= 100 ? styles.c_ok : r.m.et >= 80 ? styles.c_warn : styles.c_bad}>{r.m.et}</td>
-                          <td>{fmt(r.m.minSep)}</td>
-                          {cell(r.m.im3)}
-                          {cell(r.m.im3t)}
-                          {cell(r.m.im5)}
-                          {cell(r.m.bleed)}
-                          <td className={styles.actions}>
-                            <button type="button" className="button button--sm button--primary" onClick={() => onShow(r.ids)}>
-                              {translate({id: 'imd.find.show', message: 'Show'})}
-                            </button>
-                            <button type="button" className="button button--sm button--secondary" onClick={() => copy(asText(r.ids, r.mhz), r.ids.join())}>
-                              {copied === r.ids.join() ? '✓' : translate({id: 'imd.find.copy', message: 'Copy'})}
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+              <ol className={styles.resultList}>
+                {done.results.map(r => {
+                  const shown = r.ids.length === current.length && r.ids.every(id => current.includes(id));
+                  const set = r.ids.map(id => channelById(id)!);
+                  const issues = findings(r.mhz, analyze(r.mhz, bleedOffset));
+                  return (
+                    <li key={r.ids.join()} className={`${styles.result} ${shown ? styles.resultShown : ''}`}>
+                      <ScoreBadge score={r.score} />
+                      <div className={styles.resultMain}>
+                        <div className={styles.resultSet}>
+                          <strong>{r.ids.map(name).join(' ')}</strong>
+                          <span className={styles.mhzLine}>{r.mhz.map(fmt).join(' ')} MHz</span>
+                        </div>
+                        {issues.length === 0 ? (
+                          <div className={styles.good}>{translate({id: 'imd.verdict.good', message: 'Clean: nothing lands on any of your channels.'})}</div>
+                        ) : (
+                          <ul className={styles.resultIssues}>
+                            {issues.map((x, k) => (
+                              <li key={k}>{findingText(x, set)}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                      <div className={styles.actions}>
+                        <button type="button" className="button button--sm button--primary" onClick={() => onShow(r.ids)}>
+                          {translate({id: 'imd.find.show', message: 'Show'})}
+                        </button>
+                        <button type="button" className="button button--sm button--secondary" onClick={() => copy(asText(r.ids, r.mhz), r.ids.join())}>
+                          {copied === r.ids.join() ? '✓' : translate({id: 'imd.find.copy', message: 'Copy'})}
+                        </button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
               <p className={styles.muted}>
-                {translate({id: 'imd.find.cols', message: 'Numbers are the distance in MHz from the closest product to a channel: bigger is better.'})}{' '}
+                {translate({id: 'imd.find.scoreHelp', message: 'Score: 100 means nothing lands within 35 MHz of a channel. Every IMD product, bleed and tight gap near a channel takes points off, more the closer it lands.'})}{' '}
                 <button type="button" className={styles.linkButton} onClick={() => copy(done.results.map((r, i) => `${i + 1}. ${asText(r.ids, r.mhz)}`).join('\n'), 'all')}>
                   {copied === 'all' ? '✓' : translate({id: 'imd.find.copyAll', message: 'Copy all 10'})}
                 </button>
