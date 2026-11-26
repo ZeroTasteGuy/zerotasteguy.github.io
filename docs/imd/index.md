@@ -41,6 +41,7 @@ Under the chart is a **score** from 0 to 100, followed by the problems in plain 
 
 - 100 means nothing lands within 35 MHz of any of your channels.
 - The score assumes all pilots are in the air at the same time. Every product that lands near a channel takes points off, more the closer it lands. 2-pilot and 3-pilot IMD count fully, VTX bleed about half, 5th order less than a third. Two channels closer than 35 MHz also take points off.
+- Low channels below 5540 MHz (L1 to L5) take points off too, more the lower they are. Normal 5.8 GHz antennas are made for about 5600 to 6000 MHz (the RushFPV Cherry 2, for example), and 5470 to 5725 MHz is also used by 5 GHz Wi-Fi. L6 to L8 are fine.
 - **ET rating** is the score of ET's IMDTabler, also shown in RotorHazard. It only counts 2-pilot IMD, which is why R1 R3 R6 R8 gets 100 there although its 3-pilot IMD lands right on the other channels.
 - **Small changes that make it cleaner** suggests swapping one channel, with the new score.
 

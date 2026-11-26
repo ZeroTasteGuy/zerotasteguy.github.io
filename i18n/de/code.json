@@ -818,5 +818,8 @@
   },
   "imd.desc.onIt": {
     "message": "genau darauf"
+  },
+  "imd.issue.low": {
+    "message": "{ch}: niedriger Kanal, normale 5,8-GHz-Antennen arbeiten dort schlechter, und er liegt nah am WLAN."
   }
 }

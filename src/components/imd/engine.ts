@@ -145,6 +145,13 @@ export const WEIGHTS: Record<Mode, Weights> = {
 
 const curve = (d: number) => (d < ET_LIMIT ? ((ET_LIMIT - d) / ET_LIMIT) ** 2 : 0);
 
+// Low channels: normal 5.8 GHz antennas are made for about 5600–6000 MHz (RushFPV Cherry 2:
+// 5600–6000 MHz, VSWR under 1.2 from 5650 to 5950), and 5470–5725 MHz is also 5 GHz Wi-Fi.
+// Max finds L6–L8 (5547–5621) still fine, so the penalty starts below 5540 and ramps up:
+// L5 ≈ 0.25, L4 ≈ 1.2, L3 ≈ 3, L1 ≈ 9 (one direct IMD hit = 1).
+export const EDGE_MHZ = 5540;
+export const edgePenalty = (mhz: number) => (mhz < EDGE_MHZ ? ((EDGE_MHZ - mhz) / 60) ** 2 : 0);
+
 export function penalty(f: number[], bleedOffset: number, w: Weights): number {
   const n = f.length;
   let pen = 0;
@@ -170,6 +177,7 @@ export function penalty(f: number[], bleedOffset: number, w: Weights): number {
       pen += w.im3 * near(2 * f[a] - f[b], a, b, -1);
       pen += w.im5 * near(3 * f[a] - 2 * f[b], a, b, -1);
     }
+    pen += edgePenalty(f[a]);
     if (bleedOffset > 0) pen += w.bleed * (near(f[a] - bleedOffset, a, -1, -1) + near(f[a] + bleedOffset, a, -1, -1));
   }
   return pen;
@@ -182,7 +190,8 @@ export const scoreOf = (pen: number, n: number) => Math.round(100 * Math.exp(-pe
 export type Finding =
   | {kind: 'gap'; a: number; b: number; d: number}
   | {kind: 'hit'; type: ProductType; on: number[]; close: number[]}
-  | {kind: 'neighbours'; pairs: [number, number][]};
+  | {kind: 'neighbours'; pairs: [number, number][]}
+  | {kind: 'low'; on: number[]};
 
 export function findings(f: number[], analysis: Analysis): Finding[] {
   const out: Finding[] = [];
@@ -210,6 +219,8 @@ export function findings(f: number[], analysis: Analysis): Finding[] {
     pairs.set(pair.join(), pair);
   }
   if (pairs.size) out.push({kind: 'neighbours', pairs: [...pairs.values()]});
+  const low = f.map((_, i) => i).filter(i => f[i] < EDGE_MHZ);
+  if (low.length) out.push({kind: 'low', on: low});
   return out;
 }
 

@@ -72,6 +72,12 @@ export function findingText(x: Finding, set: SetChannel[]): string {
       {pairs},
     );
   }
+  if (x.kind === 'low') {
+    return translate(
+      {id: 'imd.issue.low', message: '{ch}: low channel, normal 5.8 GHz antennas work worse there and it is close to Wi-Fi.'},
+      {ch: listNames(x.on.map(n))},
+    );
+  }
   const on = listNames(x.on.map(n));
   const close = listNames(x.close.map(n));
   const what = typeName(x.type);
