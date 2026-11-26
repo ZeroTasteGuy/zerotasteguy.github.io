@@ -131,6 +131,7 @@ export function level(d: number): Level {
 // Every product adds a penalty that grows as it gets closer to a channel (ET's curve,
 // scaled to 1 for a direct hit): ((35 − d) / 35)², times a weight for how strong that
 // kind of interference is. Two channels closer than 35 MHz add a penalty the same way.
+//   2-pilot IMD counts double: it hits as soon as any two pilots fly.
 //   score = 100 · e^(−penalty / 2n)   → 100 = nothing within 35 MHz; for 4 pilots one
 //   direct 2-pilot hit gives 88. Dividing by the number of pilots keeps 6 or 8 pilots readable.
 // The penalty only grows as channels are added, which lets the search skip sets early.
@@ -138,9 +139,9 @@ export function level(d: number): Level {
 export type Mode = 'balanced' | 'imd' | 'bleed';
 export type Weights = Record<ProductType, number> & {gap: number};
 export const WEIGHTS: Record<Mode, Weights> = {
-  balanced: {im3: 1, im3t: 1, im5: 0.3, bleed: 0.6, gap: 4},
-  imd: {im3: 1, im3t: 1, im5: 0.3, bleed: 0.2, gap: 4},
-  bleed: {im3: 1, im3t: 1, im5: 0.3, bleed: 2, gap: 4},
+  balanced: {im3: 2, im3t: 1, im5: 0.3, bleed: 0.6, gap: 4},
+  imd: {im3: 2, im3t: 1, im5: 0.3, bleed: 0.2, gap: 4},
+  bleed: {im3: 2, im3t: 1, im5: 0.3, bleed: 2, gap: 4},
 };
 
 const curve = (d: number) => (d < ET_LIMIT ? ((ET_LIMIT - d) / ET_LIMIT) ** 2 : 0);
