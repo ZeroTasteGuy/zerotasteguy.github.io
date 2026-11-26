@@ -26,5 +26,9 @@
   "item.label.Video Lap Tracking Lab": {
     "message": "Video Lap Tracking Lab",
     "description": "Navbar item with label Video Lap Tracking Lab"
+  },
+  "item.label.IMD Channel Calculator": {
+    "message": "IMD-Kanalrechner",
+    "description": "Navbar item with label IMD Channel Calculator"
   }
 }

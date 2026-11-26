@@ -77,6 +77,7 @@ const config: Config = {
           items: [
             {label: 'All tools', to: '/tools/'},
             {label: 'Video Lap Tracking Lab', href: 'pathname:///vltl/', target: '_self'},
+            {label: 'IMD Channel Calculator', to: '/tools/imd/'},
           ],
         },
         {

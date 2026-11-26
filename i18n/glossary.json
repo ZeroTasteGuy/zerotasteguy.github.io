@@ -116,6 +116,42 @@
     {
       "en": "MultiGP",
       "de": "MultiGP"
+    },
+    {
+      "en": "IMD Channel Calculator",
+      "de": "IMD-Kanalrechner"
+    },
+    {
+      "en": "Raceband",
+      "de": "Raceband"
+    },
+    {
+      "en": "Fatshark",
+      "de": "Fatshark"
+    },
+    {
+      "en": "Walksnail",
+      "de": "Walksnail"
+    },
+    {
+      "en": "VTX bleed",
+      "de": "VTX-Bleed"
+    },
+    {
+      "en": "low band",
+      "de": "Lowband"
+    },
+    {
+      "en": "RotorHazard",
+      "de": "RotorHazard"
+    },
+    {
+      "en": "FreqSetGen",
+      "de": "FreqSetGen"
+    },
+    {
+      "en": "IMDTabler",
+      "de": "IMDTabler"
     }
   ]
 }

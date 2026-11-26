@@ -18,6 +18,16 @@ function useTools() {
           'Time laps from video frame by frame, find your best 3 consecutive laps, and put live lap timers on your footage in DaVinci Resolve.',
       }),
     },
+    {
+      name: 'IMD Channel Calculator',
+      to: '/tools/imd/',
+      docs: '/docs/imd/',
+      text: translate({
+        id: 'tools.imd.text',
+        message:
+          'See where the interference (IMD) of your 5.8 GHz channels lands, and find the cleanest channels for 2 to 8 pilots. Raceband, HDZero, Walksnail and DJI.',
+      }),
+    },
   ];
 }
 

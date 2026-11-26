@@ -1,0 +1,686 @@
+/* IMD Channel Calculator. Colours: the accent marks your channels; orange and amber mark
+   interference (the same orange as VLTL's "bad", so it does not look like the accent). */
+
+.card {
+  --bad: #e8590c;
+  --bad-tint: rgba(232, 89, 12, 0.14);
+  --warn: #c98a00;
+  --warn-tint: rgba(230, 160, 0, 0.16);
+  --ok: #2b8a3e;
+  --ok-tint: rgba(43, 138, 62, 0.1);
+  padding: 1.25rem 1.5rem;
+  margin-top: 1.5rem;
+}
+[data-theme='dark'] .card {
+  --bad: #ff9a52;
+  --bad-tint: rgba(255, 154, 82, 0.15);
+  --warn: #ffcb36;
+  --warn-tint: rgba(255, 203, 54, 0.14);
+  --ok: #69db7c;
+  --ok-tint: rgba(105, 219, 124, 0.1);
+}
+@media (max-width: 600px) {
+  .card {
+    padding: 1rem 0.75rem;
+  }
+}
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+}
+.cardTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+}
+.cardHead .cardTitle {
+  margin: 0;
+}
+.muted {
+  color: var(--site-muted);
+}
+.good {
+  color: var(--ok);
+}
+
+/* ---- Pills (presets, pools) ---- */
+.presets,
+.poolButtons,
+.better {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.pill {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-item);
+  color: inherit;
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+.pill:hover {
+  background: var(--glass-item-hover);
+}
+.pillOn {
+  background: var(--accent-tint);
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+/* ---- Chart ---- */
+.chartBox {
+  margin: 0 -0.25rem;
+}
+.chartInfo {
+  min-height: 2.6em;
+  font-size: 0.9rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+  background: var(--glass-item);
+  margin-bottom: 0.4rem;
+}
+.chartScroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.chart {
+  display: block;
+  width: 100%;
+  min-width: 760px;
+  height: auto;
+  user-select: none;
+  font-family: var(--ifm-font-family-base);
+}
+.euBand {
+  fill: var(--ok-tint);
+}
+.euLabel {
+  font-size: 10px;
+  fill: var(--ok);
+  font-weight: 600;
+}
+.laneLabel,
+.rowLabel {
+  font-size: 12px;
+  fill: var(--site-muted);
+  font-weight: 600;
+}
+.laneLabel {
+  fill: var(--ifm-font-color-base);
+}
+.rowStripe {
+  fill: var(--glass-item);
+  opacity: 0.6;
+}
+.axis {
+  stroke: var(--site-muted);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+.tick {
+  font-size: 10px;
+  fill: var(--site-muted);
+}
+.guide {
+  stroke: var(--site-muted);
+  stroke-width: 1;
+  opacity: 0.22;
+}
+.guide.lv_bad {
+  stroke: var(--bad);
+  opacity: 0.55;
+}
+.guide.lv_warn {
+  stroke: var(--warn);
+  opacity: 0.5;
+}
+
+.setChan {
+  cursor: pointer;
+}
+.setRect {
+  fill: var(--ifm-color-primary);
+  stroke: var(--ifm-color-primary);
+  stroke-width: 2;
+}
+.setRect.lv_bad {
+  stroke: var(--bad);
+  stroke-width: 4;
+}
+.setRect.lv_warn {
+  stroke: var(--warn);
+  stroke-width: 4;
+}
+.setName {
+  font-size: 12px;
+  font-weight: 700;
+  fill: #fff;
+  pointer-events: none;
+}
+.setMhz {
+  font-size: 9px;
+  fill: rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+}
+
+.spike {
+  cursor: help;
+  color: var(--site-muted);
+}
+.spike line {
+  stroke: currentColor;
+  stroke-width: 2;
+}
+.spike path,
+.spike circle {
+  fill: currentColor;
+}
+.spike.lv_bad {
+  color: var(--bad);
+}
+.spike.lv_warn {
+  color: var(--warn);
+}
+.spike.lv_near,
+.spike.lv_ok {
+  opacity: 0.7;
+}
+.spike:hover {
+  opacity: 1;
+}
+.spike:hover line {
+  stroke-width: 3;
+}
+.hitArea {
+  fill: transparent;
+}
+
+.chan {
+  cursor: pointer;
+}
+.chanRect {
+  fill: var(--site-panel);
+  stroke: var(--site-line);
+  stroke-width: 1;
+}
+.chan:hover .chanRect {
+  stroke: var(--ifm-color-primary);
+}
+.chanRect.lv_bad {
+  fill: var(--bad-tint);
+  stroke: var(--bad);
+}
+.chanRect.lv_warn {
+  fill: var(--warn-tint);
+  stroke: var(--warn);
+}
+.chanChosen {
+  fill: var(--ifm-color-primary);
+  stroke: var(--ifm-color-primary);
+}
+.chanSame {
+  stroke: var(--ifm-color-primary);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 2;
+}
+.chanText {
+  font-size: 10.5px;
+  font-weight: 600;
+  fill: var(--ifm-font-color-base);
+  pointer-events: none;
+}
+.chanTextChosen {
+  fill: #fff;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  font-size: 0.8rem;
+  color: var(--site-muted);
+  margin-top: 0.4rem;
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.legendShape {
+  fill: var(--site-muted);
+}
+.legendLine {
+  stroke: var(--site-muted);
+  stroke-width: 2;
+}
+.swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+.swatch.lv_bad {
+  background: var(--bad);
+}
+.swatch.lv_warn {
+  background: var(--warn);
+}
+
+/* ---- Options under the chart ---- */
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+}
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+}
+.smallNum {
+  width: 3.6em;
+}
+.customForm {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+.customForm input {
+  width: 11em;
+}
+.options input[type='number'],
+.options input[type='text'],
+.field input,
+.field select {
+  font: inherit;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid var(--site-line);
+  background: var(--site-panel);
+  color: inherit;
+}
+
+/* ---- Verdict and numbers ---- */
+.verdict {
+  font-weight: 600;
+  padding: 0.55rem 0.8rem;
+  border-radius: 8px;
+  margin: 0.5rem 0 0.75rem;
+}
+.verdictGood {
+  background: var(--ok-tint);
+  color: var(--ok);
+}
+.verdictBad {
+  background: var(--bad-tint);
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 0.6rem;
+}
+.metric {
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  background: var(--glass-item);
+  border-left: 4px solid transparent;
+}
+.metricLabel {
+  font-size: 0.78rem;
+  color: var(--site-muted);
+  font-weight: 600;
+}
+.metricValue {
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.metricSub {
+  font-size: 0.78rem;
+  color: var(--site-muted);
+}
+.m_bad {
+  border-left-color: var(--bad);
+}
+.m_warn,
+.m_near {
+  border-left-color: var(--warn);
+}
+.m_ok {
+  border-left-color: var(--ok);
+}
+
+.details {
+  margin-top: 0.75rem;
+}
+.details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+.details[open] summary {
+  margin-bottom: 0.5rem;
+}
+.hitList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.88rem;
+}
+.hitList li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  padding: 0.12rem 0;
+}
+.dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--site-muted);
+}
+.hitList .lv_bad .dot {
+  background: var(--bad);
+}
+.hitList .lv_warn .dot {
+  background: var(--warn);
+}
+
+/* ---- Finder ---- */
+.finderControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin: 0.5rem 0 1rem;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.field select {
+  min-width: 5em;
+}
+.inputUnit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 400;
+}
+.inputUnit input {
+  width: 4.5em;
+}
+.poolHead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.poolGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.poolRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+.poolRowName {
+  flex: none;
+  width: 7.5em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--site-muted);
+  padding-top: 0.35rem;
+}
+.poolChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+.chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 3.3em;
+  padding: 0.15rem 0.35rem;
+  border-radius: 6px;
+  border: 1px solid var(--site-line);
+  background: var(--site-panel);
+  color: inherit;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.15;
+  cursor: pointer;
+}
+.chip small {
+  font-weight: 400;
+  font-size: 0.68rem;
+  color: var(--site-muted);
+}
+.chipOn {
+  background: var(--accent-tint);
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+.chipOff {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+@media (max-width: 600px) {
+  .poolRow {
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .poolRowName {
+    padding: 0;
+  }
+}
+.runRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin: 1.25rem 0 0.5rem;
+}
+.results {
+  margin-top: 0.75rem;
+}
+.tableScroll {
+  overflow-x: auto;
+}
+.resultTable {
+  display: table;
+  width: 100%;
+  font-size: 0.88rem;
+  margin: 0 0 0.5rem;
+}
+.resultTable th,
+.resultTable td {
+  padding: 0.35rem 0.5rem;
+  border: 0;
+  border-bottom: 1px solid var(--site-line);
+  text-align: left;
+  white-space: nowrap;
+}
+.resultTable tr {
+  background: transparent;
+  border: 0;
+}
+.resultTable thead th {
+  font-size: 0.78rem;
+  color: var(--site-muted);
+}
+.rowShown {
+  background: var(--accent-tint) !important;
+}
+.mhzLine {
+  font-size: 0.75rem;
+  color: var(--site-muted);
+}
+.c_bad {
+  color: var(--bad);
+  font-weight: 700;
+}
+.c_warn,
+.c_near {
+  color: var(--warn);
+  font-weight: 600;
+}
+.c_ok {
+  color: var(--ok);
+}
+.actions {
+  display: flex;
+  gap: 0.3rem;
+}
+.linkButton {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--ifm-color-primary);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ---- Row switches above the chart ---- */
+.rowToggles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.85rem;
+}
+.pill:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+
+/* ---- Score summary ---- */
+.summary {
+  margin-top: 0.9rem;
+}
+.summaryNums {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.summaryNums .metric {
+  min-width: 140px;
+}
+.metricValue small {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--site-muted);
+}
+.findings {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+}
+.findings li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+  font-weight: 500;
+}
+.findings .lv_bad .dot {
+  background: var(--bad);
+}
+.findings .lv_warn .dot {
+  background: var(--warn);
+}
+.verdict.verdictGood {
+  margin-top: 0.75rem;
+}
+.betterScore {
+  opacity: 0.7;
+  margin-left: 0.25rem;
+}
+
+/* ---- Score badge ---- */
+.badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.b_ok {
+  background: var(--ok-tint);
+  color: var(--ok);
+}
+.b_warn {
+  background: var(--warn-tint);
+  color: var(--warn);
+}
+.b_bad {
+  background: var(--bad-tint);
+  color: var(--bad);
+}
+
+/* ---- Search results ---- */
+.resultList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+}
+.result {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--site-line);
+  border-radius: 8px;
+}
+.resultShown {
+  background: var(--accent-tint);
+}
+.resultMain {
+  flex: 1;
+  min-width: 0;
+}
+.resultSet {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.6rem;
+}
+.resultIssues {
+  margin: 0.15rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  color: var(--site-muted);
+}
+.result .good {
+  font-size: 0.85rem;
+}
+@media (max-width: 600px) {
+  .result {
+    flex-wrap: wrap;
+  }
+  .result .actions {
+    width: 100%;
+    padding-left: 3.35rem;
+  }
+}
