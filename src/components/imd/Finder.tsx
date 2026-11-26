@@ -260,7 +260,7 @@ export default function Finder({
                 })}
               </ol>
               <p className={styles.muted}>
-                {translate({id: 'imd.find.scoreHelp', message: 'Score: 100 means nothing lands within 35 MHz of a channel. Every IMD product, bleed and tight gap near a channel takes points off, more the closer it lands. 2-pilot IMD counts double.'})}{' '}
+                {translate({id: 'imd.find.scoreHelp', message: 'Score: 100 means nothing lands within 35 MHz of a channel. Every IMD product, bleed and tight gap near a channel takes points off, more the closer it lands.'})}{' '}
                 <button type="button" className={styles.linkButton} onClick={() => copy(done.results.map((r, i) => `${i + 1}. ${asText(r.ids, r.mhz)}`).join('\n'), 'all')}>
                   {copied === 'all' ? '✓' : translate({id: 'imd.find.copyAll', message: 'Copy all 10'})}
                 </button>

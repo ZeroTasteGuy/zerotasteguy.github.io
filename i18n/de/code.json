@@ -772,7 +772,7 @@
     "message": "Die besten {n} aller möglichen Kombinationen aus {f} Frequenzen."
   },
   "imd.find.scoreHelp": {
-    "message": "Score: 100 heißt, im Umkreis von 35 MHz eines Kanals landet nichts. Jedes IMD-Produkt, jeder Bleed und jeder zu enge Abstand in der Nähe eines Kanals kostet Punkte, umso mehr, je näher er landet. IMD aus 2 Piloten zählt doppelt."
+    "message": "Score: 100 heißt, im Umkreis von 35 MHz eines Kanals landet nichts. Jedes IMD-Produkt, jeder Bleed und jeder zu enge Abstand in der Nähe eines Kanals kostet Punkte, umso mehr, je näher er landet."
   },
   "imd.rows.low": {
     "message": "Lowband"

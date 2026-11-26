@@ -40,7 +40,7 @@ Point at a line or a channel (or tap it on a phone) to see where it comes from.
 Under the chart is a **score** from 0 to 100, followed by the problems in plain words, for example "3-pilot IMD lands on R6" or "Neighbours R6/R7: if a VTX bleeds, it hits the other pilot".
 
 - 100 means nothing lands within 35 MHz of any of your channels.
-- Every product that lands near a channel takes points off, more the closer it lands. 2-pilot IMD counts double, because it hits as soon as any two pilots fly. 3-pilot IMD counts once, VTX bleed a bit over half of that, 5th order less than a third. Two channels closer than 35 MHz also take points off.
+- Every product that lands near a channel takes points off, more the closer it lands. 2-pilot and 3-pilot IMD count fully, VTX bleed about half, 5th order less than a third. Two channels closer than 35 MHz also take points off.
 - **ET rating** is the score of ET's IMDTabler, also shown in RotorHazard. It only counts 2-pilot IMD, which is why R1 R3 R6 R8 gets 100 there although its 3-pilot IMD lands right on the other channels.
 - **Small changes that make it cleaner** suggests swapping one channel, with the new score.
 
@@ -50,9 +50,9 @@ Pick the number of pilots, what your video transmitters are like, and the allowe
 
 *Your video transmitters* changes how much VTX bleed counts:
 
-- *Mixed or not sure*: bleed counts about half as much as 3-pilot IMD.
+- *Mixed or not sure*: bleed counts about half as much as IMD.
 - *All clean*: bleed hardly counts, so neighbouring channels are fine.
-- *Some bleed into the next channel*: bleed counts as much as 2-pilot IMD, so sets keep a free channel between pilots.
+- *Some bleed into the next channel*: bleed counts double, so sets keep a free channel between pilots.
 
 Under *More options* you can limit the search to EU-legal channels and set the minimum gap between channels (30 MHz by default).
 
