@@ -572,5 +572,263 @@
   },
   "about.highlights.event": {
     "message": "Rennen"
+  },
+  "imd.title": {
+    "message": "IMD-Kanalrechner"
+  },
+  "imd.description": {
+    "message": "Sieh, wo die IMD deiner 5,8-GHz-FPV-Kanäle landet, und finde die saubersten Kanäle für 2 bis 8 Piloten. Raceband, HDZero, Walksnail und DJI."
+  },
+  "tools.imd.text": {
+    "message": "Sieh, wo die Störungen (IMD) deiner 5,8-GHz-Kanäle landen, und finde die saubersten Kanäle für 2 bis 8 Piloten. Raceband, HDZero, Walksnail und DJI."
+  },
+  "imd.chart.hint": {
+    "message": "Klick in einer beliebigen Zeile auf Kanäle, um sie hinzuzufügen oder zu entfernen. Zeig auf eine Linie, um zu sehen, woher sie kommt."
+  },
+  "imd.chart.clear": {
+    "message": "Im Umkreis von 35 MHz landet nichts."
+  },
+  "imd.chart.closest": {
+    "message": "Am nächsten:"
+  },
+  "imd.chart.aria": {
+    "message": "Frequenzdiagramm der gewählten Kanäle und ihrer IMD-Produkte"
+  },
+  "imd.chart.yourSet": {
+    "message": "Deine Kanäle"
+  },
+  "imd.chart.imd": {
+    "message": "IMD / Bleed"
+  },
+  "imd.legend.im3": {
+    "message": "IMD aus 2 Piloten (2·A − B)"
+  },
+  "imd.legend.im3t": {
+    "message": "IMD aus 3 Piloten (A + B − C)"
+  },
+  "imd.legend.im5": {
+    "message": "5. Ordnung (3·A − 2·B, schwächer)"
+  },
+  "imd.legend.bleed": {
+    "message": "VTX-Bleed"
+  },
+  "imd.legend.bad": {
+    "message": "landet auf einem Kanal (unter 10 MHz)"
+  },
+  "imd.legend.warn": {
+    "message": "knapp daneben (10–20 MHz)"
+  },
+  "imd.legend.outside": {
+    "message": "{n} nahe Produkte liegen außerhalb der Ansicht (Lowband einblenden)"
+  },
+  "imd.find.pilots": {
+    "message": "Piloten"
+  },
+  "imd.find.allowed": {
+    "message": "Erlaubte Kanäle"
+  },
+  "imd.find.eu": {
+    "message": "Nur EU (5725–5875)"
+  },
+  "imd.find.clear": {
+    "message": "Leeren"
+  },
+  "imd.find.single": {
+    "message": "Einzelne Kanäle wählen"
+  },
+  "imd.find.more": {
+    "message": "Weitere Optionen"
+  },
+  "imd.find.minSep": {
+    "message": "Mindestabstand der Kanäle"
+  },
+  "imd.find.priority": {
+    "message": "Sortieren nach"
+  },
+  "imd.find.pri.imd": {
+    "message": "Wenigste IMD zuerst"
+  },
+  "imd.find.pri.bleed": {
+    "message": "Sicher vor VTX-Bleed zuerst"
+  },
+  "imd.find.pri.et": {
+    "message": "ET-Bewertung (wie FreqSetGen)"
+  },
+  "imd.find.stop": {
+    "message": "Stopp"
+  },
+  "imd.find.run": {
+    "message": "Saubersten Kanäle finden"
+  },
+  "imd.find.running": {
+    "message": "Prüfe… bisher {n} Kombinationen"
+  },
+  "imd.find.tooFew": {
+    "message": "Erlaube mindestens {n} verschiedene Frequenzen."
+  },
+  "imd.find.count": {
+    "message": "{n} verschiedene Frequenzen erlaubt"
+  },
+  "imd.find.doneAll": {
+    "message": "Alle Kombinationen in {s} s geprüft."
+  },
+  "imd.find.doneTime": {
+    "message": "Nach {s} s abgebrochen: Das sind die besten bisher gefundenen Kombinationen. Erlaube weniger Kanäle für eine vollständige Suche."
+  },
+  "imd.find.noResult": {
+    "message": "Keine Kombination passt. Verringere den Mindestabstand oder erlaube mehr Kanäle."
+  },
+  "imd.find.col.set": {
+    "message": "Kanäle"
+  },
+  "imd.find.col.etHelp": {
+    "message": "ET-Bewertung, 100 = am besten"
+  },
+  "imd.find.col.gap": {
+    "message": "Abstand"
+  },
+  "imd.find.col.im3": {
+    "message": "2 Piloten"
+  },
+  "imd.find.col.im3t": {
+    "message": "3 Piloten"
+  },
+  "imd.find.col.im5": {
+    "message": "5."
+  },
+  "imd.find.col.bleed": {
+    "message": "Bleed"
+  },
+  "imd.find.show": {
+    "message": "Anzeigen"
+  },
+  "imd.find.copy": {
+    "message": "Kopieren"
+  },
+  "imd.find.cols": {
+    "message": "Die Zahlen sind der Abstand in MHz vom nächsten Produkt zu einem Kanal: Größer ist besser."
+  },
+  "imd.find.copyAll": {
+    "message": "Alle 10 kopieren"
+  },
+  "imd.verdict.good": {
+    "message": "Sauber: Keine IMD landet auf einem deiner Kanäle."
+  },
+  "imd.verdict.close": {
+    "message": "{a} und {b} liegen nur {d} MHz auseinander."
+  },
+  "imd.verdict.hits": {
+    "message": "Störungen landen auf {n} deiner Kanäle, z. B. {example}."
+  },
+  "imd.intro": {
+    "message": "Wenn mehrere Piloten gleichzeitig fliegen, mischen sich die Signale ihrer Videosender und erzeugen Störungen (IMD) auf anderen Frequenzen. Wähl deine Kanäle und sieh, wo die Störungen landen, oder lass dir die saubersten Kanäle suchen."
+  },
+  "imd.introDocs": {
+    "message": "So funktioniert's"
+  },
+  "imd.chart.title": {
+    "message": "Deine Kanäle"
+  },
+  "imd.clear": {
+    "message": "Leeren"
+  },
+  "imd.opt.moreBands": {
+    "message": "Bänder E, B, A und Lowband zeigen"
+  },
+  "imd.opt.bleed": {
+    "message": "VTX-Bleed zeigen bei ±"
+  },
+  "imd.opt.bleedMhz": {
+    "message": "Bleed-Abstand in MHz"
+  },
+  "imd.opt.customPh": {
+    "message": "Andere MHz, z. B. 5790"
+  },
+  "imd.opt.custom": {
+    "message": "Frequenz in MHz hinzufügen"
+  },
+  "imd.opt.add": {
+    "message": "Hinzufügen"
+  },
+  "imd.share": {
+    "message": "Link kopieren"
+  },
+  "imd.hits.title": {
+    "message": "Alles, was in der Nähe deiner Kanäle landet"
+  },
+  "imd.better.title": {
+    "message": "Kleine Änderungen, die es sauberer machen"
+  },
+  "imd.find.title": {
+    "message": "Saubersten Kanäle finden"
+  },
+  "imd.find.intro": {
+    "message": "Wähl, wie viele Piloten gleichzeitig fliegen und welche Kanäle ihr nutzen dürft. Klick bei einem Ergebnis auf Anzeigen, um es im Diagramm zu sehen."
+  },
+  "imd.score.empty": {
+    "message": "Wähl mindestens zwei Kanäle, um ihre Störungen zu sehen."
+  },
+  "imd.score.none": {
+    "message": "keine"
+  },
+  "imd.score.et": {
+    "message": "IMD-Bewertung (ET)"
+  },
+  "imd.score.etSub": {
+    "message": "100 = keine 2-Piloten-IMD im Umkreis von 35 MHz"
+  },
+  "imd.score.etHelp": {
+    "message": "Dieselbe Zahl wie in ETs IMDTabler und in RotorHazard. Zählt nur Produkte aus 2 Piloten."
+  },
+  "imd.score.sep": {
+    "message": "Engster Kanalabstand"
+  },
+  "imd.score.sepHelp": {
+    "message": "Kleinster Abstand zwischen zwei deiner Kanäle. Unter etwa 30 MHz stören sich die Piloten direkt."
+  },
+  "imd.score.im3Help": {
+    "message": "Nächstes Produkt 2·A − B zu einem anderen deiner Kanäle."
+  },
+  "imd.score.im3tHelp": {
+    "message": "Nächstes Produkt A + B − C zu einem vierten Kanal. Braucht drei Piloten in der Luft und ist oft das stärkste."
+  },
+  "imd.score.im5Help": {
+    "message": "Nächstes Produkt 3·A − 2·B. Viel schwächer als 3. Ordnung."
+  },
+  "imd.score.bleedHelp": {
+    "message": "Wo die zusätzliche Leistung eines unsauberen VTX landet: bei seinem Kanal ± dem Bleed-Abstand."
+  },
+  "imd.hits.none": {
+    "message": "Im Umkreis von 20 MHz deiner Kanäle landet nichts."
+  },
+  "imd.better.swap": {
+    "message": "{a} gegen {b} tauschen"
+  },
+  "imd.better.none": {
+    "message": "Kein einzelner Kanaltausch macht diese Kombination sauberer."
+  },
+  "imd.formula.bleed": {
+    "message": "Bleed von {ch} ({sign}{offset})"
+  },
+  "imd.type.im3": {
+    "message": "IMD aus 2 Piloten"
+  },
+  "imd.type.im3t": {
+    "message": "IMD aus 3 Piloten"
+  },
+  "imd.type.im5": {
+    "message": "IMD 5. Ordnung"
+  },
+  "imd.type.bleed": {
+    "message": "VTX-Bleed"
+  },
+  "imd.desc.away": {
+    "message": "{d} MHz entfernt"
+  },
+  "imd.desc.on": {
+    "message": "genau auf {ch}"
+  },
+  "imd.desc.from": {
+    "message": "{d} MHz von {ch}"
   }
 }
