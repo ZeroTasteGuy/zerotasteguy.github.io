@@ -1,4 +1,4 @@
-import type {CSSProperties, ReactNode} from 'react';
+import type {ReactNode} from 'react';
 import {translate} from '@docusaurus/Translate';
 import {fullName, SYSTEMS, channelById, type SetChannel} from './channels';
 import {findings, level, noiseOf, penalty, scoreOf, WEIGHTS, PARTS, type Analysis, type Noise, type Part, type Product} from './engine';
@@ -173,7 +173,7 @@ export function NoiseBars({set, noise, big = false}: {set: SetChannel[]; noise: 
               ))}
               {total > scale && <b className={styles.barOver}>+</b>}
             </div>
-            <span className={styles.barName} style={bandStyle(set[i]?.system)}>
+            <span className={styles.barName}>
               {set[i]?.name}
             </span>
           </div>
@@ -194,6 +194,3 @@ export function BarsLegend(): ReactNode {
     </div>
   );
 }
-
-// Text and fills in the colour of a channel's band (like MRD-RC's chart).
-export const bandStyle = (system?: string) => ({'--band': `var(--band-${system ?? 'custom'})`}) as CSSProperties;

@@ -3,7 +3,6 @@ import {translate} from '@docusaurus/Translate';
 import {SYSTEMS, EU_MIN, EU_MAX, WIDE, fullName, type SetChannel} from './channels';
 import {level, type Analysis, type Product} from './engine';
 import {describeProduct, fmt} from './text';
-import {bandStyle} from './Scores';
 import styles from './styles.module.css';
 
 // The frequency chart: your channels on top, the IMD products below them, then a row per
@@ -163,7 +162,7 @@ export default function Chart({
             const w = Math.max(c.width * pxPerMhz, 6);
             const worst = worstOnSet[i];
             return (
-              <g key={`s${c.id}-${i}`} className={styles.setChan} style={bandStyle(c.system)} onClick={() => onToggle(c.id)}>
+              <g key={`s${c.id}-${i}`} className={styles.setChan} onClick={() => onToggle(c.id)}>
                 <rect
                   x={x(c.mhz) - w / 2}
                   y={TOP + 10}
@@ -222,10 +221,9 @@ export default function Chart({
             const y = rowY[r];
             const rowH = ROW_H + (nLanes - 1) * (ROW_H - 6);
             return (
-              <g key={s.id} style={bandStyle(s.id)}>
+              <g key={s.id}>
                 {r % 2 === 0 && <rect x={0} y={y} width={W} height={rowH} className={styles.rowStripe} />}
-                <rect x={2} y={y + rowH / 2 - 5} width={4} height={10} rx={2} className={styles.rowSwatch} />
-                <text x={10} y={y + rowH / 2 + 4} className={styles.rowLabel}>
+                <text x={8} y={y + rowH / 2 + 4} className={styles.rowLabel}>
                   {s.name}
                 </text>
                 {lanes.map(({c, lane}) => {

@@ -3,7 +3,7 @@ import {translate} from '@docusaurus/Translate';
 import {SYSTEMS, POOLS, channelById, fullName, inEU} from './channels';
 import {analyze, findings, noiseOf, WEIGHTS, type Mode, type SearchDone, type SearchInput} from './engine';
 import {findingText, fmt} from './text';
-import {BarsLegend, bandStyle, NoiseBars, ScoreBadge} from './Scores';
+import {BarsLegend, NoiseBars, ScoreBadge} from './Scores';
 import styles from './styles.module.css';
 
 // "Find the cleanest channels": pick the number of pilots and the allowed channels,
@@ -23,8 +23,8 @@ export default function Finder({
   onBest?: (best: {pilots: number; score: number} | null) => void;
 }): ReactNode {
   const [pilots, setPilots] = useState(4);
-  const [allowed, setAllowed] = useState<Set<string>>(() => new Set(POOLS.find(p => p.id === 'rf')!.ids));
-  const [pool, setPool] = useState<string | null>('rf');
+  const [allowed, setAllowed] = useState<Set<string>>(() => new Set(POOLS.find(p => p.id === 'hz')!.ids));
+  const [pool, setPool] = useState<string | null>('hz');
   const [euOnly, setEuOnly] = useState(false);
   const [minSep, setMinSep] = useState(30);
   const [mode, setMode] = useState<Mode>('balanced');
@@ -167,7 +167,7 @@ export default function Finder({
         <summary>{translate({id: 'imd.find.single', message: 'Pick single channels'})}</summary>
       <div className={styles.poolGrid}>
         {ROWS.map(s => (
-          <div key={s.id} className={styles.poolRow} style={bandStyle(s.id)}>
+          <div key={s.id} className={styles.poolRow}>
             <span className={styles.poolRowName}>{s.name}</span>
             <div className={styles.poolChips}>
               {s.channels.map(c => {
@@ -250,13 +250,7 @@ export default function Finder({
                       <ScoreBadge score={r.score} />
                       <div className={styles.resultMain}>
                         <div className={styles.resultSet}>
-                          <strong>
-                            {r.ids.map((id, k) => (
-                              <span key={id} className={styles.bandText} style={bandStyle(set[k].system)}>
-                                {name(id)}
-                              </span>
-                            ))}
-                          </strong>
+                          <strong>{r.ids.map(name).join(' ')}</strong>
                           <span className={styles.mhzLine}>{r.mhz.map(fmt).join(' ')} MHz</span>
                         </div>
                         <NoiseBars set={set} noise={noise} />

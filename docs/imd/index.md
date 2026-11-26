@@ -30,7 +30,7 @@ There is no separate "4-pilot" or "6-pilot" IMD. The strong kinds always mix two
 
 ## Reading the chart
 
-- **Your channels** are the blocks at the top. Each channel system has its own colour (Raceband blue, Fatshark violet, low band purple, HDZero teal, and so on), the same in the rows, the blocks and the results. Click a block, or a channel in any row, to remove or add it.
+- **Your channels** are the red blocks at the top. Click a block, or a channel in any row, to remove or add it.
 - **Interference** shows each product as a line: triangle for 2-pilot, diamond for 3-pilot, dot for 5th order (only drawn when it lands within 20 MHz of one of your channels, as there are hundreds of them with many pilots).
 - The lines run down through the rows of Raceband, Fatshark and HDZero, so you see which channel each one hits. **Also show** adds rows for the low band, bands E, B and A, Walksnail and DJI, the VTX bleed lines and the EU range (5725 to 5875 MHz).
 - **Orange** means it lands on a channel (under 10 MHz away), **amber** means close (10 to 20 MHz).
@@ -55,7 +55,7 @@ The score assumes all pilots are in the air at the same time. 100 means no noise
 
 ## Finding channels
 
-Pick the number of pilots, what your video transmitters are like, and the allowed channels (one click for Raceband + F2 + F4, HDZero with the low band, Raceband, Fatshark, all analog, Walksnail or DJI). The list updates right away with the 10 best sets, each with its score, the bars per channel and what to watch out for. **Show** puts a set into the chart. Above the list is the best possible score for that number of pilots, and the chart's score panel shows it too when your set has the same number of pilots.
+Pick the number of pilots, what your video transmitters are like, and the allowed channels (one click for HDZero (Raceband, F2 and F4), HDZero + low band, Raceband, Fatshark, all analog, Walksnail, DJI V1 / Vista or DJI O4). The list updates right away with the 10 best sets, each with its score, the bars per channel and what to watch out for. **Show** puts a set into the chart. Above the list is the best possible score for that number of pilots, and the chart's score panel shows it too when your set has the same number of pilots.
 
 Sets that are mirror images or shifted copies of each other (R1 R3 R6 R7 and R2 R3 R6 R8) and score exactly the same are shown as one result, with the others under *Works exactly the same*.
 
