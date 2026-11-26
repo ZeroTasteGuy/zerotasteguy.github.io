@@ -3,3 +3,4 @@ Allow: /
 Disallow: /vltl/test/
 
 Sitemap: https://maxd.ax/sitemap.xml
+Sitemap: https://maxd.ax/de/sitemap.xml
