@@ -22,6 +22,17 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
 
+  // Visitor stats: GoatCounter, cookie-free, no consent banner needed.
+  // Dashboard: https://maxdax.goatcounter.com
+  scripts: [
+    {
+      src: 'https://gc.zgo.at/count.js',
+      async: true,
+      'data-goatcounter': 'https://maxdax.goatcounter.com/count',
+    },
+  ],
+  clientModules: ['./src/goatcounter.ts'],
+
   // Shown at the bottom of tools so you can tell which version is live.
   customFields: {
     buildTime: new Date().toISOString(),
@@ -57,6 +68,8 @@ const config: Config = {
           // (The VLTL test build stays out; see robots.txt.)
           createSitemapItems: async ({defaultCreateSitemapItems, ...params}) => {
             const items = await defaultCreateSitemapItems(params);
+            // Each language gets its own sitemap (/sitemap.xml, /de/sitemap.xml); VLTL only goes in the English one.
+            if (params.siteConfig.baseUrl !== '/') return items;
             return [...items, {url: 'https://maxd.ax/vltl/', changefreq: 'weekly', priority: 0.5}];
           },
         },
