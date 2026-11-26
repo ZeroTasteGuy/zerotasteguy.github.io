@@ -8,6 +8,13 @@
   --warn-tint: rgba(230, 160, 0, 0.16);
   --ok: #2b8a3e;
   --ok-tint: rgba(43, 138, 62, 0.1);
+  /* Parts of the noise bars */
+  --part-im3: #e8590c;
+  --part-im3t: #c92a2a;
+  --part-im5: #e0a800;
+  --part-bleed: #4c6ef5;
+  --part-gap: #868e96;
+  --part-edge: #9c36b5;
   padding: 1.25rem 1.5rem;
   margin-top: 1.5rem;
 }
@@ -18,6 +25,12 @@
   --warn-tint: rgba(255, 203, 54, 0.14);
   --ok: #69db7c;
   --ok-tint: rgba(105, 219, 124, 0.1);
+  --part-im3: #ff922b;
+  --part-im3t: #ff6b6b;
+  --part-im5: #ffd43b;
+  --part-bleed: #748ffc;
+  --part-gap: #adb5bd;
+  --part-edge: #da77f2;
 }
 @media (max-width: 600px) {
   .card {
@@ -683,4 +696,103 @@
     width: 100%;
     padding-left: 3.35rem;
   }
+}
+
+/* ---- Noise bars (one per channel) ---- */
+.bars {
+  display: flex;
+  gap: 0.3rem;
+  margin: 0.35rem 0 0.15rem;
+}
+.barCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 2.1rem;
+  cursor: help;
+}
+.barTrack {
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  width: 0.9rem;
+  height: 1.6rem;
+  border-radius: 3px;
+  background: var(--site-line);
+  overflow: hidden;
+}
+.barsBig .barTrack {
+  width: 1.4rem;
+  height: 2.8rem;
+}
+.barsBig .barCol {
+  width: 2.8rem;
+}
+.barTrack i {
+  display: block;
+  flex: none;
+}
+.barOver {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.7rem;
+  line-height: 1;
+  color: #fff;
+}
+.barName {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--site-muted);
+  white-space: nowrap;
+}
+.part_im3 {
+  background: var(--part-im3);
+}
+.part_im3t {
+  background: var(--part-im3t);
+}
+.part_im5 {
+  background: var(--part-im5);
+}
+.part_bleed {
+  background: var(--part-bleed);
+}
+.part_gap {
+  background: var(--part-gap);
+}
+.part_edge {
+  background: var(--part-edge);
+}
+.barsLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.9rem;
+  margin: 0.25rem 0 0.5rem;
+  font-size: 0.78rem;
+  color: var(--site-muted);
+}
+.barsLegend i {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 2px;
+  vertical-align: -1px;
+}
+.twins {
+  font-size: 0.82rem;
+  color: var(--site-muted);
+}
+.bestLine {
+  font-size: 0.88rem;
+  margin-bottom: 0.4rem;
+}
+
+.buildLine {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--site-muted);
 }

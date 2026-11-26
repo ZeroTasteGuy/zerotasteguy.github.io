@@ -22,6 +22,12 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
 
+  // Shown at the bottom of tools so you can tell which version is live.
+  customFields: {
+    buildTime: new Date().toISOString(),
+    buildCommit: (process.env.GITHUB_SHA ?? '').slice(0, 7),
+  },
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'de'],

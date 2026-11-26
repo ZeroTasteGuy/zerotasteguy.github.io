@@ -1,23 +1,34 @@
 import type {ReactNode} from 'react';
 import {translate} from '@docusaurus/Translate';
 import {fullName, SYSTEMS, channelById, type SetChannel} from './channels';
-import {findings, level, penalty, scoreOf, WEIGHTS, type Analysis, type Product} from './engine';
-import {describeProduct, findingText, fmt} from './text';
+import {findings, level, noiseOf, penalty, scoreOf, WEIGHTS, PARTS, type Analysis, type Noise, type Part, type Product} from './engine';
+import {describeProduct, findingText, fmt, typeName} from './text';
 import styles from './styles.module.css';
 
-const scoreLevel = (s: number) => (s >= 90 ? 'ok' : s >= 70 ? 'warn' : 'bad');
+export const scoreLevel = (s: number) => (s >= 85 ? 'ok' : s >= 60 ? 'warn' : 'bad');
 
 export function ScoreBadge({score}: {score: number}): ReactNode {
   return <span className={`${styles.badge} ${styles[`b_${scoreLevel(score)}`]}`}>{score}</span>;
 }
 
 // Score, ET rating, closest gap, and the problems in plain words.
-export function ScorePanel({set, analysis, bleedOffset}: {set: SetChannel[]; analysis: Analysis; bleedOffset: number}): ReactNode {
+export function ScorePanel({
+  set,
+  analysis,
+  bleedOffset,
+  best,
+}: {
+  set: SetChannel[];
+  analysis: Analysis;
+  bleedOffset: number;
+  best?: {pilots: number; score: number} | null;
+}): ReactNode {
   if (set.length < 2) {
     return <p className={styles.muted}>{translate({id: 'imd.score.empty', message: 'Pick at least two channels to see their interference.'})}</p>;
   }
   const f = set.map(c => c.mhz);
-  const score = scoreOf(penalty(f, bleedOffset, WEIGHTS.balanced), f.length);
+  const noise = noiseOf(f, bleedOffset, WEIGHTS.balanced);
+  const score = scoreOf(noise.pen, f.length);
   const list = findings(f, analysis);
   return (
     <div className={styles.summary}>
@@ -41,6 +52,17 @@ export function ScorePanel({set, analysis, bleedOffset}: {set: SetChannel[]; ana
           </div>
         </div>
       </div>
+      <NoiseBars set={set} noise={noise} big />
+      {best && best.pilots === set.length && (
+        <p className={styles.muted}>
+          {best.score >= score
+            ? translate(
+                {id: 'imd.score.best', message: 'Best possible with {n} pilots in the channels allowed below: {best}.'},
+                {n: best.pilots, best: best.score},
+              )
+            : translate({id: 'imd.score.beatsBest', message: 'Better than every set from the channels allowed below.'})}
+        </p>
+      )}
       {list.length === 0 ? (
         <p className={`${styles.verdict} ${styles.verdictGood}`}>
           {translate({id: 'imd.verdict.good', message: 'Clean: nothing lands on any of your channels.'})}
@@ -120,6 +142,54 @@ export function Improvements({set, bleedOffset, onApply}: {set: SetChannel[]; bl
         <button key={o.label} type="button" className="button button--sm button--secondary" onClick={() => onApply(o.ids)}>
           {o.label} <span className={styles.betterScore}>→ {scoreOf(o.p, set.length)}</span>
         </button>
+      ))}
+    </div>
+  );
+}
+
+// What each part of the noise is called, for the bars and their legend.
+export function partName(p: Part): string {
+  if (p === 'gap') return translate({id: 'imd.part.gap', message: 'Channel too close'});
+  if (p === 'edge') return translate({id: 'imd.part.edge', message: 'Antenna range'});
+  return typeName(p);
+}
+
+// One small stacked bar per channel: how much noise lands on it, split by kind. A full
+// bar (scale) is noise of 2, about two direct hits; more is cut off with a mark.
+export function NoiseBars({set, noise, big = false}: {set: SetChannel[]; noise: Noise; big?: boolean}): ReactNode {
+  const scale = 2;
+  const unit = translate({id: 'imd.bars.unit', message: '1 = one direct hit'});
+  return (
+    <div className={`${styles.bars} ${big ? styles.barsBig : ''}`} role="img" aria-label={translate({id: 'imd.bars.aria', message: 'Interference on each channel'})}>
+      {noise.channels.map((c, i) => {
+        const total = c.noise + c.parts.edge;
+        const parts = PARTS.filter(k => c.parts[k] > 0.005);
+        const tip = `${set[i] ? fullName(set[i]) : ''}: ${total.toFixed(2)} (${unit})${parts.length ? '\n' : ''}${parts.map(k => `${partName(k)} ${c.parts[k].toFixed(2)}`).join('\n')}`;
+        return (
+          <div key={i} className={styles.barCol} title={tip}>
+            <div className={styles.barTrack}>
+              {parts.map(k => (
+                <i key={k} className={styles[`part_${k}`]} style={{height: `${Math.min(100, (c.parts[k] / scale) * 100)}%`}} />
+              ))}
+              {total > scale && <b className={styles.barOver}>+</b>}
+            </div>
+            <span className={styles.barName}>
+              {set[i]?.name}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export function BarsLegend(): ReactNode {
+  return (
+    <div className={styles.barsLegend}>
+      {PARTS.map(k => (
+        <span key={k}>
+          <i className={styles[`part_${k}`]} /> {partName(k)}
+        </span>
       ))}
     </div>
   );

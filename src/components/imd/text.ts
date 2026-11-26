@@ -8,11 +8,16 @@ export function formula(p: Product, set: SetChannel[]): string {
   const n = (i: number) => fullName(set[i]);
   switch (p.type) {
     case 'im3':
-      return `2·${n(p.from[0])} − ${n(p.from[1])}`;
     case 'im3t':
-      return `${n(p.from[0])} + ${n(p.from[1])} − ${n(p.from[2])}`;
     case 'im5':
-      return `3·${n(p.from[0])} − 2·${n(p.from[1])}`;
+      // "2·R1 + R3 − R5 − R8"
+      return p.from
+        .map((ch, i) => {
+          const c = p.coef![i];
+          const term = `${Math.abs(c) === 1 ? '' : `${Math.abs(c)}·`}${n(ch)}`;
+          return i === 0 ? term : `${c < 0 ? '−' : '+'} ${term}`;
+        })
+        .join(' ');
     case 'bleed':
       return translate(
         {id: 'imd.formula.bleed', message: 'bleed of {ch} ({sign}{offset})'},

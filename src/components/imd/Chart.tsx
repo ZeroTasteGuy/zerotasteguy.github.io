@@ -67,17 +67,20 @@ export default function Chart({
   const H = yy + 20;
   const [hover, setHover] = useState<Hover>(null);
 
+  // 5th order products are weak and many (hundreds with 8 pilots), so only the ones that
+  // land near one of your channels are drawn.
   const products = useMemo(
-    () => analysis.products.filter(p => (showBleed || p.type !== 'bleed') && inRange(p.mhz)),
+    () => analysis.products.filter(p => (showBleed || p.type !== 'bleed') && (p.type !== 'im5' || p.dist < 20) && inRange(p.mhz)),
     [analysis, showBleed, lo],
   );
-  const outside = analysis.products.filter(p => (showBleed || p.type !== 'bleed') && !inRange(p.mhz) && p.dist < 35).length;
+  const outside = analysis.products.filter(p => (showBleed || p.type !== 'bleed') && p.type !== 'im5' && !inRange(p.mhz) && p.dist < 35).length;
 
   // How close the nearest product comes to a frequency (for channels in the system rows).
   const nearest = (mhz: number) => {
     let best: Product | null = null;
     let d = Infinity;
     for (const p of products) {
+      if (p.type === 'im5') continue; // weak, so it does not colour channels
       const dd = Math.abs(p.mhz - mhz);
       if (dd < d) {
         d = dd;
@@ -89,7 +92,7 @@ export default function Chart({
   // Worst product landing on each of your channels.
   const worstOnSet = set.map((_, i) => {
     let best: Product | null = null;
-    for (const p of products) if (p.hit === i && (!best || p.dist < best.dist)) best = p;
+    for (const p of products) if (p.type !== 'im5' && p.hit === i && (!best || p.dist < best.dist)) best = p;
     return best;
   });
 
@@ -149,7 +152,7 @@ export default function Chart({
               x2={x(p.mhz)}
               y1={TOP + SET_H}
               y2={H - 6}
-              className={`${styles.guide} ${p.dist < 20 ? levelClass(p.dist) : ''}`}
+              className={`${styles.guide} ${p.dist < 20 && p.type !== 'im5' ? levelClass(p.dist) : ''}`}
               strokeDasharray={p.type === 'bleed' ? '3 3' : undefined}
             />
           ))}
@@ -184,7 +187,7 @@ export default function Chart({
             const base = TOP + SET_H + IMD_H - 4;
             const h = p.type === 'im5' || p.type === 'bleed' ? IMD_H * 0.45 : IMD_H * 0.85;
             const px = x(p.mhz);
-            const cls = `${styles.spike} ${styles[`t_${p.type}`]} ${levelClass(p.dist)}`;
+            const cls = `${styles.spike} ${styles[`t_${p.type}`]} ${p.type === 'im5' ? styles.lv_near : levelClass(p.dist)}`;
             const top = base - h;
             return (
               <g
@@ -258,7 +261,7 @@ export default function Chart({
       <div className={styles.legend}>
         <span><svg width="14" height="12"><path d="M2,11 L7,2 L12,11 Z" className={styles.legendShape} /></svg> {translate({id: 'imd.legend.im3', message: '2-pilot IMD (2·A − B)'})}</span>
         <span><svg width="14" height="14"><path d="M7,1 L13,7 L7,13 L1,7 Z" className={styles.legendShape} /></svg> {translate({id: 'imd.legend.im3t', message: '3-pilot IMD (A + B − C)'})}</span>
-        <span><svg width="12" height="12"><circle cx="6" cy="6" r="4" className={styles.legendShape} /></svg> {translate({id: 'imd.legend.im5', message: '5th order (3·A − 2·B, weaker)'})}</span>
+        <span><svg width="12" height="12"><circle cx="6" cy="6" r="4" className={styles.legendShape} /></svg> {translate({id: 'imd.legend.im5', message: '5th order (like 3·A − 2·B, weaker; shown when close)'})}</span>
         {showBleed && <span><svg width="16" height="10"><line x1="0" x2="16" y1="5" y2="5" strokeDasharray="4 3" className={styles.legendLine} /></svg> {translate({id: 'imd.legend.bleed', message: 'VTX bleed'})}</span>}
         <span><i className={`${styles.swatch} ${styles.lv_bad}`} /> {translate({id: 'imd.legend.bad', message: 'lands on a channel (under 10 MHz)'})}</span>
         <span><i className={`${styles.swatch} ${styles.lv_warn}`} /> {translate({id: 'imd.legend.warn', message: 'close (10–20 MHz)'})}</span>

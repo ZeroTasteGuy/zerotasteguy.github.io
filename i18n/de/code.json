@@ -607,7 +607,7 @@
     "message": "IMD aus 3 Piloten (A + B − C)"
   },
   "imd.legend.im5": {
-    "message": "5. Ordnung (3·A − 2·B, schwächer)"
+    "message": "5. Ordnung (z. B. 3·A − 2·B, schwächer; nur wenn nah)"
   },
   "imd.legend.bleed": {
     "message": "VTX-Bleed"
@@ -771,9 +771,6 @@
   "imd.find.doneAll2": {
     "message": "Die besten {n} aller möglichen Kombinationen aus {f} Frequenzen."
   },
-  "imd.find.scoreHelp": {
-    "message": "Score: 100 heißt, im Umkreis von 35 MHz eines Kanals landet nichts. Jedes IMD-Produkt, jeder Bleed und jeder zu enge Abstand in der Nähe eines Kanals kostet Punkte, umso mehr, je näher er landet."
-  },
   "imd.rows.low": {
     "message": "Lowband"
   },
@@ -821,5 +818,35 @@
   },
   "imd.issue.low": {
     "message": "{ch}: außerhalb des Bereichs gängiger 5,8-GHz-Antennen (etwa 5600–6000 MHz), das Bild wird schwächer."
+  },
+  "imd.version": {
+    "message": "Version vom {when}"
+  },
+  "imd.score.best": {
+    "message": "Bestmöglich mit {n} Piloten aus den unten erlaubten Kanälen: {best}."
+  },
+  "imd.score.beatsBest": {
+    "message": "Besser als jedes Set aus den unten erlaubten Kanälen."
+  },
+  "imd.part.gap": {
+    "message": "Kanal zu nah"
+  },
+  "imd.part.edge": {
+    "message": "Antennenbereich"
+  },
+  "imd.bars.unit": {
+    "message": "1 = ein direkter Treffer"
+  },
+  "imd.bars.aria": {
+    "message": "Störungen auf jedem Kanal"
+  },
+  "imd.find.best": {
+    "message": "Bestmöglich mit {n} Piloten: {score}. Mehr Piloten heißt immer mehr Störungen, vergleiche also Sets mit gleich vielen Piloten."
+  },
+  "imd.find.twins": {
+    "message": "Funktioniert genauso:"
+  },
+  "imd.find.scoreHelp2": {
+    "message": "Die Balken zeigen, wie viel Störung auf jedem Kanal landet (ein voller Balken sind etwa zwei direkte Treffer). Der Score zählt jeden Kanal, und ein stark getroffener Kanal kostet mehr als dieselbe Störung verteilt auf mehrere."
   }
 }
