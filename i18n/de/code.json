@@ -820,6 +820,6 @@
     "message": "genau darauf"
   },
   "imd.issue.low": {
-    "message": "{ch}: niedriger Kanal, normale 5,8-GHz-Antennen arbeiten dort schlechter, und er liegt nah am WLAN."
+    "message": "{ch}: außerhalb des Bereichs gängiger 5,8-GHz-Antennen (etwa 5600–6000 MHz), das Bild wird schwächer."
   }
 }

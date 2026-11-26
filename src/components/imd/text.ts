@@ -74,7 +74,7 @@ export function findingText(x: Finding, set: SetChannel[]): string {
   }
   if (x.kind === 'low') {
     return translate(
-      {id: 'imd.issue.low', message: '{ch}: low channel, normal 5.8 GHz antennas work worse there and it is close to Wi-Fi.'},
+      {id: 'imd.issue.low', message: '{ch}: outside the range of common 5.8 GHz antennas (about 5600–6000 MHz), so the picture gets weaker.'},
       {ch: listNames(x.on.map(n))},
     );
   }
