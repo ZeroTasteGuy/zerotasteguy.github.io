@@ -55,7 +55,7 @@ The score assumes all pilots are in the air at the same time. 100 means no noise
 
 ## Finding channels
 
-Pick the number of pilots, what your video transmitters are like, and the allowed channels (one click for HDZero (Raceband, F2 and F4), HDZero + low band, Raceband, Fatshark, all analog, Walksnail, DJI V1 / Vista or DJI O4). The list updates right away with the 10 best sets, each with its score, the bars per channel and what to watch out for. **Show** puts a set into the chart. Above the list is the best possible score for that number of pilots, and the chart's score panel shows it too when your set has the same number of pilots.
+Pick the number of pilots, what your video transmitters are like, and the allowed channels. The buttons HDZero (Raceband, F2 and F4), HDZero + low band, Raceband, Fatshark, all analog, Walksnail, DJI V1 / Vista and DJI O4 can be combined, for example HDZero + Walksnail for a mixed group, and *Pick single channels* adds or removes single channels. The list updates right away with the 10 best sets, each with its score, the bars per channel and what to watch out for. **Show** puts a set into the chart. Above the list is the best possible score for that number of pilots, and the chart's score panel shows it too when your set has the same number of pilots.
 
 Sets that are mirror images or shifted copies of each other (R1 R3 R6 R7 and R2 R3 R6 R8) and score exactly the same are shown as one result, with the others under *Works exactly the same*.
 
@@ -64,6 +64,8 @@ Sets that are mirror images or shifted copies of each other (R1 R3 R6 R7 and R2 
 - *Mixed or not sure*: bleed counts about half as much as IMD.
 - *All clean*: bleed hardly counts, so neighbouring channels are fine.
 - *Some bleed into the next channel*: bleed counts double, so sets keep a free channel between pilots.
+
+Under *Priorities for the score* a slider for each part of the score lets you try what matters to you: how much 2-pilot, 3-pilot and 5th order IMD, VTX bleed, close channels and the antenna range count, and how much more one badly hit channel costs than the same interference spread over all channels (*Same interference on every channel*; at 0 only the total counts). The chart's score uses the same priorities. *Reset* goes back to the defaults.
 
 Under *More options* you can limit the search to EU-legal channels and set the minimum gap between channels (30 MHz by default).
 

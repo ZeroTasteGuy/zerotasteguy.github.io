@@ -4,7 +4,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Heading from '@theme/Heading';
 import {translate} from '@docusaurus/Translate';
 import {PRESETS, SYSTEMS, channelById, type SetChannel} from './channels';
-import {analyze} from './engine';
+import {analyze, DEFAULT_WEIGHTS, type Weights} from './engine';
 import Chart from './Chart';
 import Finder from './Finder';
 import {HitList, Improvements, ScorePanel} from './Scores';
@@ -31,6 +31,8 @@ export default function ImdTool(): ReactNode {
   const [custom, setCustom] = useState('');
   const [copied, setCopied] = useState(false);
   const [best, setBest] = useState<{pilots: number; score: number} | null>(null);
+  // Priorities of the score, set with the sliders in the finder; the chart's score uses them too.
+  const [weights, setWeights] = useState<Weights>(DEFAULT_WEIGHTS);
 
   useEffect(() => {
     const h = readHash();
@@ -148,13 +150,13 @@ export default function ImdTool(): ReactNode {
 
         <Chart set={set} analysis={analysis} showBleed={showBleed} rows={rows} showEU={showEU} onToggle={toggle} />
 
-        <ScorePanel set={set} analysis={analysis} bleedOffset={bleedOffset} best={best} />
+        <ScorePanel set={set} analysis={analysis} bleedOffset={bleedOffset} weights={weights} best={best} />
 
         {set.length >= 2 && (
           <>
             <details className={styles.details}>
               <summary>{translate({id: 'imd.better.title', message: 'Small changes that make it cleaner'})}</summary>
-              <Improvements set={set} bleedOffset={bleedOffset} onApply={setIds} />
+              <Improvements set={set} bleedOffset={bleedOffset} weights={weights} onApply={setIds} />
             </details>
             <details className={styles.details}>
               <summary>{translate({id: 'imd.hits.title', message: 'Everything that lands near your channels'})}</summary>
@@ -211,7 +213,7 @@ export default function ImdTool(): ReactNode {
         <p className={styles.muted}>
           {translate({id: 'imd.find.intro', message: 'Choose how many pilots fly at once and which channels you may use. Click Show on a result to see it in the chart.'})}
         </p>
-        <Finder bleedOffset={bleedOffset} onShow={showSet} current={ids} onBest={setBest} />
+        <Finder bleedOffset={bleedOffset} onShow={showSet} current={ids} onBest={setBest} weights={weights} setWeights={setWeights} />
       </section>
       <BuildLine />
     </main>
