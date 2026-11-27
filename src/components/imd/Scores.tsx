@@ -1,7 +1,7 @@
 import type {ReactNode} from 'react';
 import {translate} from '@docusaurus/Translate';
 import {fullName, SYSTEMS, channelById, type SetChannel} from './channels';
-import {findings, level, noiseOf, penalty, scoreOf, WEIGHTS, PARTS, type Analysis, type Noise, type Part, type Product} from './engine';
+import {findings, level, noiseOf, penalty, scoreOf, PARTS, type Analysis, type Noise, type Part, type Product, type Weights} from './engine';
 import {describeProduct, findingText, fmt, typeName} from './text';
 import styles from './styles.module.css';
 
@@ -16,19 +16,21 @@ export function ScorePanel({
   set,
   analysis,
   bleedOffset,
+  weights,
   best,
 }: {
   set: SetChannel[];
   analysis: Analysis;
   bleedOffset: number;
+  weights: Weights;
   best?: {pilots: number; score: number} | null;
 }): ReactNode {
   if (set.length < 2) {
     return <p className={styles.muted}>{translate({id: 'imd.score.empty', message: 'Pick at least two channels to see their interference.'})}</p>;
   }
   const f = set.map(c => c.mhz);
-  const noise = noiseOf(f, bleedOffset, WEIGHTS.balanced);
-  const score = scoreOf(noise.pen, f.length);
+  const noise = noiseOf(f, bleedOffset, weights);
+  const score = scoreOf(noise.pen, f.length, weights.even);
   const list = findings(f, analysis);
   return (
     <div className={styles.summary}>
@@ -111,8 +113,8 @@ export function HitList({set, analysis}: {set: SetChannel[]; analysis: Analysis}
 
 // "Swap R8 for R7": single-channel swaps that raise the score, using channels from the
 // systems already in the set.
-export function Improvements({set, bleedOffset, onApply}: {set: SetChannel[]; bleedOffset: number; onApply: (ids: string[]) => void}): ReactNode {
-  const pen = (cs: SetChannel[]) => penalty(cs.map(c => c.mhz), bleedOffset, WEIGHTS.balanced);
+export function Improvements({set, bleedOffset, weights, onApply}: {set: SetChannel[]; bleedOffset: number; weights: Weights; onApply: (ids: string[]) => void}): ReactNode {
+  const pen = (cs: SetChannel[]) => penalty(cs.map(c => c.mhz), bleedOffset, weights);
   const current = pen(set);
   const systems = new Set(set.map(c => c.system));
   const pool = SYSTEMS.filter(s => systems.has(s.id))
@@ -140,7 +142,7 @@ export function Improvements({set, bleedOffset, onApply}: {set: SetChannel[]; bl
     <div className={styles.better}>
       {swaps.slice(0, 4).map(o => (
         <button key={o.label} type="button" className="button button--sm button--secondary" onClick={() => onApply(o.ids)}>
-          {o.label} <span className={styles.betterScore}>→ {scoreOf(o.p, set.length)}</span>
+          {o.label} <span className={styles.betterScore}>→ {scoreOf(o.p, set.length, weights.even)}</span>
         </button>
       ))}
     </div>

@@ -848,5 +848,32 @@
   },
   "imd.find.scoreHelp2": {
     "message": "Die Balken zeigen, wie viel Störung auf jedem Kanal landet (ein voller Balken sind etwa zwei direkte Treffer). Der Score zählt jeden Kanal, und ein stark getroffener Kanal kostet mehr als dieselbe Störung verteilt auf mehrere."
+  },
+  "imd.find.mode.custom": {
+    "message": "Eigene Bleed-Priorität (unten)"
+  },
+  "imd.find.prio": {
+    "message": "Prioritäten für den Score"
+  },
+  "imd.prio.even": {
+    "message": "Gleich viel Störung auf jedem Kanal"
+  },
+  "imd.prio.even.help": {
+    "message": "Höher: ein stark getroffener Kanal kostet viel mehr als dieselbe Störung verteilt auf alle. 0: nur die Summe zählt."
+  },
+  "imd.prio.bleed.help": {
+    "message": "Wird auch über „Eure Videosender“ eingestellt."
+  },
+  "imd.prio.gap.help": {
+    "message": "Kanäle mit weniger als 60 MHz Abstand."
+  },
+  "imd.prio.edge.help": {
+    "message": "Kanäle außerhalb von 5600–6000 MHz."
+  },
+  "imd.prio.note": {
+    "message": "0 = zählt nicht; 1 = ein direkter Treffer zählt 1. Scores mit geänderten Prioritäten lassen sich nicht mit den Standardwerten vergleichen."
+  },
+  "imd.prio.reset": {
+    "message": "Zurücksetzen"
   }
 }

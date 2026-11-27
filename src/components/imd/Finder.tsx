@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState, type ReactNode} from 'react';
 import {translate} from '@docusaurus/Translate';
 import {SYSTEMS, POOLS, channelById, fullName, inEU} from './channels';
-import {analyze, findings, noiseOf, WEIGHTS, type Mode, type SearchDone, type SearchInput} from './engine';
+import {analyze, findings, noiseOf, DEFAULT_WEIGHTS, MODE_BLEED, type Mode, type SearchDone, type SearchInput, type Weights} from './engine';
 import {findingText, fmt} from './text';
 import {BarsLegend, NoiseBars, ScoreBadge} from './Scores';
 import styles from './styles.module.css';
@@ -16,18 +16,23 @@ export default function Finder({
   onShow,
   current,
   onBest,
+  weights,
+  setWeights,
 }: {
   bleedOffset: number;
   onShow: (ids: string[]) => void;
   current: string[];
   onBest?: (best: {pilots: number; score: number} | null) => void;
+  weights: Weights;
+  setWeights: (w: Weights) => void;
 }): ReactNode {
   const [pilots, setPilots] = useState(4);
   const [allowed, setAllowed] = useState<Set<string>>(() => new Set(POOLS.find(p => p.id === 'hz')!.ids));
-  const [pool, setPool] = useState<string | null>('hz');
+  // Pool buttons can be combined (HDZero + Walksnail): allowed = all their channels.
+  const [pools, setPools] = useState<Set<string>>(() => new Set(['hz']));
   const [euOnly, setEuOnly] = useState(false);
   const [minSep, setMinSep] = useState(30);
-  const [mode, setMode] = useState<Mode>('balanced');
+  const mode = (Object.keys(MODE_BLEED) as Mode[]).find(m => MODE_BLEED[m] === weights.bleed) ?? 'custom';
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState<SearchDone | null>(null);
@@ -40,11 +45,19 @@ export default function Finder({
   const uniqueFreqs = new Set(usable.map(c => c.mhz)).size;
 
   const pickPool = (id: string) => {
-    setPool(id);
-    setAllowed(new Set(POOLS.find(p => p.id === id)!.ids));
+    const next = new Set(pools);
+    const ids = POOLS.find(p => p.id === id)!.ids;
+    if (next.has(id)) {
+      next.delete(id);
+      const keep = new Set([...next].flatMap(k => POOLS.find(p => p.id === k)!.ids));
+      setAllowed(prev => new Set([...prev].filter(c => !ids.includes(c) || keep.has(c))));
+    } else {
+      next.add(id);
+      setAllowed(prev => new Set([...prev, ...ids]));
+    }
+    setPools(next);
   };
   const toggle = (id: string) => {
-    setPool(null);
     setAllowed(prev => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -73,12 +86,13 @@ export default function Finder({
       pilots,
       minSep,
       bleedOffset,
-      mode,
+      weights,
       top: 10,
       timeLimitMs: 8000,
     };
     w.postMessage(input);
   };
+  const weightsKey = JSON.stringify(weights);
   // Search again whenever a setting changes (most searches take a few milliseconds).
   const poolKey = usable.map(c => c.id).join();
   useEffect(() => {
@@ -90,14 +104,14 @@ export default function Finder({
     }
     const t = setTimeout(run, 200);
     return () => clearTimeout(t);
-  }, [poolKey, pilots, minSep, mode, bleedOffset]);
+  }, [poolKey, pilots, minSep, weightsKey, bleedOffset]);
 
   // The best score tells the chart above what is possible (only for the default weights,
   // which the chart's score uses too).
   useEffect(() => {
     const top = done?.results[0];
-    onBest?.(top && done!.complete && mode === 'balanced' && !running ? {pilots: top.ids.length, score: top.score} : null);
-  }, [done, mode, running]);
+    onBest?.(top && done!.complete && !running ? {pilots: top.ids.length, score: top.score} : null);
+  }, [done, running]);
 
   const stop = () => {
     worker.current?.terminate();
@@ -132,10 +146,11 @@ export default function Finder({
         </label>
         <label className={styles.field}>
           <span>{translate({id: 'imd.find.mode', message: 'Your video transmitters'})}</span>
-          <select value={mode} onChange={e => setMode(e.target.value as Mode)}>
+          <select value={mode} onChange={e => e.target.value !== 'custom' && setWeights({...weights, bleed: MODE_BLEED[e.target.value as Mode]})}>
             <option value="balanced">{translate({id: 'imd.find.mode.balanced', message: 'Mixed or not sure'})}</option>
             <option value="imd">{translate({id: 'imd.find.mode.imd', message: 'All clean (only IMD matters)'})}</option>
             <option value="bleed">{translate({id: 'imd.find.mode.bleed', message: 'Some bleed into the next channel'})}</option>
+            {mode === 'custom' && <option value="custom">{translate({id: 'imd.find.mode.custom', message: 'Own bleed priority (below)'})}</option>}
           </select>
         </label>
       </div>
@@ -147,8 +162,10 @@ export default function Finder({
             <button
               key={p.id}
               type="button"
-              className={`${styles.pill} ${pool === p.id ? styles.pillOn : ''}`}
+              aria-pressed={pools.has(p.id)}
+              className={`${styles.pill} ${pools.has(p.id) ? styles.pillOn : ''}`}
               onClick={() => pickPool(p.id)}>
+              {pools.has(p.id) ? '✓ ' : '+ '}
               {p.label}
             </button>
           ))}
@@ -156,7 +173,7 @@ export default function Finder({
             type="button"
             className={styles.pill}
             onClick={() => {
-              setPool(null);
+              setPools(new Set());
               setAllowed(new Set());
             }}>
             {translate({id: 'imd.find.clear', message: 'Clear'})}
@@ -190,6 +207,10 @@ export default function Finder({
           </div>
         ))}
       </div>
+      </details>
+      <details className={styles.details}>
+        <summary>{translate({id: 'imd.find.prio', message: 'Priorities for the score'})}</summary>
+        <Priorities weights={weights} setWeights={setWeights} />
       </details>
       <details className={styles.details}>
         <summary>{translate({id: 'imd.find.more', message: 'More options'})}</summary>
@@ -244,7 +265,7 @@ export default function Finder({
                   const shown = r.ids.length === current.length && r.ids.every(id => current.includes(id));
                   const set = r.ids.map(id => channelById(id)!);
                   const issues = findings(r.mhz, analyze(r.mhz, bleedOffset));
-                  const noise = noiseOf(r.mhz, bleedOffset, WEIGHTS[mode]);
+                  const noise = noiseOf(r.mhz, bleedOffset, weights);
                   return (
                     <li key={r.ids.join()} className={`${styles.result} ${shown ? styles.resultShown : ''}`}>
                       <ScoreBadge score={r.score} />
@@ -300,6 +321,76 @@ export default function Finder({
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+// Sliders for every weight of the score, so people can try what matters to them. The
+// chart's score above uses the same priorities.
+function Priorities({weights, setWeights}: {weights: Weights; setWeights: (w: Weights) => void}): ReactNode {
+  const SLIDERS: {key: keyof Weights; label: string; help: string; max: number; step: number}[] = [
+    {
+      key: 'even',
+      label: translate({id: 'imd.prio.even', message: 'Same interference on every channel'}),
+      help: translate({id: 'imd.prio.even.help', message: 'Higher: one badly hit channel costs much more than the same interference spread over all. 0: only the total counts.'}),
+      max: 5,
+      step: 0.1,
+    },
+    {key: 'im3', label: translate({id: 'imd.type.im3', message: '2-pilot IMD'}), help: '2·A − B', max: 3, step: 0.1},
+    {key: 'im3t', label: translate({id: 'imd.type.im3t', message: '3-pilot IMD'}), help: 'A + B − C', max: 3, step: 0.1},
+    {key: 'im5', label: translate({id: 'imd.type.im5', message: '5th order IMD'}), help: '3·A − 2·B …', max: 1, step: 0.05},
+    {
+      key: 'bleed',
+      label: translate({id: 'imd.type.bleed', message: 'VTX bleed'}),
+      help: translate({id: 'imd.prio.bleed.help', message: 'Also set by "Your video transmitters".'}),
+      max: 3,
+      step: 0.1,
+    },
+    {
+      key: 'gap',
+      label: translate({id: 'imd.part.gap', message: 'Channel too close'}),
+      help: translate({id: 'imd.prio.gap.help', message: 'Channels less than 60 MHz apart.'}),
+      max: 6,
+      step: 0.1,
+    },
+    {
+      key: 'edge',
+      label: translate({id: 'imd.part.edge', message: 'Antenna range'}),
+      help: translate({id: 'imd.prio.edge.help', message: 'Channels outside 5600–6000 MHz.'}),
+      max: 3,
+      step: 0.1,
+    },
+  ];
+  const changed = (Object.keys(DEFAULT_WEIGHTS) as (keyof Weights)[]).some(k => weights[k] !== DEFAULT_WEIGHTS[k]);
+  return (
+    <div className={styles.prio}>
+      {SLIDERS.map(sl => (
+        <label key={sl.key} className={styles.prioRow}>
+          <span className={styles.prioLabel}>
+            {sl.label}
+            <small>{sl.help}</small>
+          </span>
+          <input
+            type="range"
+            min={0}
+            max={sl.max}
+            step={sl.step}
+            value={weights[sl.key]}
+            onChange={e => setWeights({...weights, [sl.key]: Number(e.target.value)})}
+          />
+          <output className={`${styles.prioValue} ${weights[sl.key] !== DEFAULT_WEIGHTS[sl.key] ? styles.prioChanged : ''}`}>
+            {weights[sl.key].toFixed(sl.step < 0.1 ? 2 : 1)}
+          </output>
+        </label>
+      ))}
+      <div className={styles.prioFoot}>
+        <span className={styles.muted}>
+          {translate({id: 'imd.prio.note', message: '0 = does not count; 1 = one direct hit counts as 1. Scores with changed priorities can not be compared with the default ones.'})}
+        </span>
+        <button type="button" className="button button--sm button--secondary" disabled={!changed} onClick={() => setWeights(DEFAULT_WEIGHTS)}>
+          {translate({id: 'imd.prio.reset', message: 'Reset'})}
+        </button>
+      </div>
     </div>
   );
 }

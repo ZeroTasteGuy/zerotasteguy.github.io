@@ -179,7 +179,7 @@ export function level(d: number): Level {
 //    20, 0.1 at 37 (one Raceband channel away) and 0 from 60 MHz. So a near miss still
 //    counts a little, and sets on the 37 MHz Raceband grid don't all tie.
 //    A channel closer than 60 MHz to another one adds spacing noise to both the same way.
-// 2. Each channel's noise counts as noise + noise², so one channel with a lot of noise
+// 2. Each channel's noise counts as noise + even · noise² (even = 1 by default), so one channel with a lot of noise
 //    costs more than the same noise spread over several channels.
 // 3. A channel outside the range of common antennas gets a weaker picture, so its noise
 //    counts (1 + antenna penalty) times, and the antenna penalty is added on top.
@@ -191,11 +191,19 @@ export function level(d: number): Level {
 export type Mode = 'balanced' | 'imd' | 'bleed';
 export type Part = ProductType | 'gap' | 'edge';
 export const PARTS: Part[] = ['im3', 'im3t', 'im5', 'bleed', 'gap', 'edge'];
-export type Weights = Record<ProductType, number> & {gap: number};
+// The priorities, all adjustable with sliders on the page:
+//   im3 … bleed, gap: how much each kind of noise counts
+//   edge: how much the antenna range counts (1 = the penalty below)
+//   even: how much worse one badly hit channel is than the same noise spread out
+//         (a channel's noise x counts as x + even · x²; 0 = only the total counts)
+export type Weights = Record<ProductType, number> & {gap: number; edge: number; even: number};
+export const DEFAULT_WEIGHTS: Weights = {im3: 1, im3t: 1, im5: 0.1, bleed: 0.6, gap: 3, edge: 1, even: 1};
+// "Your video transmitters" only changes how much bleed counts.
+export const MODE_BLEED: Record<Mode, number> = {balanced: 0.6, imd: 0.2, bleed: 2};
 export const WEIGHTS: Record<Mode, Weights> = {
-  balanced: {im3: 1, im3t: 1, im5: 0.1, bleed: 0.6, gap: 3},
-  imd: {im3: 1, im3t: 1, im5: 0.1, bleed: 0.2, gap: 3},
-  bleed: {im3: 1, im3t: 1, im5: 0.1, bleed: 2, gap: 3},
+  balanced: DEFAULT_WEIGHTS,
+  imd: {...DEFAULT_WEIGHTS, bleed: MODE_BLEED.imd},
+  bleed: {...DEFAULT_WEIGHTS, bleed: MODE_BLEED.bleed},
 };
 
 export const REACH = 60;
@@ -210,7 +218,6 @@ export const nearness = (d: number) => {
   if (d < 0) d = -d;
   return d >= REACH ? 0 : NEAR[Math.round(d * STEPS)];
 };
-const worse = (x: number) => x + x * x;
 
 // Channels outside the range of common 5.8 GHz antennas. Rated bands (maker specs):
 // Foxeer Lollipop 4 5500–6000 MHz, TrueRC/Pagoda-2 5550–6050, RushFPV Cherry 2 5600–6000
@@ -271,19 +278,20 @@ export function noiseOf(f: number[], bleedOffset: number, w: Weights): Noise {
   }
   let pen = 0;
   for (let c = 0; c < n; c++) {
-    const e = edgePenalty(f[c]);
+    const e = w.edge * edgePenalty(f[c]);
     const ch = channels[c];
     for (const k of PARTS) ch.parts[k] *= 1 + e;
     ch.noise *= 1 + e;
     ch.parts.edge = e;
-    pen += worse(ch.noise) + e;
+    pen += ch.noise + w.even * ch.noise * ch.noise + e;
   }
   return {pen, channels};
 }
 
 export const penalty = (f: number[], bleedOffset: number, w: Weights) => noiseOf(f, bleedOffset, w).pen;
-export const scoreOf = (pen: number, n: number) => {
-  const x = (Math.sqrt(1 + (4 * pen) / Math.max(n, 1)) - 1) / 2;
+export const scoreOf = (pen: number, n: number, even = DEFAULT_WEIGHTS.even) => {
+  const p = pen / Math.max(n, 1);
+  const x = even > 0 ? (Math.sqrt(1 + 4 * even * p) - 1) / (2 * even) : p;
   return Math.round(100 / Math.sqrt(1 + x));
 };
 
@@ -336,7 +344,7 @@ export type SearchInput = {
   pilots: number;
   minSep: number;
   bleedOffset: number;
-  mode: Mode;
+  weights: Weights;
   top?: number;
   timeLimitMs?: number;
 };
@@ -360,7 +368,7 @@ export function search(input: SearchInput, onProgress?: (checked: number) => voi
   const top = input.top ?? 10;
   const keep = top * 3; // more than shown, because twins are merged at the end
   const limit = input.timeLimitMs ?? 15000;
-  const w = WEIGHTS[input.mode];
+  const w = input.weights;
   const bleed = input.bleedOffset;
   // One entry per frequency (R7 and F8 are both 5880), lowest first.
   const seen = new Set<number>();
@@ -390,7 +398,7 @@ export function search(input: SearchInput, onProgress?: (checked: number) => voi
     const f = cs.map(c => c.mhz);
     let minSep = Infinity;
     for (let i = 1; i < f.length; i++) minSep = Math.min(minSep, f[i] - f[i - 1]);
-    return {ids: cs.map(c => c.id), mhz: f, pen, score: scoreOf(pen, N), et: etRating(f), minSep, worst, twins: []};
+    return {ids: cs.map(c => c.id), mhz: f, pen, score: scoreOf(pen, N, w.even), et: etRating(f), minSep, worst, twins: []};
   };
 
   // The search adds one channel at a time and only works out what that channel adds:
@@ -453,11 +461,14 @@ export function search(input: SearchInput, onProgress?: (checked: number) => voi
         push(mhz, weight, mask, k, nz);
       }
     }
-    const e = edgePenalty(fk);
+    const e = w.edge * edgePenalty(fk);
     edge[n] = edge[k] + e;
     gain[k] = 1 + e;
     let pen = edge[n];
-    for (let c = 0; c <= k; c++) pen += worse(nz[c] * gain[c]);
+    for (let c = 0; c <= k; c++) {
+      const x = nz[c] * gain[c];
+      pen += x + w.even * x * x;
+    }
     return pen;
   };
 
